@@ -1,25 +1,21 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 
-import { StyleSheet, View } from 'react-native';
-import { AmazonIvsReactNativeBroadcastView } from 'amazon-ivs-react-native-broadcast';
+import IVSBroadcastCameraView from 'amazon-ivs-react-native-broadcast';
+
+const VIDEO_CONFIG = {
+  width: 1920,
+  height: 1080,
+  bitrate: 8500000,
+  targetFrameRate: 60,
+  keyframeInterval: 2,
+  isBFrames: true,
+  isAutoBitrate: true,
+  maxBitrate: 8500000,
+  minBitrate: 1500000,
+};
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <AmazonIvsReactNativeBroadcastViewManager color="#32a852" style={styles.box} />
-    </View>
-  );
-}
+  const [canDisplay, setCanDisplay] = useState(true);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});
+  return canDisplay && <IVSBroadcastCameraView videoConfig={VIDEO_CONFIG} />;
+}

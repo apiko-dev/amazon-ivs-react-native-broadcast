@@ -37,6 +37,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>In order to stream your awesome video, allow access to camera please</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>In order to stream your awesome audio, allow access to microphone please</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>

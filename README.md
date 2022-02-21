@@ -11,11 +11,11 @@ npm install amazon-ivs-react-native-broadcast
 ## Usage
 
 ```js
-import { AmazonIvsReactNativeBroadcastView } from "amazon-ivs-react-native-broadcast";
+import { AmazonIvsReactNativeBroadcastView } from 'amazon-ivs-react-native-broadcast';
 
 // ...
 
-<AmazonIvsReactNativeBroadcastView color="tomato" />
+<AmazonIvsReactNativeBroadcastView color="tomato" />;
 ```
 
 ## Contributing

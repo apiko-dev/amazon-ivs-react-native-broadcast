@@ -1,59 +1,64 @@
-buildscript {
-    if (project == rootProject) {
-        repositories {
-            google()
-            mavenCentral()
-            jcenter()
-        }
+import groovy.json.JsonSlurper
 
-        dependencies {
-            classpath 'com.android.tools.build:gradle:3.5.3'
-        }
+def safeExtGet(name) {
+  project.ext.get('AmazonIvsReactNativeBroadcast_' + name)
+}
+
+buildscript {
+  if (project == rootProject) {
+    repositories {
+      google()
+      mavenCentral()
     }
+
+    dependencies {
+      classpath 'com.android.tools.build:gradle:4.2.2'
+    }
+  }
 }
 
 apply plugin: 'com.android.library'
 
-def safeExtGet(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-}
+def rootPkgJsonFile = file('../package.json')
+def pkgJsonData = new JsonSlurper().parseText(rootPkgJsonFile.text)
 
 android {
-    compileSdkVersion safeExtGet('AmazonIvsReactNativeBroadcast_compileSdkVersion', 29)
-    defaultConfig {
-        minSdkVersion safeExtGet('AmazonIvsReactNativeBroadcast_minSdkVersion', 16)
-        targetSdkVersion safeExtGet('AmazonIvsReactNativeBroadcast_targetSdkVersion', 29)
-        versionCode 1
-        versionName "1.0"
+  compileSdkVersion safeExtGet('compileSdkVersion').toInteger()
+  defaultConfig {
+    minSdkVersion safeExtGet('minSdkVersion').toInteger()
+    targetSdkVersion safeExtGet('targetSdkVersion').toInteger()
+    versionCode 1
+    versionName pkgJsonData.version
+  }
 
+  buildTypes {
+    release {
+      minifyEnabled false
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-        }
-    }
-    lintOptions {
-        disable 'GradleCompatible'
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+  }
+  lintOptions {
+    disable 'GradleCompatible'
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-        url("$rootDir/../node_modules/react-native/android")
-    }
-    google()
-    mavenCentral()
-    jcenter()
+  mavenLocal()
+  maven {
+    // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+    url("$rootDir/../node_modules/react-native/android")
+  }
+  google()
+  mavenCentral()
 }
 
+def ivsBroadcastSdkVersion = safeExtGet('ivsBroadcastSdkVersion')
+
 dependencies {
-    //noinspection GradleDynamicVersion
-    implementation "com.facebook.react:react-native:+"  // From node_modules
+  // noinspection GradleDynamicVersion
+  implementation "com.facebook.react:react-native:+"  // From node_modules
+  implementation "com.amazonaws:ivs-broadcast:$ivsBroadcastSdkVersion"
 }

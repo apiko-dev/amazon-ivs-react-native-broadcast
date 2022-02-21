@@ -24,8 +24,10 @@
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "prepare": "bob build",
+    "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:format": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "prettier:format": "prettier --write .",
+    "prepare": "bob build && npx husky install",
     "release": "release-it",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
@@ -136,7 +138,6 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      "commonjs",
       "module",
       [
         "typescript",
