@@ -1,4 +1,6 @@
 {
   "name": "AmazonIvsReactNativeBroadcastExample",
-  "displayName": "AmazonIvsReactNativeBroadcast Example"
+  "displayName": "AmazonIvsReactNativeBroadcast Example",
+  "rtmpsUrl": "",
+  "streamKey": ""
 }

@@ -12,14 +12,13 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import javax.annotation.Nullable;
 
 public class IVSBroadcastCameraViewManger extends ViewGroupManager<IVSBroadcastCameraView> {
-  public static final String REACT_CLASS = "RNIVSBroadcastCameraView";
   private final String START_COMMAND_NAME = "START";
   private final String STOP_COMMAND_NAME = "STOP";
   private final String SWAP_CAMERA_COMMAND_NAME = "SWAP_CAMERA";
 
   @Override
   public String getName() {
-    return REACT_CLASS;
+    return "RCTIVSBroadcastCameraView";
   }
 
   @Override

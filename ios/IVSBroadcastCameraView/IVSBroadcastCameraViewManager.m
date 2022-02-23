@@ -1,7 +1,7 @@
 #import "React/RCTBridgeModule.h"
 #import <React/RCTViewManager.h>
 
-@interface RCT_EXTERN_MODULE(RNIVSBroadcastCameraView, RCTViewManager)
+@interface RCT_EXTERN_MODULE(RCTIVSBroadcastCameraView, RCTViewManager)
 // Props
 RCT_EXPORT_VIEW_PROPERTY(streamKey, NSString)
 RCT_EXPORT_VIEW_PROPERTY(rtmpsUrl, NSString)

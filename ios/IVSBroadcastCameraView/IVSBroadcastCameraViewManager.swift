@@ -1,6 +1,6 @@
 import Foundation
 
-@objc (RNIVSBroadcastCameraView)
+@objc (RCTIVSBroadcastCameraView)
 class IVSBroadcastCameraViewManager: RCTViewManager {
   override func view() -> UIView! {
     return IVSBroadcastCameraView()
