@@ -43,7 +43,7 @@ const INITIAL_META_DATA_STATE = {
 const VIDEO_CONFIG = {
   width: 1920,
   height: 1080,
-  bitrate: 8500000,
+  bitrate: 7500000,
   targetFrameRate: 60,
   keyframeInterval: 2,
   isBFrames: true,
@@ -53,7 +53,6 @@ const VIDEO_CONFIG = {
 };
 const AUDIO_CONFIG = {
   bitrate: 128000,
-  audioSessionStrategy: 'recordOnly' as const,
 };
 
 const Spinner = () => <ActivityIndicator size="large" style={s.spinner} />;
@@ -161,7 +160,7 @@ const App: FC = () => {
   );
 
   const onErrorHandler = useCallback(
-    errorMessage => console.log('Internal error: ', errorMessage),
+    errorMessage => console.log('Internal module error: ', errorMessage),
     []
   );
 
