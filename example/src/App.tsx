@@ -4,11 +4,12 @@ import {
   Modal,
   View,
   Alert,
-  Button,
+  AppState,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
+  TouchableOpacityProps,
 } from 'react-native';
-// import { useAppState } from '@react-native-community/hooks';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { rtmpsUrl, streamKey } from '../app.json';
@@ -27,9 +28,17 @@ enum SessionReadyStatus {
 const { None, NotReady, Ready } = SessionReadyStatus;
 
 const INITIAL_BROADCAST_STATE_STATUS = 'INVALID' as const;
-const DEFAULT_STATE = {
+const INITIAL_STATE = {
   readyStatus: None,
   stateStatus: INITIAL_BROADCAST_STATE_STATUS,
+};
+const INITIAL_META_DATA_STATE = {
+  audioStats: {
+    rms: 0,
+    peak: 0,
+  },
+  streamQuality: 0,
+  networkHealth: 0,
 };
 const VIDEO_CONFIG = {
   width: 1920,
@@ -47,26 +56,49 @@ const AUDIO_CONFIG = {
   audioSessionStrategy: 'recordOnly' as const,
 };
 
-const Spinner = <ActivityIndicator size="large" />;
+const Spinner = () => <ActivityIndicator size="large" style={s.spinner} />;
+
+const Button: FC<{
+  title: string;
+  onPress: Exclude<TouchableOpacityProps['onPress'], undefined>;
+}> = ({ onPress, title }) => (
+  <TouchableOpacity style={s.button} onPress={onPress}>
+    <Text style={s.buttonText}>{title}</Text>
+  </TouchableOpacity>
+);
 
 const App: FC = () => {
   const cameraViewRef = useRef<ICameraView>(null);
-  // const appState = useAppState();
 
   const [{ stateStatus, readyStatus }, setState] = useState<{
-    stateStatus: StateStatusUnion;
-    readyStatus: SessionReadyStatus;
-  }>(DEFAULT_STATE);
+    readonly stateStatus: StateStatusUnion;
+    readonly readyStatus: SessionReadyStatus;
+  }>(INITIAL_STATE);
+
+  const [{ audioStats, networkHealth, streamQuality }, setMetaData] = useState<{
+    readonly streamQuality: number;
+    readonly networkHealth: number;
+    readonly audioStats: {
+      readonly rms: number;
+      readonly peak: number;
+    };
+  }>(INITIAL_META_DATA_STATE);
 
   const isConnecting = stateStatus === 'CONNECTING';
   const isConnected = stateStatus === 'CONNECTED';
   const isDisconnected = stateStatus === 'DISCONNECTED';
 
-  //   useEffect(() => {
-  //     if (appState === 'background') {
-  //       cameraViewRef.current?.stop();
-  //     }
-  //   }, [appState]);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'background') {
+        cameraViewRef.current?.stop();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (readyStatus === NotReady) {
@@ -86,13 +118,42 @@ const App: FC = () => {
     []
   );
 
-  const onBroadcastStateChangedHandler = useCallback(status => {
-    console.log('next status: ', status);
-    setState(currentState => ({
-      ...currentState,
-      stateStatus: status,
-    }));
-  }, []);
+  const onBroadcastStateChangedHandler = useCallback(
+    status =>
+      setState(currentState => ({
+        ...currentState,
+        stateStatus: status,
+      })),
+    []
+  );
+
+  const onBroadcastAudioStatsHandler = useCallback(
+    stats =>
+      setMetaData(currentState => ({
+        ...currentState,
+        audioStats: {
+          ...currentState.audioStats,
+          ...stats,
+        },
+      })),
+    []
+  );
+  const onBroadcastQualityChangedHandler = useCallback(
+    quality =>
+      setMetaData(currentState => ({
+        ...currentState,
+        streamQuality: quality,
+      })),
+    []
+  );
+  const onNetworkHealthChangedHandler = useCallback(
+    health =>
+      setMetaData(currentState => ({
+        ...currentState,
+        networkHealth: health,
+      })),
+    []
+  );
 
   const onBroadcastErrorHandler = useCallback(
     exception => console.log('Broadcast session error: ', exception),
@@ -129,7 +190,7 @@ const App: FC = () => {
     []
   );
 
-  const isPlayButtonVisible =
+  const isStartButtonVisible =
     isDisconnected || stateStatus === INITIAL_BROADCAST_STATE_STATUS;
 
   return (
@@ -141,10 +202,13 @@ const App: FC = () => {
         streamKey={streamKey}
         videoConfig={VIDEO_CONFIG}
         audioConfig={AUDIO_CONFIG}
-        onIsBroadcastReady={onIsBroadcastReadyHandler}
-        onBroadcastStateChanged={onBroadcastStateChangedHandler}
         onError={onErrorHandler}
         onBroadcastError={onBroadcastErrorHandler}
+        onIsBroadcastReady={onIsBroadcastReadyHandler}
+        onBroadcastAudioStats={onBroadcastAudioStatsHandler}
+        onNetworkHealthChanged={onNetworkHealthChangedHandler}
+        onBroadcastStateChanged={onBroadcastStateChangedHandler}
+        onBroadcastQualityChanged={onBroadcastQualityChangedHandler}
         onMediaServicesWereLost={onMediaServicesWereLostHandler}
         onMediaServicesWereReset={onMediaServicesWereResetHandler}
         {...(__DEV__ && {
@@ -159,40 +223,52 @@ const App: FC = () => {
         supportedOrientations={['landscape']}
       >
         <SafeAreaProvider>
-          {readyStatus === None
-            ? Spinner
-            : readyStatus === Ready && (
-                <SafeAreaView style={s.primaryContainer}>
-                  <View style={s.topContainer}>
-                    <View style={s.topButtonContainer}>
+          {readyStatus === None ? (
+            <Spinner />
+          ) : (
+            readyStatus === Ready && (
+              <SafeAreaView style={s.primaryContainer}>
+                <View style={s.topContainer}>
+                  <View style={s.topButtonContainer}>
+                    <Button
+                      title="Swap"
+                      onPress={onPressSwapCameraButtonHandler}
+                    />
+                    {isConnected && (
+                      <Button title="Stop" onPress={onPressStopButtonHandler} />
+                    )}
+                  </View>
+                </View>
+                {(isStartButtonVisible || isConnecting) && (
+                  <View style={s.middleContainer}>
+                    {isStartButtonVisible && (
                       <Button
-                        title="Swap"
-                        onPress={onPressSwapCameraButtonHandler}
+                        title="Start"
+                        onPress={onPressPlayButtonHandler}
                       />
-                      {isConnected && (
-                        <Button
-                          title="Stop"
-                          onPress={onPressStopButtonHandler}
-                        />
-                      )}
-                    </View>
+                    )}
+                    {isConnecting && <Spinner />}
                   </View>
-                  {(isPlayButtonVisible || isConnecting) && (
-                    <View style={s.middleContainer}>
-                      {isPlayButtonVisible && (
-                        <Button
-                          title="Start"
-                          onPress={onPressPlayButtonHandler}
-                        />
-                      )}
-                      {isConnecting && Spinner}
-                    </View>
-                  )}
-                  <View style={s.bottomContainer}>
-                    {isConnected && <Text style={s.liveText}>Live</Text>}
+                )}
+                <View style={s.bottomContainer}>
+                  <View style={s.metaDataContainer}>
+                    <Text
+                      style={s.metaDataText}
+                    >{`Peak ${audioStats.peak?.toFixed(
+                      2
+                    )}, Rms: ${audioStats.rms?.toFixed(2)}`}</Text>
+                    <Text
+                      style={s.metaDataText}
+                    >{`Stream quality: ${streamQuality}`}</Text>
+                    <Text
+                      style={s.metaDataText}
+                    >{`Network health: ${networkHealth}`}</Text>
                   </View>
-                </SafeAreaView>
-              )}
+                  {isConnected && <Text style={s.liveText}>LIVE</Text>}
+                </View>
+              </SafeAreaView>
+            )
+          )}
         </SafeAreaProvider>
       </Modal>
     </>
@@ -200,6 +276,9 @@ const App: FC = () => {
 };
 
 const s = StyleSheet.create({
+  spinner: {
+    flex: 1,
+  },
   topContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -220,8 +299,27 @@ const s = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
+  button: {
+    marginHorizontal: 8,
+  },
+  buttonText: {
+    padding: 8,
+    borderRadius: 8,
+    fontSize: 20,
+    color: '#ffffff',
+    backgroundColor: 'rgba(128, 128, 128, 0.4)',
+  },
+  metaDataContainer: {
+    flex: 1,
+  },
+  metaDataText: {
+    color: '#ffffff',
+  },
   liveText: {
-    color: '#FF5C5C',
+    color: '#ffffff',
+    padding: 8,
+    backgroundColor: '#FF5C5C',
+    borderRadius: 8,
   },
   cameraView: {
     flex: 1,
