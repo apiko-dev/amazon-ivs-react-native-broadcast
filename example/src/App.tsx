@@ -14,9 +14,11 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { rtmpsUrl, streamKey } from '../app.json';
 import {
-  CameraView,
-  ICameraView,
+  IAudioStats,
   StateStatusUnion,
+  IBroadcastSessionError,
+  IVSBroadcastCameraView,
+  IIVSBroadcastCameraView,
 } from 'amazon-ivs-react-native-broadcast';
 
 enum SessionReadyStatus {
@@ -67,7 +69,7 @@ const Button: FC<{
 );
 
 const App: FC = () => {
-  const cameraViewRef = useRef<ICameraView>(null);
+  const cameraViewRef = useRef<IIVSBroadcastCameraView>(null);
 
   const [{ stateStatus, readyStatus }, setState] = useState<{
     readonly stateStatus: StateStatusUnion;
@@ -109,7 +111,7 @@ const App: FC = () => {
   }, [readyStatus]);
 
   const onIsBroadcastReadyHandler = useCallback(
-    isReady =>
+    (isReady: boolean) =>
       setState(currentState => ({
         ...currentState,
         readyStatus: isReady ? Ready : NotReady,
@@ -118,7 +120,7 @@ const App: FC = () => {
   );
 
   const onBroadcastStateChangedHandler = useCallback(
-    status =>
+    (status: StateStatusUnion) =>
       setState(currentState => ({
         ...currentState,
         stateStatus: status,
@@ -127,7 +129,7 @@ const App: FC = () => {
   );
 
   const onBroadcastAudioStatsHandler = useCallback(
-    stats =>
+    (stats: IAudioStats) =>
       setMetaData(currentState => ({
         ...currentState,
         audioStats: {
@@ -138,7 +140,7 @@ const App: FC = () => {
     []
   );
   const onBroadcastQualityChangedHandler = useCallback(
-    quality =>
+    (quality: number) =>
       setMetaData(currentState => ({
         ...currentState,
         streamQuality: quality,
@@ -146,7 +148,7 @@ const App: FC = () => {
     []
   );
   const onNetworkHealthChangedHandler = useCallback(
-    health =>
+    (health: number) =>
       setMetaData(currentState => ({
         ...currentState,
         networkHealth: health,
@@ -155,12 +157,14 @@ const App: FC = () => {
   );
 
   const onBroadcastErrorHandler = useCallback(
-    exception => console.log('Broadcast session error: ', exception),
+    (exception: IBroadcastSessionError) =>
+      console.log('Broadcast session error: ', exception),
     []
   );
 
   const onErrorHandler = useCallback(
-    errorMessage => console.log('Internal module error: ', errorMessage),
+    (errorMessage: string) =>
+      console.log('Internal module error: ', errorMessage),
     []
   );
 
@@ -194,7 +198,7 @@ const App: FC = () => {
 
   return (
     <>
-      <CameraView
+      <IVSBroadcastCameraView
         ref={cameraViewRef}
         style={s.cameraView}
         rtmpsUrl={rtmpsUrl}
@@ -288,8 +292,8 @@ const s = StyleSheet.create({
   },
   middleContainer: {
     flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
   },
   bottomContainer: {

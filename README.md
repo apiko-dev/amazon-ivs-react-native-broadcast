@@ -1,27 +1,91 @@
 # amazon-ivs-react-native-broadcast
 
-A React Native wrapper for the Amazon IVS iOS and Android broadcast SDKs
+A React Native wrapper for the Amazon IVS iOS and Android broadcast SDKs.
+
+⚠️ _Note that the current module implementation doesn't support full functionality provided by Amazon IVS iOS and Android broadcast SDKs._
+⚠️ _Apps using `amazon-ivs-react-native-broadcast` must target **iOS 11** and **Android 12** (API 31)._
+
+👉 [Read more](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast.html) about **broadcasting to Amazon IVS**.
+👉 [See](https://docs.aws.amazon.com/ivs/latest/userguide/streaming-config.html) **Amazon IVS streaming configuration** guideline.
 
 ## Installation
 
 ```sh
-npm install amazon-ivs-react-native-broadcast
+$ yarn add amazon-ivs-react-native-broadcast
+# --- or ---
+$ npm install amazon-ivs-react-native-broadcast
+$ cd ios && pod install && cd ..
 ```
+
+# `IVSBroadcastCameraView` component
+Allows consumers to stream video from an active phone camera.
+
+
+## ⚠️ Requirements
+
+An application must request permission to access the user’s camera and microphone. This isn't specific to the component but required for any application that needs access to cameras and microphones.
+
+##### _iOS_
+Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys to the `ios/YourProjectName/Info.plist` file:
+```xml
+    ...
+	<key>NSCameraUsageDescription</key>
+	<string>In order to stream your awesome video, allow access to camera please</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>In order to stream your awesome audio, allow access to microphone please</string>
+	...
+```
+
+##### _Android_
+Add `CAMERA` and  `RECORD_AUDIO` permissions to the `AndroidManifest.xml` file:
+```xml
+...
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.RECORD_AUDIO"/>
+...
+```
+>⚠️ On devices before SDK version 23, the permissions are automatically granted if they appear in the manifest, so `check` should always result to `true` and `request` should always resolve to `PermissionsAndroid.RESULTS.GRANTED`, however if your app is installed on a device that runs Android 6.0 or higher, **you must request** the _dangerous permissions_ at runtime manually.
+
+Example of requesting Android dangerous permissions at runtime could be found in the [`./example/src/index.android.tsx`](./example/src/index.android.tsx) file.
+## API
+Props | Type | iOS | Android |
+:---: | :---: | :---: | :---: |
+`rtmpsUrl` | `String` | ✅ | ✅ |
+`streamKey` | `String` | ✅ | ✅ |
+`videoConfig` | `IVideoConfig?` | ✅ | ✅ |
+`audioConfig` | `IAudioConfig?` | ✅ | ✅ |
+`logLevel` | `LogLevel?` | ✅ | ✅ |
+`sessionLogLevel` | `LogLevel?` | ✅ | ✅ |
+`cameraPreviewAspectMode` | `CameraPreviewAspectMode?` | ✅ | ✅ |
+`isCameraPreviewMirrored` | `Boolean?` | ✅ | ✅ |
+`cameraPosition` | `CameraPosition?` | ✅  | ✅|
+
+Handlers | Type | iOS | Android
+:---: | :---: | :---: | :---:  
+`onError` | `(errorMessage: String): void?` | ✅  | ✅  |
+`onBroadcastError` | `(error: IBroadcastSessionError): void?` | ✅  | ✅  |
+`onIsBroadcastReady` | `(isReady: Boolean): void?` | ✅  | ✅  |
+`onBroadcastAudioStats` | `(audioStats: IAudioStats): void?` | ✅  | ✅  |
+`onBroadcastStateChanged` | `(stateStatus: StateStatusUnion): void?` | ✅  | ✅  |
+`onBroadcastQualityChanged` | `(quality: Number): void?` | ✅  | ✅  |
+`onNetworkHealthChanged` | `(networkHealth: Number): void?` | ✅  | ✅  |
+`onAudioSessionInterrupted` | `(): void?` | ✅  |  |
+`onAudioSessionResumed` | `(): void?` | ✅  |  |
+`onMediaServicesWereLost` | `(): void?` | ✅  |  |
+`onMediaServicesWereReset` | `(): void?` | ✅  |  |
+
+Methods | Type | iOS | Android
+:---: | :---: | :---: | :---:  
+`start` | `(): void` | ✅  | ✅  |
+`stop` | `(): void` | ✅  | ✅  |
+`swapCamera` | `(): void` | ✅  | ✅  |
+
+👉 Read more detailed [API documentation](docs/api-documentation.md).
 
 ## Usage
+A complex usage could be found in the [`./example/src/App.tsx`](./example/src/App.tsx) file or just go to the [`./example`](./example/) folder and read **Setting up and running application** section how to set up and run the example app to see `IVSBroadcastCameraView` component in action.
 
-```js
-import { AmazonIvsReactNativeBroadcastView } from 'amazon-ivs-react-native-broadcast';
-
-// ...
-
-<AmazonIvsReactNativeBroadcastView color="tomato" />;
-```
-
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+***
 
 ## License
-
-MIT
+[MIT](LICENSE)

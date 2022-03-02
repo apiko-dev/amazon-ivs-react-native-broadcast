@@ -1,4 +1,4 @@
-import type { NativeSyntheticEvent, ViewStyle } from 'react-native';
+import type { NativeSyntheticEvent, ViewStyle, StyleProp } from 'react-native';
 
 export enum Command {
   Start = 'START',
@@ -55,7 +55,7 @@ interface IEventHandler<T extends Record<string, unknown>> {
   (event: NativeSyntheticEvent<T>): void;
 }
 
-interface IBroadcastSessionError {
+export interface IBroadcastSessionError {
   readonly code: string;
   readonly type: string;
   readonly source: string;
@@ -63,7 +63,7 @@ interface IBroadcastSessionError {
   readonly isFatal: boolean;
 }
 
-interface IAudioStats {
+export interface IAudioStats {
   /**
    * Audio Peak over the time period
    */
@@ -134,8 +134,8 @@ interface IAudioConfig {
   readonly audioSessionStrategy?: AudioSessionStrategy;
 }
 
-interface ICameraViewBaseProps {
-  readonly style?: ViewStyle;
+interface IIVSBroadcastCameraViewBaseProps {
+  readonly style?: StyleProp<ViewStyle>;
   /**
    * Used to locate the view in end-to-end tests
    */
@@ -179,7 +179,7 @@ interface ICameraViewBaseProps {
   readonly cameraPosition?: CameraPosition;
 }
 
-export interface ICameraView {
+export interface IIVSBroadcastCameraView {
   /**
    * Start the configured broadcast session
    */
@@ -195,7 +195,8 @@ export interface ICameraView {
   swapCamera(): void;
 }
 
-export interface ICameraNativeViewProps extends ICameraViewBaseProps {
+export interface IIVSBroadcastCameraNativeViewProps
+  extends IIVSBroadcastCameraViewBaseProps {
   onError: IEventHandler<Readonly<{ message: string }>>;
   onBroadcastError: IEventHandler<
     Readonly<{
@@ -223,7 +224,8 @@ export interface ICameraNativeViewProps extends ICameraViewBaseProps {
   onMediaServicesWereLost(): void;
 }
 
-export interface ICameraViewProps extends ICameraViewBaseProps {
+export interface IIVSBroadcastCameraViewProps
+  extends IIVSBroadcastCameraViewBaseProps {
   /**
    * Indicates that module' internal error occurred
    */

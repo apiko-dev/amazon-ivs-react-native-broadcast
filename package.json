@@ -121,7 +121,15 @@
       "@typescript-eslint/no-var-requires": 0,
       "react/react-in-jsx-scope": 0,
       "no-shadow": 0,
-      "@typescript-eslint/no-shadow": 1
+      "@typescript-eslint/no-shadow": 1,
+      "@typescript-eslint/naming-convention": [
+        "error",
+        {
+          "selector": "interface",
+          "format": null,
+          "prefix": ["I"]
+        } 
+      ]
     }
   },
   "eslintIgnore": [
