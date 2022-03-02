@@ -41,13 +41,13 @@
     "stream",
     "sdk"
   ],
-  "repository": "https://apiko.com",
+  "repository": "https://github.com/apiko-dev/amazon-ivs-react-native-broadcast",
   "author": "Andrew Shapovalov <a.shapovalov@apiko.com> (https://apiko.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://apiko.com/issues"
+    "url": "https://github.com/apiko-dev/amazon-ivs-react-native-broadcast/issues"
   },
-  "homepage": "https://apiko.com#readme",
+  "homepage": "https://github.com/apiko-dev/amazon-ivs-react-native-broadcast#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
