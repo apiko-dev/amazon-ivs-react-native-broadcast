@@ -4,7 +4,7 @@ This repository contains example app which use the Amazon IVS iOS and Android br
 
 ## Setting up and running application
 
-1. Add `rtmpsUrl` and `streamKey` values to [./app.json](app.json) file 
+1. Add `rtmpsUrl` and `streamKey` values to [`./app.json`](app.json) file 
 
 2. Install modules
 ```sh
