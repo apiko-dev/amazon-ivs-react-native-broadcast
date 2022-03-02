@@ -93,7 +93,8 @@
   "release-it": {
     "git": {
       "commitMessage": "chore: release v${version}",
-      "tagName": "${version}"
+      "tagName": "${version}",
+      "requireCleanWorkingDir": false
     },
     "npm": {
       "publish": false
@@ -101,11 +102,6 @@
     "github": {
       "release": false,
       "releaseName": "${version}"
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "eslint"
-      }
     }
   },
   "eslintConfig": {
