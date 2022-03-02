@@ -101,11 +101,6 @@
     "github": {
       "release": false,
       "releaseName": "${version}"
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "eslint"
-      }
     }
   },
   "eslintConfig": {
