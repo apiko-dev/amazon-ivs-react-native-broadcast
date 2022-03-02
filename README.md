@@ -1,11 +1,13 @@
-# amazon-ivs-react-native-broadcast
+# **Amazon IVS React Native Broadcast**
 
 A React Native wrapper for the Amazon IVS iOS and Android broadcast SDKs.
 
 ⚠️ _Note that the current module implementation doesn't support full functionality provided by Amazon IVS iOS and Android broadcast SDKs._
+
 ⚠️ _Apps using `amazon-ivs-react-native-broadcast` must target **iOS 11** and **Android 12** (API 31)._
 
 👉 [Read more](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast.html) about **broadcasting to Amazon IVS**.
+
 👉 [See](https://docs.aws.amazon.com/ivs/latest/userguide/streaming-config.html) **Amazon IVS streaming configuration** guideline.
 
 ## Installation
@@ -25,18 +27,18 @@ Allows consumers to stream video from an active phone camera.
 
 An application must request permission to access the user’s camera and microphone. This isn't specific to the component but required for any application that needs access to cameras and microphones.
 
-##### _iOS_
+##### **_iOS_**
 Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys to the `ios/YourProjectName/Info.plist` file:
 ```xml
-    ...
-	<key>NSCameraUsageDescription</key>
-	<string>In order to stream your awesome video, allow access to camera please</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>In order to stream your awesome audio, allow access to microphone please</string>
-	...
+...
+<key>NSCameraUsageDescription</key>
+<string>In order to stream your awesome video, allow access to camera please</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>In order to stream your awesome audio, allow access to microphone please</string>
+...
 ```
 
-##### _Android_
+##### **_Android_**
 Add `CAMERA` and  `RECORD_AUDIO` permissions to the `AndroidManifest.xml` file:
 ```xml
 ...
@@ -44,7 +46,7 @@ Add `CAMERA` and  `RECORD_AUDIO` permissions to the `AndroidManifest.xml` file:
 <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 ...
 ```
->⚠️ On devices before SDK version 23, the permissions are automatically granted if they appear in the manifest, so `check` should always result to `true` and `request` should always resolve to `PermissionsAndroid.RESULTS.GRANTED`, however if your app is installed on a device that runs Android 6.0 or higher, **you must request** the _dangerous permissions_ at runtime manually.
+>⚠️ _On devices before SDK version 23, the permissions are automatically granted if they appear in the manifest, so `check` should always result to `true` and `request` should always resolve to `PermissionsAndroid.RESULTS.GRANTED`, however if your app is installed on a device that runs Android 6.0 or higher, **you must request** the _dangerous permissions_ at runtime manually._
 
 Example of requesting Android dangerous permissions at runtime could be found in the [`./example/src/index.android.tsx`](./example/src/index.android.tsx) file.
 ## API

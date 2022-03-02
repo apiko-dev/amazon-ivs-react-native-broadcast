@@ -1,6 +1,6 @@
 # Amazon IVS React Native Broadcast Example App
 
-This repository contains example app which use the Amazon IVS iOS and Android broadcast SDKs via React Native wrapper
+This repository contains example app which use the Amazon IVS iOS and Android broadcast SDKs via React Native wrapper.
 
 ## Setting up and running application
 
