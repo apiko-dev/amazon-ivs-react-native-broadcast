@@ -6,9 +6,11 @@ A React Native wrapper for the Amazon IVS iOS and Android broadcast SDKs.
 
 ⚠️ _Apps using `amazon-ivs-react-native-broadcast` must target **iOS 11** and **Android 12** (API 31)._
 
-👉 [Read more](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast.html) about **broadcasting to Amazon IVS**.
+***
 
-👉 [See](https://docs.aws.amazon.com/ivs/latest/userguide/streaming-config.html) **Amazon IVS streaming configuration** guideline.
+👉 [Read more](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast.html) about broadcasting to Amazon IVS.
+
+👉 [See](https://docs.aws.amazon.com/ivs/latest/userguide/streaming-config.html) Amazon IVS streaming configuration guideline.
 
 ## Installation
 
@@ -25,7 +27,7 @@ Allows consumers to stream video from an active phone camera.
 
 ## ⚠️ Requirements
 
-An application must request permission to access the user’s camera and microphone. This isn't specific to the component but required for any application that needs access to cameras and microphones.
+An application must request permission to access the user’s camera and microphone. This isn't specific to the component but required for any application that needs access to the cameras and microphones.
 
 ##### **_iOS_**
 Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys to the `ios/YourProjectName/Info.plist` file:
@@ -52,25 +54,25 @@ Example of requesting Android dangerous permissions at runtime could be found in
 ## API
 Props | Type | iOS | Android |
 :---: | :---: | :---: | :---: |
-`rtmpsUrl` | `String` | ✅ | ✅ |
-`streamKey` | `String` | ✅ | ✅ |
+`rtmpsUrl` | `string` | ✅ | ✅ |
+`streamKey` | `string` | ✅ | ✅ |
 `videoConfig` | `IVideoConfig?` | ✅ | ✅ |
 `audioConfig` | `IAudioConfig?` | ✅ | ✅ |
 `logLevel` | `LogLevel?` | ✅ | ✅ |
 `sessionLogLevel` | `LogLevel?` | ✅ | ✅ |
 `cameraPreviewAspectMode` | `CameraPreviewAspectMode?` | ✅ | ✅ |
-`isCameraPreviewMirrored` | `Boolean?` | ✅ | ✅ |
+`isCameraPreviewMirrored` | `boolean?` | ✅ | ✅ |
 `cameraPosition` | `CameraPosition?` | ✅  | ✅|
 
 Handlers | Type | iOS | Android
 :---: | :---: | :---: | :---:  
-`onError` | `(errorMessage: String): void?` | ✅  | ✅  |
+`onError` | `(errorMessage: string): void?` | ✅  | ✅  |
 `onBroadcastError` | `(error: IBroadcastSessionError): void?` | ✅  | ✅  |
-`onIsBroadcastReady` | `(isReady: Boolean): void?` | ✅  | ✅  |
+`onIsBroadcastReady` | `(isReady: boolean): void?` | ✅  | ✅  |
 `onBroadcastAudioStats` | `(audioStats: IAudioStats): void?` | ✅  | ✅  |
 `onBroadcastStateChanged` | `(stateStatus: StateStatusUnion): void?` | ✅  | ✅  |
-`onBroadcastQualityChanged` | `(quality: Number): void?` | ✅  | ✅  |
-`onNetworkHealthChanged` | `(networkHealth: Number): void?` | ✅  | ✅  |
+`onBroadcastQualityChanged` | `(quality: number): void?` | ✅  | ✅  |
+`onNetworkHealthChanged` | `(networkHealth: number): void?` | ✅  | ✅  |
 `onAudioSessionInterrupted` | `(): void?` | ✅  |  |
 `onAudioSessionResumed` | `(): void?` | ✅  |  |
 `onMediaServicesWereLost` | `(): void?` | ✅  |  |

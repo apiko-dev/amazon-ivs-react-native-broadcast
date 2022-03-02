@@ -1,10 +1,10 @@
 # **API Documentation**
 
-## `IVSBroadcastCameraView` component:
+## `IVSBroadcastCameraView` component
 
 ### _**Props**_
 
-#### `style`
+#### ⚫ `style`
 
 Style of `IVSBroadcastCameraView` component. 
 
@@ -12,7 +12,7 @@ Style of `IVSBroadcastCameraView` component.
 | :---: | :---: | :---: |
 | `StyleProp<ViewStyle>` | No | iOS, Android |
 
-#### `testID`
+#### ⚫ `testID`
 
 Used to locate `IVSBroadcastCameraView` component in the end-to-end tests.
 
@@ -20,7 +20,7 @@ Used to locate `IVSBroadcastCameraView` component in the end-to-end tests.
 | :---: | :---: | :---: |
 | `string` | No | iOS, Android |
 
-#### `rtmpsUrl`
+#### ⚫ `rtmpsUrl`
 
 The RTMPS endpoint provided by IVS.
 
@@ -28,7 +28,7 @@ The RTMPS endpoint provided by IVS.
 | :---: | :---: | :---: |
 | `string` | Yes | iOS, Android |
 
-#### `streamKey`
+#### ⚫ `streamKey`
 
 The broadcaster’s stream key that has been provided by IVS.
 
@@ -36,9 +36,10 @@ The broadcaster’s stream key that has been provided by IVS.
 | :---: | :---: | :---: |
 | `string` | Yes | iOS, Android |
 
-#### `videoConfig`
+#### ⚫ `videoConfig`
 
 A configuration object describing the desired format of the final output Video stream.
+
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
 | Type | Required | Platform |
@@ -58,9 +59,10 @@ _**Default video config:**_
 | `maxBitrate` | `6000000` |
 | `minBitrate` | `300000` |
 
-#### `audioConfig`
+#### ⚫ `audioConfig`
 
 A configuration object describing the desired format of the final output Audio stream.
+
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
 | Type | Required | Platform |
@@ -74,7 +76,7 @@ _**Default audio config:**_
 | `channels` | `2` |
 | `audioSessionStrategy` | `playAndRecord` |
 
-#### `logLevel`
+#### ⚫ `logLevel`
 
  In order to catch logs at a more granular level than `Error` during the initialization process, use this property instead of the [`sessionLogLevel`](#sessionloglevel).
  
@@ -82,7 +84,7 @@ _**Default audio config:**_
 | :---: | :---: | :---: | :---: |
 | [`LogLevel`](./types.md#loglevel) | No | iOS, Android | `error` |
 
-#### `sessionLogLevel`
+#### ⚫ `sessionLogLevel`
 
 Logging level for the broadcast session.
 
@@ -90,7 +92,7 @@ Logging level for the broadcast session.
 | :---: | :---: | :---: | :---: |
 | [`LogLevel`](./types.md#loglevel) | No | iOS, Android | `error` |
 
-#### `cameraPreviewAspectMode`
+#### ⚫ `cameraPreviewAspectMode`
 
  Determines how view's aspect ratio will be maintained.
  
@@ -98,7 +100,7 @@ Logging level for the broadcast session.
 | :---: | :---: | :---: | :---: |
 | [`CameraPreviewAspectMode`](./types.md#camerapreviewaspectmode) | No | iOS, Android | `none` |
 
-#### `isCameraPreviewMirrored`
+#### ⚫ `isCameraPreviewMirrored`
 
 Flips the camera preview horizontally.
 
@@ -106,7 +108,7 @@ Flips the camera preview horizontally.
 | :---: | :---: | :---: | :---: |
 | `boolean` | No | iOS, Android | `false` |
 
-#### `cameraPosition`
+#### ⚫ `cameraPosition`
 
 The position of the input device relative to the host device.
 
@@ -116,7 +118,7 @@ The position of the input device relative to the host device.
 
 ### _**Handlers**_
 
-#### `onError`
+#### ⚫ `onError`
 
  Indicates that module' internal error occurred.
 
@@ -124,7 +126,7 @@ The position of the input device relative to the host device.
 | :---: | :---: | :---: |
 | `onError(errorMessage: string): void` | No | iOS, Android |
  
-####  `onBroadcastError`
+#### ⚫  `onBroadcastError`
 
 Indicates that broadcast session error occurred. Errors may or may not be fatal. In the case of a fatal error the broadcast session moves into `DISCONNECTED` [state status](./types.md#statestatusunion).
 
@@ -134,7 +136,7 @@ Indicates that broadcast session error occurred. Errors may or may not be fatal.
 
 👉 See [`IBroadcastSessionError`](./types.md#ibroadcastsessionerror) type.
 
-####  `onIsBroadcastReady`
+#### ⚫  `onIsBroadcastReady`
 
 Fires(once) when initialization (including adding camera preview to the view hierarchy) is done.
 
@@ -142,7 +144,7 @@ Fires(once) when initialization (including adding camera preview to the view hie
 | :---: | :---: | :---: |
 | `onIsBroadcastReady(isReady: boolean): void` | No | iOS, Android |
 
-####  `onBroadcastAudioStats`
+#### ⚫  `onBroadcastAudioStats`
 
 Periodically called with audio `peak` and `rms` in `dBFS`.
 
@@ -152,7 +154,7 @@ Periodically called with audio `peak` and `rms` in `dBFS`.
 
 👉 See [`IAudioStats`](./types.md#iaudiostats) type.
 
-#### `onBroadcastStateChanged`
+#### ⚫ `onBroadcastStateChanged`
 
 Indicates that the broadcast state changed.
 
@@ -162,25 +164,27 @@ Indicates that the broadcast state changed.
 
 👉 See [`StateStatusUnion`](./types.md#statestatusunion) type.
 
-#### `onBroadcastQualityChanged`
+#### ⚫ `onBroadcastQualityChanged`
 
 Represents the quality of the stream.
+
 `quality` is a number between `0` and `1` that represents the quality of the stream based on minimum and maximum bitrate provided in the [`videoConfig`](#videoconfig). `0` means the stream is at the lowest possible quality, or streaming is not possible at all. `1` means the bitrate is near the maximum allowed.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onBroadcastQualityChanged(quality: number): void` | No | iOS, Android |
 
-#### `onNetworkHealthChanged`
+#### ⚫ `onNetworkHealthChanged`
 
 Provides updates when the instantaneous quality of the network changes.
+
 `networkHealth` is a number between `0` and `1` that represents the current health of the network. `0` means the network is struggling to keep up and the broadcast may be experiencing latency spikes. The SDK may also reduce the quality of the broadcast on low values in order to keep it stable, depending on the minimum allowed bitrate in the [`videoConfig`](#videoconfig). A value of `1` means the network is easily able to keep up with the current demand and the SDK will be trying to increase the broadcast quality over time, depending on the maximum allowed bitrate. Lower values like `0.5` are not necessarily bad, it just means the network is being saturated, but it is still able to keep up.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onNetworkHealthChanged(networkHealth: number): void` | No | iOS, Android |
 
-#### `onAudioSessionInterrupted`
+#### ⚫ `onAudioSessionInterrupted`
 
 Indicates that audio session has been interrupted.
 
@@ -192,7 +196,7 @@ Indicates that audio session has been interrupted.
 * User receives a phone call or FaceTime call
 * User activates Siri
 
-#### `onAudioSessionResumed`
+#### ⚫ `onAudioSessionResumed`
 
 Indicates that audio session has been resumed (after interrupted).
 
@@ -200,9 +204,9 @@ Indicates that audio session has been resumed (after interrupted).
 | :---: | :---: | :---: |
 | `onAudioSessionResumed(): void` | No | iOS |
 
-#### `onMediaServicesWereLost`
+#### ⚫ `onMediaServicesWereLost`
 
->In very rare cases, the entire media subsystem on an iOS device will crash. In this scenario, the SDK can no longer broadcast.
+>_In very rare cases, the entire media subsystem on an iOS device will crash. In this scenario, the SDK can no longer broadcast._
 
 Indicates that the media server services are terminated.
 Respond by stopping and completely deallocating broadcast session. All internal components used by the broadcast session will be invalidated.
@@ -211,7 +215,7 @@ Respond by stopping and completely deallocating broadcast session. All internal 
 | :---: | :---: | :---: |
 | `onMediaServicesWereLost(): void` | No | iOS |
 
-#### `onMediaServicesWereReset`
+#### ⚫ `onMediaServicesWereReset`
 
 Indicates that the media server services are reset.
 Respond by notifying consumers that they can broadcast again. Depending on the case, you may be able to automatically start broadcasting again at this point.
@@ -222,7 +226,7 @@ Respond by notifying consumers that they can broadcast again. Depending on the c
 
 ### _**Methods**_
 
-#### `start`
+#### ⚫ `start`
 
 Start the configured broadcast session.
 
@@ -230,7 +234,7 @@ Start the configured broadcast session.
 | :---: | :---: | :---: |
 | `(): void` | No | iOS, Android |
 
-#### `stop`
+#### ⚫ `stop`
 
 Stop the broadcast session, but do not deallocate resources.
 
@@ -240,7 +244,7 @@ Stop the broadcast session, but do not deallocate resources.
 
 ⚠️ Stopping the stream happens asynchronously while the SDK attempts to gracefully end the broadcast. Observe state changes to know when a new stream could be started. 
 
-#### `swapCamera`
+#### ⚫ `swapCamera`
 
 Swap back camera to front camera and vice versa.
 
