@@ -79,10 +79,10 @@ Handlers | Type | iOS | Android
 `onBroadcastStateChanged` | `(stateStatus: StateStatusUnion): void?` | ✅  | ✅  |
 `onBroadcastQualityChanged` | `(quality: number): void?` | ✅  | ✅  |
 `onNetworkHealthChanged` | `(networkHealth: number): void?` | ✅  | ✅  |
-`onAudioSessionInterrupted` | `(): void?` | ✅  |  |
-`onAudioSessionResumed` | `(): void?` | ✅  |  |
-`onMediaServicesWereLost` | `(): void?` | ✅  |  |
-`onMediaServicesWereReset` | `(): void?` | ✅  |  |
+`onAudioSessionInterrupted` | `(): void?` | ✅  | 🚫 |
+`onAudioSessionResumed` | `(): void?` | ✅  | 🚫 |
+`onMediaServicesWereLost` | `(): void?` | ✅  | 🚫 |
+`onMediaServicesWereReset` | `(): void?` | ✅  | 🚫 |
 
 Methods | Type | iOS | Android
 :---: | :---: | :---: | :---:  
