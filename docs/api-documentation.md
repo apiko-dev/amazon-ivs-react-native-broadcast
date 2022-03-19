@@ -192,9 +192,9 @@ Indicates that audio session has been interrupted.
 | :---: | :---: | :---: |
 | `onAudioSessionInterrupted(): void` | No | iOS |
 
-⚠️ There are several scenarios where the SDK may not have exclusive access to audio-input hardware. Some example scenarios that you need to handle are:
-* User receives a phone call or FaceTime call
-* User activates Siri
+⚠️ _There are several scenarios where the SDK may not have exclusive access to audio-input hardware. Some example scenarios that you need to handle are:_
+* _User receives a phone call or FaceTime call_
+* _User activates Siri_
 
 #### `onAudioSessionResumed` 📌
 
@@ -242,7 +242,7 @@ Stop the broadcast session, but do not deallocate resources.
 | :---: | :---: | :---: |
 | `(): void` | No | iOS, Android |
 
-⚠️ Stopping the stream happens asynchronously while the SDK attempts to gracefully end the broadcast. Observe state changes to know when a new stream could be started. 
+⚠️ _Stopping the stream happens asynchronously while the SDK attempts to gracefully end the broadcast. Observe state changes to know when a new stream could be started._
 
 #### `swapCamera` 📌
 

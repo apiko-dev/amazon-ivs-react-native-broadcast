@@ -8,10 +8,10 @@ export enum Command {
 
 export enum EventPayloadKey {
   ErrorHandler = 'message',
-  IsBroadcastReadyHandler = 'isReady',
-  BroadcastQualityChangedHandler = 'quality',
   BroadcastErrorHandler = 'exception',
+  IsBroadcastReadyHandler = 'isReady',
   BroadcastAudioStatsHandler = 'audioStats',
+  BroadcastQualityChangedHandler = 'quality',
   BroadcastStateChangedHandler = 'stateStatus',
   NetworkHealthChangedHandler = 'networkHealth',
 }

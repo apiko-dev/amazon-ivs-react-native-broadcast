@@ -14,9 +14,9 @@
 | `maxBitrate` | `number?` | `100000` - `8500000` | The maximum bitrate for the output video stream |
 | `minBitrate` | `number?` | `100000` - `8500000` | The minimum bitrate for the output video stream |
 
-⚠️ The `width` and `height` must both be between `160` and `1920`, and the maximum total number of pixels is `2,073,600.` So the smallest size is `160x160`, and the largest is either `1080x1920` or `1920x1080`. However something like `1920x1200` would not be worked. `1280x180` however is supported.
+⚠️ _The `width` and `height` must both be between `160` and `1920`, and the maximum total number of pixels is `2,073,600.` So the smallest size is `160x160`, and the largest is either `1080x1920` or `1920x1080`. However something like `1920x1200` would not be worked. `1280x180` however is supported._
 
-⚠️ Bitrate, FPS, and resolution are interrelated that's why they are mandatory when `videoConfig` prop is in use.
+⚠️ _Bitrate, FPS, and resolution are interrelated that's why they are mandatory when `videoConfig` prop is in use._
 
 ## `IAudioConfig`
 | Key | Type | Range | Description |
@@ -25,7 +25,7 @@
 | `channels` | [`AudioChannel?`](#audiochannel) | | The number of channels for the output audio stream |
 | `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | | A value representing how the broadcast session will interact with `AVAudioSession` (iOS only). |
 
-⚠️ AirPods do not record any audio if the `audioSessionStrategy` is set to `recordOnly`. By default, the `playAndRecord` value is used, so this issue manifests only if the value is changed to `recordOnly`.
+⚠️ _AirPods do not record any audio if the `audioSessionStrategy` is set to `recordOnly`. By default, the `playAndRecord` value is used, so this issue manifests only if the value is changed to `recordOnly`._
 
 ## `AudioChannel`
 
@@ -107,7 +107,7 @@ interface IBroadcastSessionError {
 
 👉 See iOS `code` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.2.0/ios/Enums/IVSBroadcastError.html#/c:@E@IVSBroadcastError@IVSBroadcastErrorDeviceExchangeIncompatibleTypes).
 
-👉  See Android `type` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.2.1/android/reference/com/amazonaws/ivs/broadcast/ErrorType.html).
+👉 See Android `type` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.2.1/android/reference/com/amazonaws/ivs/broadcast/ErrorType.html).
 
 ## `IAudioStats`
 

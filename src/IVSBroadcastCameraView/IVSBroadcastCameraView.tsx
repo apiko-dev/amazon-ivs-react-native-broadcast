@@ -1,8 +1,8 @@
 import React, {
   useRef,
   forwardRef,
-  useImperativeHandle,
   PropsWithChildren,
+  useImperativeHandle,
 } from 'react';
 import {
   Platform,
@@ -45,13 +45,13 @@ const getCommandIdByPlatform = (command: Command) => {
 };
 
 const {
+  ErrorHandler,
   BroadcastErrorHandler,
   IsBroadcastReadyHandler,
   BroadcastAudioStatsHandler,
+  NetworkHealthChangedHandler,
   BroadcastStateChangedHandler,
   BroadcastQualityChangedHandler,
-  ErrorHandler,
-  NetworkHealthChangedHandler: NetworkHealth,
 } = EventPayloadKey;
 
 const IVSBroadcastCameraView = forwardRef<
@@ -139,7 +139,8 @@ const IVSBroadcastCameraView = forwardRef<
     };
 
   const onNetworkHealthChangedHandler: IIVSBroadcastCameraNativeViewProps['onNetworkHealthChanged'] =
-    ({ nativeEvent }) => onNetworkHealthChanged?.(nativeEvent[NetworkHealth]);
+    ({ nativeEvent }) =>
+      onNetworkHealthChanged?.(nativeEvent[NetworkHealthChangedHandler]);
 
   const onBroadcastQualityChangedHandler: IIVSBroadcastCameraNativeViewProps['onBroadcastQualityChanged'] =
     ({ nativeEvent }) =>
