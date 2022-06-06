@@ -31,66 +31,66 @@ class IVSBroadcastSessionService: NSObject {
   
   private func getLogLevel(_ logLevelName: NSString) -> IVSBroadcastSession.LogLevel {
     switch logLevelName {
-    case "debug":
-      return IVSBroadcastSession.LogLevel.debug
-    case "error":
-      return IVSBroadcastSession.LogLevel.error
-    case "info":
-      return IVSBroadcastSession.LogLevel.info
-    case "warning":
-      return IVSBroadcastSession.LogLevel.warn
-    default:
-      assertionFailure("Does not support log level: \(logLevelName)")
-      return IVSBroadcastSession.LogLevel.error
+      case "debug":
+        return IVSBroadcastSession.LogLevel.debug
+      case "error":
+        return IVSBroadcastSession.LogLevel.error
+      case "info":
+        return IVSBroadcastSession.LogLevel.info
+      case "warning":
+        return IVSBroadcastSession.LogLevel.warn
+      default:
+        assertionFailure("Does not support log level: \(logLevelName)")
+        return IVSBroadcastSession.LogLevel.error
     }
   }
   
   private func getAspectMode(_ aspectModeName: NSString) -> IVSBroadcastConfiguration.AspectMode {
     switch aspectModeName {
-    case "fit":
-      return IVSBroadcastConfiguration.AspectMode.fit
-    case "fill":
-      return IVSBroadcastConfiguration.AspectMode.fill
-    case "none":
-      return IVSBroadcastConfiguration.AspectMode.none
-    default:
-      assertionFailure("Does not support aspect mode: \(aspectModeName)")
-      return IVSBroadcastConfiguration.AspectMode.fill
+      case "fit":
+        return IVSBroadcastConfiguration.AspectMode.fit
+      case "fill":
+        return IVSBroadcastConfiguration.AspectMode.fill
+      case "none":
+        return IVSBroadcastConfiguration.AspectMode.none
+      default:
+        assertionFailure("Does not support aspect mode: \(aspectModeName)")
+        return IVSBroadcastConfiguration.AspectMode.fill
     }
   }
   
   private func getCameraPosition(_ cameraPositionName: NSString) -> IVSDevicePosition {
     switch(cameraPositionName) {
-    case "front":
-      return IVSDevicePosition.front
-    case "back":
-      return IVSDevicePosition.back
-    default:
-      assertionFailure("Does not support camera position: \(cameraPositionName)")
-      return IVSDevicePosition.back
+      case "front":
+        return IVSDevicePosition.front
+      case "back":
+        return IVSDevicePosition.back
+      default:
+        assertionFailure("Does not support camera position: \(cameraPositionName)")
+        return IVSDevicePosition.back
     }
   }
   
   private func getAudioSessionStrategy(_ audioSessionStrategyName: NSString) -> IVSBroadcastSession.AudioSessionStrategy {
     switch audioSessionStrategyName {
-    case "recordOnly":
-      return IVSBroadcastSession.AudioSessionStrategy.recordOnly
-    case "playAndRecord":
-      return IVSBroadcastSession.AudioSessionStrategy.playAndRecord
-    case "noAction":
-      return IVSBroadcastSession.AudioSessionStrategy.noAction
-    default:
-      assertionFailure("Does not support audio session strategy: \(audioSessionStrategyName).")
-      return IVSBroadcastSession.AudioSessionStrategy.playAndRecord
+      case "recordOnly":
+        return IVSBroadcastSession.AudioSessionStrategy.recordOnly
+      case "playAndRecord":
+        return IVSBroadcastSession.AudioSessionStrategy.playAndRecord
+      case "noAction":
+        return IVSBroadcastSession.AudioSessionStrategy.noAction
+      default:
+        assertionFailure("Does not support audio session strategy: \(audioSessionStrategyName).")
+        return IVSBroadcastSession.AudioSessionStrategy.playAndRecord
     }
   }
   
   private func getInitialDeviceDescriptors() -> [IVSDeviceDescriptor] {
     switch(self.initialCameraPosition) {
-    case .front:
-      return IVSPresets.devices().frontCamera()
-    default:
-      return IVSPresets.devices().backCamera()
+      case .front:
+        return IVSPresets.devices().frontCamera()
+      default:
+        return IVSPresets.devices().backCamera()
     }
   }
   
@@ -191,7 +191,7 @@ class IVSBroadcastSessionService: NSObject {
     self.broadcastSession?.stop()
   }
   
-  public func swapCamera() throws {
+  public func swapCamera(aspectModeName: NSString, isMirrored: Bool, onReceiveCameraPreview: @escaping (_: Error?, _: IVSImagePreviewView?) -> Void) throws {
     self.checkBroadcastSessionOrThrow()
     
     let currentCameraDeviceUrn = self.currentCameraDeviceUrn ?? ""
@@ -206,33 +206,36 @@ class IVSBroadcastSessionService: NSObject {
       throw IVSBroadcastCameraViewError("Can not get next camera to swap.")
     }
     
-    // Remove the current preview view since the device will be changing
-    if let currentCameraPreview = try? (currentCamera as! IVSImageDevice).previewView() {
-      currentCameraPreview.subviews.forEach { $0.removeFromSuperview() }
-    }
-    
     self.broadcastSession?.exchangeOldDevice(currentCamera, withNewDevice: nextCamera) { newDevice, _ in
       if let newCameraDevice = newDevice {
+        let aspectMode = self.getAspectMode(aspectModeName)
+        
+        if let newCameraPreview = try? (newCameraDevice as! IVSImageDevice).previewView(with: aspectMode) {
+          newCameraPreview.setMirrored(isMirrored)
+          onReceiveCameraPreview(nil, newCameraPreview)
+        } else {
+          onReceiveCameraPreview(IVSBroadcastCameraViewError("Can not get camera preview."), nil)
+        }
         self.currentCameraDeviceUrn = newCameraDevice.descriptor().urn
       } else {
-        assertionFailure("New device is empty.")
+        onReceiveCameraPreview(IVSBroadcastCameraViewError("New device is empty."), nil)
       }
     }
   }
   
-  public func getCameraPreviewAsync(aspectModeName: NSString, isMirrored: Bool, callback: @escaping (_: Error?, _: IVSImagePreviewView?) -> Void) {
+  public func getCameraPreviewAsync(aspectModeName: NSString, isMirrored: Bool, onReceiveCameraPreview: @escaping (_: Error?, _: IVSImagePreviewView?) -> Void) {
     self.checkBroadcastSessionOrThrow()
     
     self.broadcastSession?.awaitDeviceChanges { () -> Void in
       let aspectMode = self.getAspectMode(aspectModeName)
       
       guard let cameraPreview = self.getSessionPreviewView(aspectMode) else {
-        callback(IVSBroadcastCameraViewError("Can not get broadcast session camera preview."), nil)
+        onReceiveCameraPreview(IVSBroadcastCameraViewError("Can not get camera preview."), nil)
         return
       }
       
       cameraPreview.setMirrored(isMirrored)
-      callback(nil, cameraPreview)
+      onReceiveCameraPreview(nil, cameraPreview)
     }
   }
   

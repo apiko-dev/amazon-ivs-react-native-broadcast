@@ -223,7 +223,7 @@ const App: FC = () => {
         visible
         transparent
         animationType="fade"
-        supportedOrientations={['landscape']}
+        supportedOrientations={['landscape', 'portrait']}
       >
         <SafeAreaProvider>
           {readyStatus === None ? (

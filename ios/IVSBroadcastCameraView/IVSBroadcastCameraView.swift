@@ -2,6 +2,7 @@ import UIKit
 import AVFoundation
 
 class IVSBroadcastCameraView: UIView {
+  private var wasInitialSubViewAdded: Bool = false
   private let broadcastSession: IVSBroadcastSessionService = IVSBroadcastSessionService() // The primary interaction point with the IVS Broadcast SDK
   
   @objc var streamKey: NSString?
@@ -78,12 +79,12 @@ class IVSBroadcastCameraView: UIView {
     else { return }
     
     switch type {
-    case .began:
-      self.onAudioSessionInterrupted?([:])
-    case .ended:
-      self.onAudioSessionResumed?([:])
-    @unknown default:
-      break
+      case .began:
+        self.onAudioSessionInterrupted?([:])
+      case .ended:
+        self.onAudioSessionResumed?([:])
+      @unknown default:
+        break
     }
   }
   
@@ -128,13 +129,12 @@ class IVSBroadcastCameraView: UIView {
     self.onError?(["message": error.localizedDescription])
   }
   
-  // Handler to receive camera preview
-  private func onCameraPreviewHandler(error: Error?, preview: UIView?) {
+  private func onReceiveCameraPreviewHandler(error: Error?, preview: UIView?) {
     if error != nil {
       self.onErrorHandler(error!)
     } else if preview != nil  {
+      self.subviews.forEach { $0.removeFromSuperview() }
       self.addSubview(preview!)
-      self.onIsBroadcastReady?(["isReady": self.broadcastSession.isReady()])
     } else {
       assertionFailure("Unexpected behaviour.")
     }
@@ -158,7 +158,7 @@ class IVSBroadcastCameraView: UIView {
           try self.broadcastSession.initiate()
           self.broadcastSession.setSessionLogLevel(self.sessionLogLevel)
           // Receive camera preview asynchronously to ensure that all devices have been attached
-          self.broadcastSession.getCameraPreviewAsync(aspectModeName: self.cameraPreviewAspectMode, isMirrored: self.isCameraPreviewMirrored, callback: self.onCameraPreviewHandler)
+          self.broadcastSession.getCameraPreviewAsync(aspectModeName: self.cameraPreviewAspectMode, isMirrored: self.isCameraPreviewMirrored, onReceiveCameraPreview: self.onReceiveCameraPreviewHandler)
         } catch {
           self.onErrorHandler(error)
         }
@@ -169,6 +169,13 @@ class IVSBroadcastCameraView: UIView {
       unsubscribeNotificationCenter()
       self.subviews.forEach { $0.removeFromSuperview() }
       self.broadcastSession.deinitiate()
+    }
+  }
+  
+  override func didAddSubview(_ subview: UIView) {
+    if self.wasInitialSubViewAdded == false {
+      self.wasInitialSubViewAdded = true
+      self.onIsBroadcastReady?(["isReady": self.broadcastSession.isReady()])
     }
   }
   
@@ -196,7 +203,7 @@ class IVSBroadcastCameraView: UIView {
   
   public func swapCamera() {
     do {
-      try self.broadcastSession.swapCamera()
+      try self.broadcastSession.swapCamera(aspectModeName: self.cameraPreviewAspectMode, isMirrored: self.isCameraPreviewMirrored, onReceiveCameraPreview: self.onReceiveCameraPreviewHandler)
     } catch {
       self.onErrorHandler(error)
     }
