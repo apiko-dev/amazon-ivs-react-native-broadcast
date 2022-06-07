@@ -177,7 +177,7 @@ Represents the quality of the stream.
 
 #### `onNetworkHealthChanged` 📌
 
-Provides updates when the instantaneous quality of the network changes.
+Provides updates when the instantaneous quality of the network changes. It can be used to provide feedback about when the broadcast might have temporary disruptions.
 
 `networkHealth` is a number between `0` and `1` that represents the current health of the network. `0` means the network is struggling to keep up and the broadcast may be experiencing latency spikes. The SDK may also reduce the quality of the broadcast on low values in order to keep it stable, depending on the minimum allowed bitrate in the [`videoConfig`](#videoconfig-%F0%9F%93%8C). A value of `1` means the network is easily able to keep up with the current demand and the SDK will be trying to increase the broadcast quality over time, depending on the maximum allowed bitrate. Lower values like `0.5` are not necessarily bad, it just means the network is being saturated, but it is still able to keep up.
 
