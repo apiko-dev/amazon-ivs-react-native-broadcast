@@ -44,6 +44,11 @@ type AudioChannel = 1 | 2;
 ```ts
 type AudioSessionStrategy = 'recordOnly' | 'playAndRecord' | 'noAction';
 ```
+| Value | Description |
+| :---: | --- |
+| `recordOnly` | Controls `AVAudioSession` completely and will set the category to `record`. There is a known issue with the `recordOnly` category and AirPods. Use `playAndRecord` category to make AirPods work. |
+| `playAndRecord` | Controls `AVAudioSession` completely and will set the category to `playAndRecord`. |
+| `noAction` | Does not control `AVAudioSession` at all. If this strategy is selected, only custom audio sources will be allowed. Microphone based sources will not be returned or added by any APIs. |
 
 ## `AudioQuality` (iOS only)
 

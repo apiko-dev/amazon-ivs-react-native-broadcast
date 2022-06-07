@@ -234,6 +234,7 @@ class IVSBroadcastSessionService: NSObject {
         } else {
           onReceiveCameraPreview(IVSBroadcastCameraViewError("Can not get camera preview."), nil)
         }
+        
         self.currentCameraDeviceUrn = newCameraDevice.descriptor().urn
       } else {
         onReceiveCameraPreview(IVSBroadcastCameraViewError("New device is empty."), nil)
