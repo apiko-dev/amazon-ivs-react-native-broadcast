@@ -35,8 +35,8 @@ Allows consumers to stream video from an active phone camera.
 
 An application must request permission to access the user’s camera and microphone. This isn't specific to the component but required for any application that needs access to the cameras and microphones.
 
-##### **_iOS_**
-Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys to the `ios/YourProjectName/Info.plist` file:
+#### **iOS**
+Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys to the `Info.plist` file:
 ```xml
 ...
 <key>NSCameraUsageDescription</key>
@@ -46,7 +46,7 @@ Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys to the `i
 ...
 ```
 
-##### **_Android_**
+#### **Android**
 Add `CAMERA` and  `RECORD_AUDIO` permissions to the `AndroidManifest.xml` file:
 ```xml
 ...
@@ -54,7 +54,7 @@ Add `CAMERA` and  `RECORD_AUDIO` permissions to the `AndroidManifest.xml` file:
 <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 ...
 ```
->⚠️ _On devices before SDK version 23, the permissions are automatically granted if they appear in the manifest, so `check` should always result to `true` and `request` should always resolve to `PermissionsAndroid.RESULTS.GRANTED`, however if your app is installed on a device that runs Android 6.0 or higher, **you must request** the _dangerous permissions_ at runtime manually._
+>⚠️ _On devices before SDK version 23, the permissions are automatically granted if they appear in the manifest, so check should always result to `true` and request should always resolve to `PermissionsAndroid.RESULTS.GRANTED`, however if your app is installed on a device that runs Android 6.0 or higher, **you must request** the _dangerous permissions_ at runtime manually._
 
 Example of requesting Android dangerous permissions at runtime could be found in the [`./example/src/index.android.tsx`](./example/src/index.android.tsx) file.
 ## API
@@ -93,7 +93,7 @@ Methods | Type | iOS | Android
 👉 Read more detailed [API documentation](docs/api-documentation.md).
 
 ## Usage
-A complex usage could be found in the [`./example/src/App.tsx`](./example/src/App.tsx) file or just go to the [`./example`](./example/) folder and read **Setting up and running application** section how to set up and run the example app to see `IVSBroadcastCameraView` component in action.
+A complex usage could be found in the [`./example/src/App.tsx`](./example/src/App.tsx) file or just go to the [`./example`](./example/) folder and read _Setting up and running application_ section how to set up and run the example app to see `IVSBroadcastCameraView` component in action.
 
 ***
 
