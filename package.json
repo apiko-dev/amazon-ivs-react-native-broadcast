@@ -1,6 +1,6 @@
 {
   "name": "amazon-ivs-react-native-broadcast",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A React Native wrapper for the Amazon IVS iOS and Android broadcast SDKs",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -124,8 +124,10 @@
         {
           "selector": "interface",
           "format": null,
-          "prefix": ["I"]
-        } 
+          "prefix": [
+            "I"
+          ]
+        }
       ]
     }
   },
