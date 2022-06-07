@@ -26,7 +26,6 @@ enum SessionReadyStatus {
   Ready = 'READY',
   NotReady = 'NOT_READY',
 }
-
 const { None, NotReady, Ready } = SessionReadyStatus;
 
 const INITIAL_BROADCAST_STATE_STATUS = 'INVALID' as const;
@@ -52,10 +51,10 @@ const VIDEO_CONFIG = {
   isAutoBitrate: true,
   maxBitrate: 8500000,
   minBitrate: 1500000,
-};
+} as const;
 const AUDIO_CONFIG = {
   bitrate: 128000,
-};
+} as const;
 
 const Spinner = () => <ActivityIndicator size="large" style={s.spinner} />;
 

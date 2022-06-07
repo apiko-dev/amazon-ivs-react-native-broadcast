@@ -75,6 +75,7 @@ _**Default audio config:**_
 | `bitrate` | `96000` |
 | `channels` | `2` |
 | `audioSessionStrategy` | `playAndRecord` |
+| `quality` | `medium` |
 
 #### `logLevel` 📌
 

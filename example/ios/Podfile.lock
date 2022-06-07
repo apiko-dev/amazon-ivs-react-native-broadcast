@@ -1,8 +1,8 @@
 PODS:
   - amazon-ivs-react-native-broadcast (0.1.0):
-    - AmazonIVSBroadcast (~> 1.2.0)
+    - AmazonIVSBroadcast (~> 1.4.0)
     - React-Core
-  - AmazonIVSBroadcast (1.2.0)
+  - AmazonIVSBroadcast (1.4.0)
   - boost (1.76.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.67.2)
@@ -390,14 +390,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amazon-ivs-react-native-broadcast: 3e1cd30ee745bdfaf1daa2ef1ef784b8907cc863
-  AmazonIVSBroadcast: b52aa30ceb6e4ca35a51ad93b41cfd9700d378bb
+  amazon-ivs-react-native-broadcast: 3003ad90f703c620b3e6c19dad02633be830dbb1
+  AmazonIVSBroadcast: c41b0f1f835d50bd93d6dca6bdb1f17af8364444
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  DoubleConversion: cde416483dac037923206447da6e1454df403714
+  DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   FBLazyVector: 244195e30d63d7f564c55da4410b9a24e8fbceaa
   FBReactNativeSpec: c94002c1d93da3658f4d5119c6994d19961e3d52
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 2ad46e202fbaa5641fceb4b2af37dcd88fd8762d
+  glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
   RCT-Folly: 803a9cfd78114b2ec0f140cfa6fa2a6bafb2d685
   RCTRequired: cd47794163052d2b8318c891a7a14fcfaccc75ab
   RCTTypeSafety: 393bb40b3e357b224cde53d3fec26813c52428b1

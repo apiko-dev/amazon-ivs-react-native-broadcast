@@ -8,7 +8,7 @@
 | `height` | `number` | `160` - `1920` | The height of the output video stream |
 | `bitrate` | `number` | `100000` - `8500000` | Initial bitrate for the output video stream |
 | `targetFrameRate` | `number` | `10` - `60`| The target framerate of the output video stream |
-| `keyframeInterval` | `number` | `1` - `10` | The keyframe interval for the output video stream |
+| `keyframeInterval` | `number` | `1` - `5` | The keyframe interval for the output video stream |
 | `isBFrames` | `boolean?` | | Whether the output video stream uses B (Bidirectional predicted picture) frames |
 | `isAutoBitrate` | `boolean?` | | Whether the output video stream will automatically adjust the bitrate based on network conditions. Use `minBitrate` and `maxBitrate` values to specify the bounds when this value is `true` |
 | `maxBitrate` | `number?` | `100000` - `8500000` | The maximum bitrate for the output video stream |
@@ -24,8 +24,10 @@
 | `bitrate` | `number?` | `64000` - `160000` | The average bitrate for the final output audio stream |
 | `channels` | [`AudioChannel?`](#audiochannel) | | The number of channels for the output audio stream |
 | `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | | A value representing how the broadcast session will interact with `AVAudioSession` (iOS only). |
+| `quality` | [`AudioQuality?`](#audioquality-ios-only) | | The quality of the audio encoding (iOS only). |
 
 ⚠️ _AirPods do not record any audio if the `audioSessionStrategy` is set to `recordOnly`. By default, the `playAndRecord` value is used, so this issue manifests only if the value is changed to `recordOnly`._
+⚠️ _Reducing the audio `quality` can have a large impact on CPU usage._
 
 ## `AudioChannel`
 
@@ -41,6 +43,12 @@ type AudioChannel = 1 | 2;
 
 ```ts
 type AudioSessionStrategy = 'recordOnly' | 'playAndRecord' | 'noAction';
+```
+
+## `AudioQuality` (iOS only)
+
+```ts
+type AudioQuality = 'minimum' | 'low' | 'medium' | 'high' | 'maximum';
 ```
 
 ## `LogLevel`

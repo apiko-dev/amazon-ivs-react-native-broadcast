@@ -49,6 +49,10 @@ type CameraPreviewAspectMode = 'fit' | 'fill' | 'none';
 
 type AudioChannel = 1 | 2;
 
+type AudioQuality = 'minimum' | 'low' | 'medium' | 'high' | 'maximum';
+
+type KeyframeInterval = 1 | 2 | 3 | 4 | 5;
+
 type AudioSessionStrategy = 'recordOnly' | 'playAndRecord' | 'noAction';
 
 interface IEventHandler<T extends Record<string, unknown>> {
@@ -95,9 +99,9 @@ interface IVideoConfig {
   readonly targetFrameRate: number;
   /**
    * The keyframe interval for the output video stream.
-   * !! The value must be between 1 and 10
+   * !! The value must be between 1 and 5
    */
-  readonly keyframeInterval: number;
+  readonly keyframeInterval: KeyframeInterval;
   /**
    * Whether the output video stream uses B (Bidirectional predicted picture) frames
    */
@@ -129,9 +133,13 @@ interface IAudioConfig {
    */
   readonly channels?: AudioChannel;
   /**
-   * A value representing how the broadcast session will interact with AVAudioSession
+   * A value representing how the broadcast session will interact with AVAudioSession (iOS only)
    */
   readonly audioSessionStrategy?: AudioSessionStrategy;
+  /**
+   * The quality of the audio encoding (iOS only)
+   */
+  readonly quality?: AudioQuality;
 }
 
 interface IIVSBroadcastCameraViewBaseProps {

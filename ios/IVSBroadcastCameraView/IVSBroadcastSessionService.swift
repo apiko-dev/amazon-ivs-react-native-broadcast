@@ -85,6 +85,24 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
+  private func getAudioQuality(_ audioQualityName: NSString) -> IVSBroadcastConfiguration.AudioQuality {
+    switch audioQualityName {
+      case "minimum":
+        return .minimum
+      case "low":
+        return .low
+      case "medium":
+        return .medium
+      case "high":
+        return .high
+      case "maximum":
+        return .maximum
+      default:
+        assertionFailure("Does not support audio quality: \(audioQualityName).")
+        return .medium
+    }
+  }
+  
   private func getInitialDeviceDescriptors() -> [IVSDeviceDescriptor] {
     switch(self.initialCameraPosition) {
       case .front:
@@ -303,6 +321,10 @@ class IVSBroadcastSessionService: NSObject {
     do {
       if let audioBitrate = audioConfig["bitrate"] {
         try self.config.audio.setBitrate(audioBitrate as! Int)
+      }
+      if let audioQualityName = audioConfig["quality"] {
+        let audioQuality = self.getAudioQuality(audioQualityName as! NSString)
+        self.config.audio.setQuality(audioQuality)
       }
       if let channels = audioConfig["channels"] {
         try self.config.audio.setChannels(channels as! Int)
