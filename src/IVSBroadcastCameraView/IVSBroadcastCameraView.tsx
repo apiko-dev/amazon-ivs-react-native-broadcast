@@ -30,7 +30,7 @@ const RCTIVSBroadcastCameraView =
 const NATIVE_SIDE_COMMANDS =
   UIManager.getViewManagerConfig(NATIVE_VIEW_NAME).Commands;
 
-const getCommandIdByPlatform = (command: Command) => {
+export const getCommandIdByPlatform = (command: Command) => {
   switch (Platform.OS) {
     case 'android': {
       return command;
@@ -160,6 +160,7 @@ const IVSBroadcastCameraView = forwardRef<
 
   return (
     <RCTIVSBroadcastCameraView
+      testID={NATIVE_VIEW_NAME}
       {...restProps}
       ref={nativeViewRef}
       logLevel={logLevel}
