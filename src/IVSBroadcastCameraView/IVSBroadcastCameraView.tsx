@@ -22,7 +22,7 @@ import {
 } from './IVSBroadcastCameraView.types';
 
 const UNKNOWN = 'unknown';
-const NATIVE_VIEW_NAME = 'RCTIVSBroadcastCameraView';
+export const NATIVE_VIEW_NAME = 'RCTIVSBroadcastCameraView';
 
 const RCTIVSBroadcastCameraView =
   requireNativeComponent<IIVSBroadcastCameraNativeViewProps>(NATIVE_VIEW_NAME);

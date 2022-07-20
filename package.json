@@ -55,6 +55,7 @@
     "@commitlint/config-conventional": "^16.2.1",
     "@react-native-community/eslint-config": "^3.0.1",
     "@release-it/conventional-changelog": "^4.1.0",
+    "@testing-library/react-native": "^10.1.1",
     "@types/jest": "^27.4.0",
     "@types/react": "^17.0.39",
     "@types/react-native": "^0.66.16",
@@ -71,6 +72,7 @@
     "react": "^17.0.2",
     "react-native": "^0.67.2",
     "react-native-builder-bob": "^0.18.2",
+    "react-test-renderer": "17.0.2",
     "release-it": "^14.2.2",
     "typescript": "^4.5.5"
   },

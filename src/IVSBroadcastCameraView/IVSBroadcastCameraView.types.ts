@@ -1,4 +1,11 @@
+import type { Component, ComponentType } from 'react';
 import type { NativeSyntheticEvent, ViewStyle, StyleProp } from 'react-native';
+
+export type ExtractComponentProps<T> = T extends
+  | ComponentType<infer P>
+  | Component<infer P>
+  ? P
+  : never;
 
 export enum Command {
   Start = 'START',
@@ -142,12 +149,42 @@ interface IAudioConfig {
   readonly quality?: AudioQuality;
 }
 
-interface IIVSBroadcastCameraViewBaseProps {
+export interface INativeEventHandlers {
+  onError: IEventHandler<Readonly<{ message: string }>>;
+  onBroadcastError: IEventHandler<
+    Readonly<{
+      exception: {
+        readonly code?: number;
+        readonly type?: string;
+        readonly source?: string;
+        readonly detail?: string;
+        readonly isFatal?: boolean;
+      };
+    }>
+  >;
+  onIsBroadcastReady: IEventHandler<Readonly<{ isReady: boolean }>>;
+  onBroadcastAudioStats: IEventHandler<Readonly<{ audioStats: IAudioStats }>>;
+  onBroadcastStateChanged: IEventHandler<
+    Readonly<{
+      stateStatus: StateStatusUnion | number;
+    }>
+  >;
+  onBroadcastQualityChanged: IEventHandler<Readonly<{ quality: number }>>;
+  onNetworkHealthChanged: IEventHandler<Readonly<{ networkHealth: number }>>;
+  onAudioSessionInterrupted(): void;
+  onAudioSessionResumed(): void;
+  onMediaServicesWereReset(): void;
+  onMediaServicesWereLost(): void;
+}
+
+export interface IIVSBroadcastCameraNativeViewProps
+  extends IBaseProps,
+    INativeEventHandlers {
   readonly style?: StyleProp<ViewStyle>;
-  /**
-   * Used to locate the view in end-to-end tests
-   */
   readonly testID?: string;
+}
+
+interface IBaseProps {
   /**
    * The RTMPS endpoint provided by IVS
    */
@@ -187,53 +224,7 @@ interface IIVSBroadcastCameraViewBaseProps {
   readonly cameraPosition?: CameraPosition;
 }
 
-export interface IIVSBroadcastCameraView {
-  /**
-   * Start the configured broadcast session
-   */
-  start(): void;
-  /**
-   * Stop the broadcast session, but do not deallocate resources.
-   * Stopping the stream happens asynchronously while the SDK attempts to gracefully end the broadcast.
-   */
-  stop(): void;
-  /**
-   * Swap back camera to front camera and vice versa
-   */
-  swapCamera(): void;
-}
-
-export interface IIVSBroadcastCameraNativeViewProps
-  extends IIVSBroadcastCameraViewBaseProps {
-  onError: IEventHandler<Readonly<{ message: string }>>;
-  onBroadcastError: IEventHandler<
-    Readonly<{
-      exception: {
-        readonly code?: number;
-        readonly type?: string;
-        readonly source?: string;
-        readonly detail?: string;
-        readonly isFatal?: boolean;
-      };
-    }>
-  >;
-  onIsBroadcastReady: IEventHandler<Readonly<{ isReady: boolean }>>;
-  onBroadcastAudioStats: IEventHandler<Readonly<{ audioStats: IAudioStats }>>;
-  onBroadcastStateChanged: IEventHandler<
-    Readonly<{
-      stateStatus: StateStatusUnion | number;
-    }>
-  >;
-  onBroadcastQualityChanged: IEventHandler<Readonly<{ quality: number }>>;
-  onNetworkHealthChanged: IEventHandler<Readonly<{ networkHealth: number }>>;
-  onAudioSessionInterrupted(): void;
-  onAudioSessionResumed(): void;
-  onMediaServicesWereReset(): void;
-  onMediaServicesWereLost(): void;
-}
-
-export interface IIVSBroadcastCameraViewProps
-  extends IIVSBroadcastCameraViewBaseProps {
+export interface IEventHandlers {
   /**
    * Indicates that module' internal error occurred
    */
@@ -279,4 +270,33 @@ export interface IIVSBroadcastCameraViewProps
    * Indicates that the media server services are reset
    */
   onMediaServicesWereReset?(): void;
+}
+
+export interface IIVSBroadcastCameraViewProps
+  extends IBaseProps,
+    IEventHandlers {
+  /**
+   * The style of the IVSBroadcastCameraView component
+   */
+  readonly style?: StyleProp<ViewStyle>;
+  /**
+   * Used to locate the view in end-to-end tests
+   */
+  readonly testID?: string;
+}
+
+export interface IIVSBroadcastCameraView {
+  /**
+   * Start the configured broadcast session
+   */
+  start(): void;
+  /**
+   * Stop the broadcast session, but do not deallocate resources.
+   * Stopping the stream happens asynchronously while the SDK attempts to gracefully end the broadcast.
+   */
+  stop(): void;
+  /**
+   * Swap back camera to front camera and vice versa
+   */
+  swapCamera(): void;
 }
