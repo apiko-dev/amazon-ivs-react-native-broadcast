@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render IVSBroadcastCameraView component Matched 1`] = `
+<RCTIVSBroadcastCameraView
+  cameraPosition="back"
+  cameraPreviewAspectMode="none"
+  isCameraPreviewMirrored={false}
+  logLevel="error"
+  onAudioSessionInterrupted={[Function]}
+  onAudioSessionResumed={[Function]}
+  onBroadcastAudioStats={[Function]}
+  onBroadcastError={[Function]}
+  onBroadcastQualityChanged={[Function]}
+  onBroadcastStateChanged={[Function]}
+  onError={[Function]}
+  onIsBroadcastReady={[Function]}
+  onMediaServicesWereLost={[Function]}
+  onMediaServicesWereReset={[Function]}
+  onNetworkHealthChanged={[Function]}
+  rtmpsUrl=""
+  sessionLogLevel="error"
+  streamKey=""
+  testID="RCTIVSBroadcastCameraView"
+/>
+`;

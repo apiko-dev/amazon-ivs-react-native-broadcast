@@ -100,9 +100,16 @@ describe('getCommandIdByPlatform function works as expected', () => {
   });
 });
 
-test('Render IVSBroadcastCameraView component', async () => {
-  const broadcastCameraView = await getIVSBroadcastCameraView();
-  expect(broadcastCameraView).toBeDefined();
+describe('Render IVSBroadcastCameraView component', () => {
+  test('Defined', async () => {
+    const broadcastCameraView = await getIVSBroadcastCameraView();
+    expect(broadcastCameraView).toBeDefined();
+  });
+
+  test('Matched', () => {
+    const ivsBroadcastCameraViewTree = renderIVSBroadcastCameraView().toJSON();
+    expect(ivsBroadcastCameraViewTree).toMatchSnapshot();
+  });
 });
 
 describe('Event handlers work as expected', () => {
