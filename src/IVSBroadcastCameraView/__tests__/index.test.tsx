@@ -100,7 +100,7 @@ describe('getCommandIdByPlatform function works as expected', () => {
   });
 });
 
-describe('Render IVSBroadcastCameraView component', () => {
+describe('IVSBroadcastCameraView component', () => {
   test('Defined', async () => {
     const broadcastCameraView = await getIVSBroadcastCameraView();
     expect(broadcastCameraView).toBeDefined();

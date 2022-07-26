@@ -229,7 +229,10 @@ const App: FC = () => {
             <Spinner />
           ) : (
             readyStatus === Ready && (
-              <SafeAreaView style={s.primaryContainer}>
+              <SafeAreaView
+                testID="primary-container"
+                style={s.primaryContainer}
+              >
                 <View style={s.topContainer}>
                   <View style={s.topButtonContainer}>
                     <Button
