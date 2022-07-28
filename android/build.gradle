@@ -30,7 +30,6 @@ android {
     versionCode 1
     versionName pkgJsonData.version
   }
-
   buildTypes {
     release {
       minifyEnabled false
@@ -58,7 +57,10 @@ repositories {
 def ivsBroadcastSdkVersion = safeExtGet('ivsBroadcastSdkVersion')
 
 dependencies {
-  // noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"  // From node_modules
   implementation "com.amazonaws:ivs-broadcast:$ivsBroadcastSdkVersion"
+
+  // Unit testing dependencies
+  // testImplementation 'junit:junit:4.13.2'
+  // testImplementation 'org.robolectric:robolectric:4.8'
 }

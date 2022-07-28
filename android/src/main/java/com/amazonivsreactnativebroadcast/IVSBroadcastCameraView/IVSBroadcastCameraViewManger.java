@@ -12,10 +12,6 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import javax.annotation.Nullable;
 
 public class IVSBroadcastCameraViewManger extends ViewGroupManager<IVSBroadcastCameraView> {
-  private final String START_COMMAND_NAME = "START";
-  private final String STOP_COMMAND_NAME = "STOP";
-  private final String SWAP_CAMERA_COMMAND_NAME = "SWAP_CAMERA";
-
   @Override
   public String getName() {
     return "RCTIVSBroadcastCameraView";
@@ -33,23 +29,23 @@ public class IVSBroadcastCameraViewManger extends ViewGroupManager<IVSBroadcastC
   @Nullable
   @Override
   public Map<String, Integer> getCommandsMap() {
-    return MapBuilder.of(START_COMMAND_NAME, 0,
-      STOP_COMMAND_NAME, 1,
-      SWAP_CAMERA_COMMAND_NAME, 2);
+    return MapBuilder.of(IVSBroadcastCameraView.START_COMMAND_NAME, 0,
+      IVSBroadcastCameraView.STOP_COMMAND_NAME, 1,
+      IVSBroadcastCameraView.SWAP_CAMERA_COMMAND_NAME, 2);
   }
 
   @Override
   public void receiveCommand(IVSBroadcastCameraView view, String commandId, @Nullable ReadableArray args) {
     switch (commandId) {
-      case START_COMMAND_NAME: {
+      case IVSBroadcastCameraView.START_COMMAND_NAME: {
         view.start();
         break;
       }
-      case STOP_COMMAND_NAME: {
+      case IVSBroadcastCameraView.STOP_COMMAND_NAME: {
         view.stop();
         break;
       }
-      case SWAP_CAMERA_COMMAND_NAME: {
+      case IVSBroadcastCameraView.SWAP_CAMERA_COMMAND_NAME: {
         view.swapCamera();
         break;
       }

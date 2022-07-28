@@ -14,6 +14,10 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEventListener {
+      public static final String START_COMMAND_NAME = "START";
+      public static final String STOP_COMMAND_NAME = "STOP";
+      public static final String SWAP_CAMERA_COMMAND_NAME = "SWAP_CAMERA";
+
       public enum Events {
         ON_BROADCAST_STATE_CHANGED("onBroadcastStateChanged"),
         ON_BROADCAST_ERROR("onBroadcastError"),
@@ -65,11 +69,9 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
             BroadcastSession.Listener broadcastListener = new IVSBroadcastSessionListener(this::sendEvent).broadcastListener;
             ivsBroadcastSession.setListener(broadcastListener);
 
-            // Creates instance of IVS broadcast session
             ivsBroadcastSession.init();
 
             ivsBroadcastSession.setSessionLogLevel(SESSION_LOG_LEVEL);
-            // Receive camera preview asynchronously to ensure that all devices have been attached
             ivsBroadcastSession.getCameraPreviewAsync((cameraPreview) -> {
                 addCameraPreview(cameraPreview);
 
@@ -107,7 +109,7 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
     protected void swapCamera() {
         try {
             ivsBroadcastSession.swapCamera((cameraPreview) -> {
-                removeAllViews(); // Remove the current preview view since the device will be changing
+                removeAllViews();
                 addCameraPreview(cameraPreview);
             });
         } catch (RuntimeException error) {

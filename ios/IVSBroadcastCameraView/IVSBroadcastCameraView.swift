@@ -3,7 +3,7 @@ import AVFoundation
 
 class IVSBroadcastCameraView: UIView {
   private var wasInitialSubViewAdded: Bool = false
-  private let broadcastSession: IVSBroadcastSessionService = IVSBroadcastSessionService() // The primary interaction point with the IVS Broadcast SDK
+  private let broadcastSession: IVSBroadcastSessionService = IVSBroadcastSessionService()
   
   @objc var streamKey: NSString?
   @objc var rtmpsUrl: NSString?
@@ -157,14 +157,12 @@ class IVSBroadcastCameraView: UIView {
         do {
           try self.broadcastSession.initiate()
           self.broadcastSession.setSessionLogLevel(self.sessionLogLevel)
-          // Receive camera preview asynchronously to ensure that all devices have been attached
           self.broadcastSession.getCameraPreviewAsync(aspectModeName: self.cameraPreviewAspectMode, isMirrored: self.isCameraPreviewMirrored, onReceiveCameraPreview: self.onReceiveCameraPreviewHandler)
         } catch {
           self.onErrorHandler(error)
         }
       }
     } else {
-      // Enable the Application Idle Timer
       UIApplication.shared.isIdleTimerDisabled = false
       unsubscribeNotificationCenter()
       self.subviews.forEach { $0.removeFromSuperview() }

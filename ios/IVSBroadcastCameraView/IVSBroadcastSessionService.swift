@@ -7,7 +7,6 @@ enum BuiltInCameraDeviceUrns: String {
   case frontCamera = "com.apple.avfoundation.avcapturedevice.built-in_video:1"
 }
 
-// Official documentation: https://aws.github.io/amazon-ivs-broadcast-docs/1.2.0/ios/index.html
 // Guide: https://docs.aws.amazon.com/ivs/latest/userguide//broadcast-ios.html
 class IVSBroadcastSessionService: NSObject {
   
@@ -242,6 +241,7 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
+  // Receive camera preview asynchronously to ensure that all devices have been attached
   public func getCameraPreviewAsync(aspectModeName: NSString, isMirrored: Bool, onReceiveCameraPreview: @escaping (_: Error?, _: IVSImagePreviewView?) -> Void) {
     self.checkBroadcastSessionOrThrow()
     

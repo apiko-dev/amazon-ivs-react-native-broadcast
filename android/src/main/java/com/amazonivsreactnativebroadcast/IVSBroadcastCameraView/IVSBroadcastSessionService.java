@@ -12,7 +12,6 @@ interface CameraPreviewHandler {
     void run(ImagePreviewView cameraPreview);
 }
 
-// Official documentation: https://aws.github.io/amazon-ivs-broadcast-docs/1.2.1/android/reference/com/amazonaws/ivs/broadcast/BroadcastSession.Listener.html#onDeviceAdded(com.amazonaws.ivs.broadcast.Device.Descriptor)
 // Guide: https://docs.aws.amazon.com/ivs/latest/userguide//broadcast-android.html
 public class IVSBroadcastSessionService {
     private ThemedReactContext mReactContext;
@@ -118,6 +117,7 @@ public class IVSBroadcastSessionService {
         return isInitialized;
     }
 
+    // Receive camera preview asynchronously to ensure that all devices have been attached
     public void getCameraPreviewAsync(CameraPreviewHandler callback) {
         checkBroadcastSessionOrThrow();
 
