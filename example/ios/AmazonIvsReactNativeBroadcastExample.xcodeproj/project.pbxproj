@@ -358,10 +358,12 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AmazonIvsReactNativeBroadcastExample/Pods-AmazonIvsReactNativeBroadcastExample-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/AmazonIVSBroadcast/AmazonIVSBroadcast.framework/AmazonIVSBroadcast",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AmazonIVSBroadcast.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

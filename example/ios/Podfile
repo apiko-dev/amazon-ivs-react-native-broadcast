@@ -6,7 +6,13 @@ platform :ios, '11.0'
 target 'AmazonIvsReactNativeBroadcastExample' do
   config = use_native_modules!
 
-  use_react_native!(:path => config["reactNativePath"])
+  use_react_native!(
+    :path => config["reactNativePath"],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    # By default, Hermes is disabled on Old Architecture, and enabled on New Architecture.
+    # You can enable/disable it manually by replacing `flags[:hermes_enabled]` with `true` or `false`.
+    :hermes_enabled => true
+  )
 
   pod 'amazon-ivs-react-native-broadcast', :path => '../..'
 
