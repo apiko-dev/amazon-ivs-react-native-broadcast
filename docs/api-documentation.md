@@ -2,43 +2,43 @@
 
 ## `IVSBroadcastCameraView` component
 
-### _**Props**_
+### 🔶 _**Props**_
 
-#### `style` 📌
+#### `style`
 
-Style of `IVSBroadcastCameraView` component. 
+📌 Style of `IVSBroadcastCameraView` component. 
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `StyleProp<ViewStyle>` | No | iOS, Android |
 
-#### `testID` 📌
+#### `testID`
 
-Used to locate `IVSBroadcastCameraView` component in the end-to-end tests.
+📌 Used to locate `IVSBroadcastCameraView` component in the end-to-end tests.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `string` | No | iOS, Android |
 
-#### `rtmpsUrl` 📌
+#### `rtmpsUrl`
 
-The RTMPS endpoint provided by IVS.
-
-| Type | Required | Platform |
-| :---: | :---: | :---: |
-| `string` | Yes | iOS, Android |
-
-#### `streamKey` 📌
-
-The broadcaster’s stream key that has been provided by IVS.
+📌 The RTMPS endpoint provided by IVS.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `string` | Yes | iOS, Android |
 
-#### `videoConfig` 📌
+#### `streamKey`
 
-A configuration object describing the desired format of the final output Video stream.
+📌 The broadcaster’s stream key that has been provided by IVS.
+
+| Type | Required | Platform |
+| :---: | :---: | :---: |
+| `string` | Yes | iOS, Android |
+
+#### `videoConfig`
+
+📌 A configuration object describing the desired format of the final output Video stream.
 
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
@@ -59,15 +59,15 @@ _**Default video config:**_
 | `maxBitrate` | `6000000` |
 | `minBitrate` | `300000` |
 
-#### `audioConfig` 📌
+#### `audioConfig`
 
-A configuration object describing the desired format of the final output Audio stream.
+📌 A configuration object describing the desired format of the final output Audio stream.
 
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
-| [`IAudioConfig`](./types.md#iaudioconfig) | No | iOS, Android |
+| [`IAudioConfig`](./types.md#iaudioconfig) | No | [`Check out`](./types.md#iaudioconfig) |
 
 _**Default audio config:**_
 | Key | Value |
@@ -77,117 +77,111 @@ _**Default audio config:**_
 | `audioSessionStrategy` | `playAndRecord` |
 | `quality` | `medium` |
 
-#### `logLevel` 📌
+#### `logLevel`
 
- In order to catch logs at a more granular level than `Error` during the initialization process, use this property instead of the [`sessionLogLevel`](#sessionloglevel-%F0%9F%93%8C).
+ 📌 In order to catch logs at a more granular level than `Error` during the initialization process, use this property instead of the [`sessionLogLevel`](#sessionloglevel).
  
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
 | [`LogLevel`](./types.md#loglevel) | No | iOS, Android | `error` |
 
-#### `sessionLogLevel` 📌
+#### `sessionLogLevel`
 
-Logging level for the broadcast session.
+📌 Logging level for the broadcast session.
 
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
 | [`LogLevel`](./types.md#loglevel) | No | iOS, Android | `error` |
 
-#### `cameraPreviewAspectMode` 📌
+#### `cameraPreviewAspectMode`
 
- Determines how view's aspect ratio will be maintained.
+📌 Determines how view's aspect ratio will be maintained.
  
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
 | [`CameraPreviewAspectMode`](./types.md#camerapreviewaspectmode) | No | iOS, Android | `none` |
 
-#### `isCameraPreviewMirrored` 📌
+#### `isCameraPreviewMirrored`
 
-Flips the camera preview horizontally.
+📌 Flips the camera preview horizontally.
 
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
 | `boolean` | No | iOS, Android | `false` |
 
-#### `cameraPosition` 📌
+#### `cameraPosition`
 
-The position of the input device relative to the host device.
+📌 The position of the input device relative to the host device.
 
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
 | [`CameraPosition`](./types.md#cameraposition) | No | iOS, Android | `back` |
 
-### _**Handlers**_
+### 🔶 _**Handlers**_
 
-#### `onError` 📌
+#### `onError`
 
- Indicates that module' internal error occurred.
+📌 Indicates that module' internal error occurred.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onError(errorMessage: string): void` | No | iOS, Android |
  
-#### `onBroadcastError` 📌
+#### `onBroadcastError`
 
-Indicates that broadcast session error occurred. Errors may or may not be fatal. In the case of a fatal error the broadcast session moves into `DISCONNECTED` [state status](./types.md#statestatusunion).
+📌 Indicates that broadcast session error occurred. Errors may or may not be fatal. In the case of a fatal error the broadcast session moves into `DISCONNECTED` [state status](./types.md#statestatusunion).
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
-| `onBroadcastError(error: IBroadcastSessionError): void` | No | iOS, Android |
+| `onBroadcastError(error: `[`IBroadcastSessionError`](./types.md#ibroadcastsessionerror)`): void` | No | iOS, Android |
 
-👉 See [`IBroadcastSessionError`](./types.md#ibroadcastsessionerror) type.
+#### `onIsBroadcastReady`
 
-#### `onIsBroadcastReady` 📌
-
-Fires(once) when initialization (including adding camera preview to the view hierarchy) is done.
+📌 Fires(once) when initialization (including adding camera preview to the view hierarchy) is done.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onIsBroadcastReady(isReady: boolean): void` | No | iOS, Android |
 
-#### `onBroadcastAudioStats` 📌
+#### `onBroadcastAudioStats`
 
-Periodically called with audio `peak` and `rms` in `dBFS`.
-
-| Type | Required | Platform |
-| :---: | :---: | :---: |
-| `onBroadcastAudioStats(audioStats: IAudioStats): void` | No | iOS, Android |
-
-👉 See [`IAudioStats`](./types.md#iaudiostats) type.
-
-#### `onBroadcastStateChanged` 📌
-
-Indicates that the broadcast state changed.
+📌 Periodically called with audio `peak` and `rms` in `dBFS`.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
-| `onBroadcastStateChanged(stateStatus: StateStatusUnion): void` | No | iOS, Android |
+| `onBroadcastAudioStats(audioStats: `[`IAudioStats`](./types.md#iaudiostats)`): void` | No | iOS, Android |
 
-👉 See [`StateStatusUnion`](./types.md#statestatusunion) type.
+#### `onBroadcastStateChanged`
 
-#### `onBroadcastQualityChanged` 📌
+📌 Indicates that the broadcast state changed.
 
-Represents the quality of the stream.
+| Type | Required | Platform |
+| :---: | :---: | :---: |
+| `onBroadcastStateChanged(stateStatus: `[`StateStatusUnion`](./types.md#statestatusunion)`): void` | No | iOS, Android |
 
-`quality` is a number between `0` and `1` that represents the quality of the stream based on minimum and maximum bitrate provided in the [`videoConfig`](#videoconfig-%F0%9F%93%8C). `0` means the stream is at the lowest possible quality, or streaming is not possible at all. `1` means the bitrate is near the maximum allowed.
+#### `onBroadcastQualityChanged`
+
+📌 Represents the quality of the stream.
+
+`quality` is a number between `0` and `1` that represents the quality of the stream based on minimum and maximum bitrate provided in the [`videoConfig`](#videoconfig). `0` means the stream is at the lowest possible quality, or streaming is not possible at all. `1` means the bitrate is near the maximum allowed.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onBroadcastQualityChanged(quality: number): void` | No | iOS, Android |
 
-#### `onNetworkHealthChanged` 📌
+#### `onNetworkHealthChanged`
 
-Provides updates when the instantaneous quality of the network changes. It can be used to provide feedback about when the broadcast might have temporary disruptions.
+📌 Provides updates when the instantaneous quality of the network changes. It can be used to provide feedback about when the broadcast might have temporary disruptions.
 
-`networkHealth` is a number between `0` and `1` that represents the current health of the network. `0` means the network is struggling to keep up and the broadcast may be experiencing latency spikes. The SDK may also reduce the quality of the broadcast on low values in order to keep it stable, depending on the minimum allowed bitrate in the [`videoConfig`](#videoconfig-%F0%9F%93%8C). A value of `1` means the network is easily able to keep up with the current demand and the SDK will be trying to increase the broadcast quality over time, depending on the maximum allowed bitrate. Lower values like `0.5` are not necessarily bad, it just means the network is being saturated, but it is still able to keep up.
+`networkHealth` is a number between `0` and `1` that represents the current health of the network. `0` means the network is struggling to keep up and the broadcast may be experiencing latency spikes. The SDK may also reduce the quality of the broadcast on low values in order to keep it stable, depending on the minimum allowed bitrate in the [`videoConfig`](#videoconfig). A value of `1` means the network is easily able to keep up with the current demand and the SDK will be trying to increase the broadcast quality over time, depending on the maximum allowed bitrate. Lower values like `0.5` are not necessarily bad, it just means the network is being saturated, but it is still able to keep up.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onNetworkHealthChanged(networkHealth: number): void` | No | iOS, Android |
 
-#### `onAudioSessionInterrupted` 📌
+#### `onAudioSessionInterrupted`
 
-Indicates that audio session has been interrupted.
+📌 Indicates that audio session has been interrupted.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
@@ -197,47 +191,47 @@ Indicates that audio session has been interrupted.
 * _User receives a phone call or FaceTime call_
 * _User activates Siri_
 
-#### `onAudioSessionResumed` 📌
+#### `onAudioSessionResumed`
 
-Indicates that audio session has been resumed (after interrupted).
+📌 Indicates that audio session has been resumed (after interrupted).
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onAudioSessionResumed(): void` | No | iOS |
 
-#### `onMediaServicesWereLost` 📌
+#### `onMediaServicesWereLost`
 
 >_In very rare cases, the entire media subsystem on an iOS device will crash. In this scenario, the SDK can no longer broadcast._
 
-Indicates that the media server services are terminated.
+📌 Indicates that the media server services are terminated.
 Respond by stopping and completely deallocating broadcast session. All internal components used by the broadcast session will be invalidated.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onMediaServicesWereLost(): void` | No | iOS |
 
-#### `onMediaServicesWereReset` 📌
+#### `onMediaServicesWereReset`
 
-Indicates that the media server services are reset.
+📌 Indicates that the media server services are reset.
 Respond by notifying consumers that they can broadcast again. Depending on the case, you may be able to automatically start broadcasting again at this point.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onMediaServicesWereReset(): void` | No | iOS |
 
-### _**Methods**_
+### 🔶 _**Methods**_
 
-#### `start` 📌
+#### `start`
 
-Start the configured broadcast session.
+📌 Start the configured broadcast session.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `(): void` | No | iOS, Android |
 
-#### `stop` 📌
+#### `stop`
 
-Stop the broadcast session, but do not deallocate resources.
+📌 Stop the broadcast session, but do not deallocate resources.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
@@ -245,9 +239,9 @@ Stop the broadcast session, but do not deallocate resources.
 
 ⚠️ _Stopping the stream happens asynchronously while the SDK attempts to gracefully end the broadcast. Observe state changes to know when a new stream could be started._
 
-#### `swapCamera` 📌
+#### `swapCamera`
 
-Swap back camera to front camera and vice versa.
+📌 Swap back camera to front camera and vice versa.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |

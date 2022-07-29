@@ -10,7 +10,7 @@ A React Native wrapper for the Amazon IVS iOS and Android broadcast SDKs.
 
 ⚠️ _Note that the current module implementation doesn't support full functionality provided by Amazon IVS iOS and Android broadcast SDKs._
 
-⚠️ _Apps using `amazon-ivs-react-native-broadcast` must target **iOS 11** and **Android 12** (API 31)._
+⚠️ _Apps using `amazon-ivs-react-native-broadcast` must target **iOS 11** and **Android 12 (API 31)**._
 
 ***
 

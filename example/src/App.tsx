@@ -60,7 +60,7 @@ const Spinner = () => <ActivityIndicator size="large" style={s.spinner} />;
 
 const Button: FC<{
   title: string;
-  onPress: Exclude<TouchableOpacityProps['onPress'], undefined>;
+  onPress: NonNullable<TouchableOpacityProps['onPress']>;
 }> = ({ onPress, title }) => (
   <TouchableOpacity style={s.button} onPress={onPress}>
     <Text style={s.buttonText}>{title}</Text>
@@ -138,6 +138,7 @@ const App: FC = () => {
       })),
     []
   );
+
   const onBroadcastQualityChangedHandler = useCallback(
     (quality: number) =>
       setMetaData(currentState => ({
@@ -146,6 +147,7 @@ const App: FC = () => {
       })),
     []
   );
+
   const onNetworkHealthChangedHandler = useCallback(
     (health: number) =>
       setMetaData(currentState => ({

@@ -19,12 +19,12 @@
 ⚠️ _Bitrate, FPS, and resolution are interrelated that's why they are mandatory when `videoConfig` prop is in use._
 
 ## `IAudioConfig`
-| Key | Type | Range | Description |
-| :---: | :---: | :---: | --- |
-| `bitrate` | `number?` | `64000` - `160000` | The average bitrate for the final output audio stream |
-| `channels` | [`AudioChannel?`](#audiochannel) | | The number of channels for the output audio stream |
-| `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | | A value representing how the broadcast session will interact with `AVAudioSession` (iOS only). |
-| `quality` | [`AudioQuality?`](#audioquality-ios-only) | | The quality of the audio encoding (iOS only). |
+| Key | Type | Range | Platform | Description |
+| :---: | :---: | :---: | :---: | --- |
+| `bitrate` | `number?` | `64000` - `160000` | iOS, Android | The average bitrate for the final output audio stream |
+| `channels` | [`AudioChannel?`](#audiochannel) | | iOS, Android | The number of channels for the output audio stream |
+| `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | | iOS | A value representing how the broadcast session will interact with `AVAudioSession`. |
+| `quality` | [`AudioQuality?`](#audioquality-ios-only) | | iOS | The quality of the audio encoding. |
 
 ⚠️ _AirPods do not record any audio if the `audioSessionStrategy` is set to `recordOnly`. By default, the `playAndRecord` value is used, so this issue manifests only if the value is changed to `recordOnly`._
 
