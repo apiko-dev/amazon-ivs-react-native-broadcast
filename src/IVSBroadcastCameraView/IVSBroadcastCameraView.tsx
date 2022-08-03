@@ -1,9 +1,4 @@
-import React, {
-  useRef,
-  forwardRef,
-  PropsWithChildren,
-  useImperativeHandle,
-} from 'react';
+import React, { useRef, forwardRef, useImperativeHandle } from 'react';
 import {
   Platform,
   UIManager,
@@ -13,7 +8,7 @@ import {
 
 import {
   Command,
-  StateStatus,
+  StateStatusEnum,
   EventPayloadKey,
   StateStatusUnion,
   IIVSBroadcastCameraView,
@@ -56,7 +51,7 @@ const {
 
 const IVSBroadcastCameraView = forwardRef<
   IIVSBroadcastCameraView,
-  PropsWithChildren<IIVSBroadcastCameraViewProps>
+  IIVSBroadcastCameraViewProps
 >((props, parentRef) => {
   const {
     onError,
@@ -70,6 +65,7 @@ const IVSBroadcastCameraView = forwardRef<
     onAudioSessionResumed,
     onMediaServicesWereLost,
     onMediaServicesWereReset,
+    isMuted = false,
     isCameraPreviewMirrored = false,
     cameraPosition = 'back',
     cameraPreviewAspectMode = 'none',
@@ -132,7 +128,7 @@ const IVSBroadcastCameraView = forwardRef<
       const incomingStateStatus = nativeEvent[BroadcastStateChangedHandler];
       const outcomingStateStatus = (
         typeof incomingStateStatus === 'number'
-          ? StateStatus[incomingStateStatus]
+          ? StateStatusEnum[incomingStateStatus]
           : incomingStateStatus
       ) as StateStatusUnion;
       onBroadcastStateChanged?.(outcomingStateStatus);
@@ -163,6 +159,7 @@ const IVSBroadcastCameraView = forwardRef<
       testID={NATIVE_VIEW_NAME}
       {...restProps}
       ref={nativeViewRef}
+      isMuted={isMuted}
       logLevel={logLevel}
       sessionLogLevel={sessionLogLevel}
       cameraPreviewAspectMode={cameraPreviewAspectMode}

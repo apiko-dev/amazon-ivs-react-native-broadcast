@@ -1,6 +1,8 @@
 export {
-  IAudioStats,
+  CameraPosition,
+  CameraPreviewAspectMode,
   StateStatusUnion,
+  IAudioStats,
   IBroadcastSessionError,
   IIVSBroadcastCameraView,
 } from './IVSBroadcastCameraView.types';

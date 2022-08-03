@@ -21,6 +21,7 @@ apply plugin: 'com.android.library'
 
 def rootPkgJsonFile = file('../package.json')
 def pkgJsonData = new JsonSlurper().parseText(rootPkgJsonFile.text)
+def ivsBroadcastSdkVersion = pkgJsonData.sdkVersion.android
 
 android {
   compileSdkVersion safeExtGet('compileSdkVersion').toInteger()

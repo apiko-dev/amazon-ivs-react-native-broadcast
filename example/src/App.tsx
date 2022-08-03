@@ -14,8 +14,10 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { rtmpsUrl, streamKey } from '../app.json';
 import {
-  IAudioStats,
+  CameraPosition,
+  CameraPreviewAspectMode,
   StateStatusUnion,
+  IAudioStats,
   IBroadcastSessionError,
   IVSBroadcastCameraView,
   IIVSBroadcastCameraView,
@@ -69,6 +71,11 @@ const Button: FC<{
 
 const App: FC = () => {
   const cameraViewRef = useRef<IIVSBroadcastCameraView>(null);
+
+  const [isMuted, setIsMuted] = useState(true);
+  const [isMirrored, setIsMirrored] = useState(false);
+  const [aspectMode, setAspectMode] = useState<CameraPreviewAspectMode>('none');
+  const [cameraPosition, setCameraPosition] = useState<CameraPosition>('back');
 
   const [{ stateStatus, readyStatus }, setState] = useState<{
     readonly stateStatus: StateStatusUnion;
@@ -179,6 +186,14 @@ const App: FC = () => {
     []
   );
 
+  const onAudioSessionInterruptedHandler = useCallback(() => {
+    console.log('The audio session is interrupted.');
+  }, []);
+
+  const onAudioSessionResumedHandler = useCallback(() => {
+    console.log('The audio session is resumed.');
+  }, []);
+
   const onPressPlayButtonHandler = useCallback(
     () => cameraViewRef.current?.start(),
     []
@@ -190,7 +205,25 @@ const App: FC = () => {
   );
 
   const onPressSwapCameraButtonHandler = useCallback(
-    () => cameraViewRef.current?.swapCamera(),
+    () =>
+      setCameraPosition(currentPosition =>
+        currentPosition === 'back' ? 'front' : 'back'
+      ),
+    []
+  );
+
+  const onPressMuteButtonHandler = useCallback(
+    () => setIsMuted(currentIsMuted => !currentIsMuted),
+    []
+  );
+
+  const onPressMirrorButtonHandler = useCallback(
+    () => setIsMirrored(currentIsMirrored => !currentIsMirrored),
+    []
+  );
+
+  const onPressAspectModeButtonHandler = useCallback(
+    (mode: CameraPreviewAspectMode) => setAspectMode(mode),
     []
   );
 
@@ -206,6 +239,10 @@ const App: FC = () => {
         streamKey={streamKey}
         videoConfig={VIDEO_CONFIG}
         audioConfig={AUDIO_CONFIG}
+        isMuted={isMuted}
+        isCameraPreviewMirrored={isMirrored}
+        cameraPosition={cameraPosition}
+        cameraPreviewAspectMode={aspectMode}
         onError={onErrorHandler}
         onBroadcastError={onBroadcastErrorHandler}
         onIsBroadcastReady={onIsBroadcastReadyHandler}
@@ -215,6 +252,8 @@ const App: FC = () => {
         onBroadcastQualityChanged={onBroadcastQualityChangedHandler}
         onMediaServicesWereLost={onMediaServicesWereLostHandler}
         onMediaServicesWereReset={onMediaServicesWereResetHandler}
+        onAudioSessionInterrupted={onAudioSessionInterruptedHandler}
+        onAudioSessionResumed={onAudioSessionResumedHandler}
         {...(__DEV__ && {
           logLevel: 'debug',
           sessionLogLevel: 'debug',
@@ -238,12 +277,29 @@ const App: FC = () => {
                 <View style={s.topContainer}>
                   <View style={s.topButtonContainer}>
                     <Button
+                      title={isMuted ? 'Unmute' : 'Mute'}
+                      onPress={onPressMuteButtonHandler}
+                    />
+                    <Button
+                      title="Toggle mirroring"
+                      onPress={onPressMirrorButtonHandler}
+                    />
+                    <Button
                       title="Swap"
                       onPress={onPressSwapCameraButtonHandler}
                     />
                     {isConnected && (
                       <Button title="Stop" onPress={onPressStopButtonHandler} />
                     )}
+                  </View>
+                  <View style={s.topButtonContainer}>
+                    {(['none', 'fill', 'fit'] as const).map(mode => (
+                      <Button
+                        key={mode}
+                        title={mode}
+                        onPress={() => onPressAspectModeButtonHandler(mode)}
+                      />
+                    ))}
                   </View>
                 </View>
                 {(isStartButtonVisible || isConnecting) && (
@@ -288,10 +344,12 @@ const s = StyleSheet.create({
   },
   topContainer: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   topButtonContainer: {
+    marginBottom: 16,
     flexDirection: 'row',
   },
   middleContainer: {
@@ -315,6 +373,7 @@ const s = StyleSheet.create({
     fontSize: 20,
     color: '#ffffff',
     backgroundColor: 'rgba(128, 128, 128, 0.4)',
+    textTransform: 'capitalize',
   },
   metaDataContainer: {
     flex: 1,

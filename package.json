@@ -7,6 +7,10 @@
   "types": "lib/typescript/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
+  "sdkVersion": {
+    "ios": "1.5.1",
+    "android": "1.4.0"
+  },
   "files": [
     "src",
     "lib",

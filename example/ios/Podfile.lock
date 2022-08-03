@@ -1,8 +1,8 @@
 PODS:
   - amazon-ivs-react-native-broadcast (1.0.1):
-    - AmazonIVSBroadcast (~> 1.4.0)
+    - AmazonIVSBroadcast (~> 1.5.1)
     - React-Core
-  - AmazonIVSBroadcast (1.4.0)
+  - AmazonIVSBroadcast (1.5.1)
   - boost (1.76.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.67.2)
@@ -416,8 +416,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amazon-ivs-react-native-broadcast: f88ef11e1b835b43dbfb2f08e215eef798eb377c
-  AmazonIVSBroadcast: c41b0f1f835d50bd93d6dca6bdb1f17af8364444
+  amazon-ivs-react-native-broadcast: fbbe4efc15438ff08ff7a700605f790b60ae74bf
+  AmazonIVSBroadcast: 9cfcfe1b6777cde40bb0fd8266961759747e1e24
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   FBLazyVector: 244195e30d63d7f564c55da4410b9a24e8fbceaa
