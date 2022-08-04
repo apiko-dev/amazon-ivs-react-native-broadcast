@@ -214,6 +214,9 @@ describe('Static methods work as expected', () => {
   test.each([
     { methodName: 'start' as const, calledWithSecondArg: Start },
     { methodName: 'stop' as const, calledWithSecondArg: Stop },
+    /**
+     * @deprecated in favor of 'cameraPosition' prop.
+     */
     { methodName: 'swapCamera' as const, calledWithSecondArg: SwapCamera },
   ])('$method', ({ methodName, calledWithSecondArg }) => {
     Platform.OS = 'android';

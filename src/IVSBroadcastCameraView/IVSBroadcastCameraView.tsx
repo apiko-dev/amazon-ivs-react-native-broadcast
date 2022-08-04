@@ -91,6 +91,9 @@ const IVSBroadcastCameraView = forwardRef<
       return {
         start: () => dispatchViewManagerCommand(Command.Start),
         stop: () => dispatchViewManagerCommand(Command.Stop),
+        /**
+         * @deprecated in favor of {@link cameraPosition}
+         */
         swapCamera: () => dispatchViewManagerCommand(Command.SwapCamera),
       };
     },

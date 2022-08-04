@@ -217,7 +217,7 @@ class IVSBroadcastCameraView: UIView {
     self.broadcastSession.stop()
   }
   
-  @available(*, message: "Deprecated in favor of cameraPosition prop.")
+  @available(*, message: "@Deprecated in favor of cameraPosition prop.")
   public func swapCamera() {
     self.broadcastSession.swapCamera(self.onReceiveCameraPreviewHandler)
   }

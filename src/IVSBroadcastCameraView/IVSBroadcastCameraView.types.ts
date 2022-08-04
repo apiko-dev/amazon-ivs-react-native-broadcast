@@ -10,6 +10,9 @@ export type ExtractComponentProps<T> = T extends
 export enum Command {
   Start = 'START',
   Stop = 'STOP',
+  /**
+   * @deprecated in favor of {@link CameraPosition}
+   */
   SwapCamera = 'SWAP_CAMERA',
 }
 

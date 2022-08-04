@@ -4,7 +4,7 @@ import Foundation
 typealias onErrorHandler = (_: Error) -> Void
 typealias onReceiveCameraPreviewHandler = (_: IVSImagePreviewView) -> Void
 
-enum BuiltInCameraDeviceUrns: String {
+enum BuiltInCameraUrns: String {
   case backUltraWideCamera = "com.apple.avfoundation.avcapturedevice.built-in_video:5"
   case backCamera = "com.apple.avfoundation.avcapturedevice.built-in_video:0"
   case frontCamera = "com.apple.avfoundation.avcapturedevice.built-in_video:1"
@@ -125,75 +125,52 @@ class IVSBroadcastSessionService: NSObject {
   }
   
   private func saveInitialDevicesUrn(_ initialDescriptors: [IVSDeviceDescriptor]) {
-    if let initialCameraDescriptor = initialDescriptors.filter({ $0.type == .camera }).first {
-      self.attachedCameraUrn = initialCameraDescriptor.urn
-    }
-    
-    if let initialMicrophoneDescriptor = initialDescriptors.filter({ $0.type == .microphone }).first {
-      self.attachedMicrophoneUrn = initialMicrophoneDescriptor.urn
-    }
-  }
-  
-  private func geDefaultBackCameraUrn() -> String {
-    if let defaultBackCameraDescriptor = IVSPresets.devices().backCamera().filter({ $0.type == .camera }).first {
-      return defaultBackCameraDescriptor.urn
-    }
-    return BuiltInCameraDeviceUrns.backCamera.rawValue
-  }
-  
-  private func geDefaultFrontCameraUrn() -> String {
-    if let defaultFrontCameraDescriptor = IVSPresets.devices().frontCamera().filter({ $0.type == .camera }).first {
-      return defaultFrontCameraDescriptor.urn
-    }
-    return BuiltInCameraDeviceUrns.frontCamera.rawValue
+    let attachedDevices = initialDescriptors.filter { $0.type == .camera || $0.type == .microphone }
+    self.attachedCameraUrn = attachedDevices.first { $0.type == .camera }?.urn ?? ""
+    self.attachedMicrophoneUrn = attachedDevices.first { $0.type == .microphone }?.urn ?? ""
   }
   
   private func getNextCameraDescriptorToSwap(_ attachedCamera : IVSDevice) -> IVSDeviceDescriptor? {
     let attachedCameraPosition = attachedCamera.descriptor().position
     
-    let foundCamera = IVSBroadcastSession
+    return IVSBroadcastSession
       .listAvailableDevices()
-      .first { $0.type == .camera && $0.urn.contains(attachedCameraPosition == IVSDevicePosition.back
-                                                     ? self.geDefaultFrontCameraUrn()
-                                                     : self.geDefaultBackCameraUrn())}
-    
-    guard let nextCamera = foundCamera else {
-      // NOTE: Defensive code
-      return IVSBroadcastSession
-        .listAvailableDevices()
-        .first { $0.type == .camera && $0.position != attachedCameraPosition }
-    }
-    
-    return nextCamera
+      .first { $0.type == .camera && $0.position != attachedCameraPosition}
   }
   
-  private func getCameraPreview(_ aspectMode: IVSBroadcastConfiguration.AspectMode) -> IVSImagePreviewView? {
-    return try? self.broadcastSession?.previewView(with: aspectMode)
+  private func getCameraPreview() -> IVSImagePreviewView? {
+    guard let preview = try? self.broadcastSession?.previewView(with: self.cameraPreviewAspectMode) else {
+      self.onError?(IVSBroadcastCameraViewError("[getCameraPreview] Can not get camera preview."))
+      return nil
+    }
+    preview.setMirrored(self.isCameraPreviewMirrored)
+    return preview
   }
   
   private func getAttachedDeviceByUrn(_ urn: String) -> IVSDevice? {
     let attachedDevices = self.broadcastSession?.listAttachedDevices()
     let wantedDeviceList = attachedDevices?.filter { $0.descriptor().urn.contains(urn) }
     
-    return wantedDeviceList?.first
+    guard let wantedDevice = wantedDeviceList?.first else {
+      self.onError?(IVSBroadcastCameraViewError("[getAttachedDeviceByUrn] Can not get attached device by urn. \(urn)"))
+      return nil
+    }
+    
+    return wantedDevice
   }
   
   private func muteAsync(_ isMuted: Bool) {
     self.broadcastSession?.awaitDeviceChanges { () -> Void in
-     guard let attachedMicrophone = self.getAttachedDeviceByUrn(self.attachedMicrophoneUrn) else {
-        self.onError?(IVSBroadcastCameraViewError("[muteAsync] Can not get attached microphone. \(self.attachedMicrophoneUrn)"))
-        return
+      if let attachedMicrophone = self.getAttachedDeviceByUrn(self.attachedMicrophoneUrn) {
+        let gain: Float = isMuted ? 0 : 1
+        (attachedMicrophone as? IVSAudioDevice)?.setGain(gain)
       }
-      
-      let gain: Float = isMuted ? 0 : 1
-      (attachedMicrophone as? IVSAudioDevice)?.setGain(gain)
     }
   }
   
-  private func swapCameraAsync(_ aspectMode: IVSBroadcastConfiguration.AspectMode, _ isMirrored: Bool, _ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
+  private func swapCameraAsync(_ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
     self.broadcastSession?.awaitDeviceChanges { () -> Void in
       guard let attachedCamera = self.getAttachedDeviceByUrn(self.attachedCameraUrn) else {
-        self.onError?(IVSBroadcastCameraViewError("[swapCameraAsync] Can not get attached camera. \(self.attachedCameraUrn)"))
         return
       }
       
@@ -204,14 +181,11 @@ class IVSBroadcastSessionService: NSObject {
       
       self.broadcastSession?.exchangeOldDevice(attachedCamera, withNewDevice: nextCameraDescriptorToSwap) { newDevice, _ in
         if let newCamera = newDevice {
-          guard let newCameraPreview = try? (newCamera as! IVSImageDevice).previewView(with: aspectMode) else {
-            self.onError?(IVSBroadcastCameraViewError("[swapCameraAsync] Can not get camera preview."))
-            return
-          }
-          
-          newCameraPreview.setMirrored(isMirrored)
-          onReceiveCameraPreview(newCameraPreview)
           self.attachedCameraUrn = newCamera.descriptor().urn
+          
+          if let newCameraPreview = self.getCameraPreview() {
+            onReceiveCameraPreview(newCameraPreview)
+          }
         } else {
           self.onError?(IVSBroadcastCameraViewError("[swapCameraAsync] New device is empty."))
         }
@@ -290,10 +264,10 @@ class IVSBroadcastSessionService: NSObject {
     self.broadcastSession?.stop()
   }
   
-  @available(*, message: "Deprecated in favor of setCameraPosition method.")
+  @available(*, message: "@Deprecated in favor of setCameraPosition method.")
   public func swapCamera(_ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
     self.checkBroadcastSessionOrThrow()
-    self.swapCameraAsync(self.cameraPreviewAspectMode, self.isCameraPreviewMirrored, onReceiveCameraPreview)
+    self.swapCameraAsync(onReceiveCameraPreview)
   }
   
   // Receive camera preview asynchronously to ensure that all devices have been attached
@@ -301,12 +275,9 @@ class IVSBroadcastSessionService: NSObject {
     self.checkBroadcastSessionOrThrow()
     
     self.broadcastSession?.awaitDeviceChanges { () -> Void in
-      guard let cameraPreview = self.getCameraPreview(self.cameraPreviewAspectMode) else {
-        self.onError?(IVSBroadcastCameraViewError("[getCameraPreviewAsync] Can not get camera preview."))
-        return
+      if let cameraPreview = self.getCameraPreview() {
+        onReceiveCameraPreview(cameraPreview)
       }
-      cameraPreview.setMirrored(self.isCameraPreviewMirrored)
-      onReceiveCameraPreview(cameraPreview)
     }
   }
   
@@ -323,7 +294,7 @@ class IVSBroadcastSessionService: NSObject {
     if let cameraPositionName = cameraPosition {
       if (self.isInitialized) {
         self.checkBroadcastSessionOrThrow()
-        self.swapCameraAsync(self.cameraPreviewAspectMode, self.isCameraPreviewMirrored, onReceiveCameraPreview)
+        self.swapCameraAsync(onReceiveCameraPreview)
       } else {
         self.initialCameraPosition = self.getCameraPosition(cameraPositionName)
       }

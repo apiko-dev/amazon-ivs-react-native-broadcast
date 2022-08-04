@@ -55,8 +55,6 @@ repositories {
   mavenCentral()
 }
 
-def ivsBroadcastSdkVersion = safeExtGet('ivsBroadcastSdkVersion')
-
 dependencies {
   implementation "com.facebook.react:react-native:+"  // From node_modules
   implementation "com.amazonaws:ivs-broadcast:$ivsBroadcastSdkVersion"
