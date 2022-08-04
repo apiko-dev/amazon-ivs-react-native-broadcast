@@ -1,5 +1,7 @@
 package com.amazonivsreactnativebroadcast.IVSBroadcastCameraView;
 
+import androidx.annotation.NonNull;
+
 import java.util.*;
 
 import com.facebook.react.bridge.ReadableArray;
@@ -35,7 +37,7 @@ public class IVSBroadcastCameraViewManger extends ViewGroupManager<IVSBroadcastC
   }
 
   @Override
-  public void receiveCommand(IVSBroadcastCameraView view, String commandId, @Nullable ReadableArray args) {
+  public void receiveCommand(IVSBroadcastCameraView view, @NonNull String commandId, @Nullable ReadableArray args) {
     switch (commandId) {
       case IVSBroadcastCameraView.START_COMMAND_NAME: {
         view.start();
@@ -66,48 +68,53 @@ public class IVSBroadcastCameraViewManger extends ViewGroupManager<IVSBroadcastC
     view.cleanUp();
   }
 
+  @ReactProp(name = "isMuted")
+  public void setIsMuted(@NonNull IVSBroadcastCameraView view, boolean isMuted) {
+    view.setIsMuted(isMuted);
+  }
+
   @ReactProp(name = "isCameraPreviewMirrored")
-  public void setIsCameraPreviewMirrored(IVSBroadcastCameraView view, boolean isCameraPreviewMirrored) {
+  public void setIsCameraPreviewMirrored(@NonNull IVSBroadcastCameraView view, boolean isCameraPreviewMirrored) {
     view.setIsCameraPreviewMirrored(isCameraPreviewMirrored);
   }
 
   @ReactProp(name = "cameraPosition")
-  public void setCameraPosition(IVSBroadcastCameraView view, String cameraPosition) {
+  public void setCameraPosition(@NonNull IVSBroadcastCameraView view, String cameraPosition) {
     view.setCameraPosition(cameraPosition);
   }
 
   @ReactProp(name = "cameraPreviewAspectMode")
-  public void setCameraPreviewAspectMode(IVSBroadcastCameraView view, String cameraPreviewAspectMode) {
+  public void setCameraPreviewAspectMode(@NonNull IVSBroadcastCameraView view, String cameraPreviewAspectMode) {
     view.setCameraPreviewAspectMode(cameraPreviewAspectMode);
   }
 
   @ReactProp(name = "rtmpsUrl")
-  public void setRtmpsUrl(IVSBroadcastCameraView view, String rtmpsUrl) {
+  public void setRtmpsUrl(@NonNull IVSBroadcastCameraView view, String rtmpsUrl) {
     view.setRtmpsUrl(rtmpsUrl);
   }
 
   @ReactProp(name = "streamKey")
-  public void setStreamKey(IVSBroadcastCameraView view, String streamKey) {
+  public void setStreamKey(@NonNull IVSBroadcastCameraView view, String streamKey) {
     view.setStreamKey(streamKey);
   }
 
   @ReactProp(name = "logLevel")
-  public void setLogLevel(IVSBroadcastCameraView view, String logLevel) {
+  public void setLogLevel(@NonNull IVSBroadcastCameraView view, String logLevel) {
     view.setLogLevel(logLevel);
   }
 
   @ReactProp(name = "sessionLogLevel")
-  public void setSessionLogLevel(IVSBroadcastCameraView view, String sessionLogLevel) {
+  public void setSessionLogLevel(@NonNull IVSBroadcastCameraView view, String sessionLogLevel) {
     view.setSessionLogLevel(sessionLogLevel);
   }
 
   @ReactProp(name = "videoConfig")
-  public void setVideoConfig(IVSBroadcastCameraView view, ReadableMap videoConfig) {
+  public void setVideoConfig(@NonNull IVSBroadcastCameraView view, ReadableMap videoConfig) {
     view.setVideoConfig(videoConfig);
   }
 
   @ReactProp(name = "audioConfig")
-  public void setAudioConfig(IVSBroadcastCameraView view, ReadableMap audioConfig) {
+  public void setAudioConfig(@NonNull IVSBroadcastCameraView view, ReadableMap audioConfig) {
     view.setAudioConfig(audioConfig);
   }
 }

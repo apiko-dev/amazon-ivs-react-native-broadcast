@@ -17,7 +17,6 @@ class IVSBroadcastSessionService: NSObject {
   
   private var isInitialMuted: Bool = false
   private var initialCameraPosition: IVSDevicePosition = IVSDevicePosition.back
-  
   private var isCameraPreviewMirrored: Bool = false
   private var cameraPreviewAspectMode: IVSBroadcastConfiguration.AspectMode = .none
   private var sessionLogLevel: IVSBroadcastSession.LogLevel = .error
@@ -116,18 +115,7 @@ class IVSBroadcastSessionService: NSObject {
   }
   
   private func getInitialDeviceDescriptorList() -> [IVSDeviceDescriptor] {
-    switch(self.initialCameraPosition) {
-      case .front:
-        return IVSPresets.devices().frontCamera()
-      default:
-        return IVSPresets.devices().backCamera()
-    }
-  }
-  
-  private func saveInitialDevicesUrn(_ initialDescriptors: [IVSDeviceDescriptor]) {
-    let attachedDevices = initialDescriptors.filter { $0.type == .camera || $0.type == .microphone }
-    self.attachedCameraUrn = attachedDevices.first { $0.type == .camera }?.urn ?? ""
-    self.attachedMicrophoneUrn = attachedDevices.first { $0.type == .microphone }?.urn ?? ""
+    return self.initialCameraPosition == .front ? IVSPresets.devices().frontCamera() : IVSPresets.devices().backCamera()
   }
   
   private func getNextCameraDescriptorToSwap(_ attachedCamera : IVSDevice) -> IVSDeviceDescriptor? {
@@ -159,16 +147,9 @@ class IVSBroadcastSessionService: NSObject {
     return wantedDevice
   }
   
-  private func muteAsync(_ isMuted: Bool) {
-    self.broadcastSession?.awaitDeviceChanges { () -> Void in
-      if let attachedMicrophone = self.getAttachedDeviceByUrn(self.attachedMicrophoneUrn) {
-        let gain: Float = isMuted ? 0 : 1
-        (attachedMicrophone as? IVSAudioDevice)?.setGain(gain)
-      }
-    }
-  }
-  
   private func swapCameraAsync(_ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
+    self.checkBroadcastSessionOrThrow()
+    
     self.broadcastSession?.awaitDeviceChanges { () -> Void in
       guard let attachedCamera = self.getAttachedDeviceByUrn(self.attachedCameraUrn) else {
         return
@@ -193,12 +174,27 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
+  private func muteAsync(_ isMuted: Bool) {
+    self.broadcastSession?.awaitDeviceChanges { () -> Void in
+      if let attachedMicrophone = self.getAttachedDeviceByUrn(self.attachedMicrophoneUrn) {
+        let gain: Float = isMuted ? 0 : 1
+        (attachedMicrophone as? IVSAudioDevice)?.setGain(gain)
+      }
+    }
+  }
+  
   private func postInitiation() {
     self.broadcastSession?.logLevel = self.sessionLogLevel
     
     if (self.isInitialMuted) {
       self.muteAsync(self.isInitialMuted)
     }
+  }
+  
+  private func saveInitialDevicesUrn(_ initialDescriptors: [IVSDeviceDescriptor]) {
+    let attachedDevices = initialDescriptors.filter { $0.type == .camera || $0.type == .microphone }
+    self.attachedCameraUrn = attachedDevices.first { $0.type == .camera }?.urn ?? ""
+    self.attachedMicrophoneUrn = attachedDevices.first { $0.type == .microphone }?.urn ?? ""
   }
   
   public func initiate() throws {
@@ -224,19 +220,16 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
-  public func isInitiated() -> Bool {
-    self.isInitialized
-  }
-  
   public func deinitiate() {
     self.checkBroadcastSessionOrThrow()
     
-    // If there as an live broadcast when this object deallocates, internally stop will be called during deallocation,
-    // and it will block until the stream has been gracefully terminated or a timeout is reeached.
-    // Because of that it is recommended that you always explicitly stop a live broadcast before deallocating.
     self.broadcastSession?.stop()
     self.broadcastSession = nil
     self.isInitialized = false
+  }
+  
+  public func isInitiated() -> Bool {
+    self.isInitialized
   }
   
   public func isReady() -> Bool {
@@ -266,17 +259,24 @@ class IVSBroadcastSessionService: NSObject {
   
   @available(*, message: "@Deprecated in favor of setCameraPosition method.")
   public func swapCamera(_ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
-    self.checkBroadcastSessionOrThrow()
     self.swapCameraAsync(onReceiveCameraPreview)
   }
   
-  // Receive camera preview asynchronously to ensure that all devices have been attached
   public func getCameraPreviewAsync(_ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
     self.checkBroadcastSessionOrThrow()
-    
     self.broadcastSession?.awaitDeviceChanges { () -> Void in
       if let cameraPreview = self.getCameraPreview() {
         onReceiveCameraPreview(cameraPreview)
+      }
+    }
+  }
+  
+  public func setCameraPosition(_ cameraPosition: NSString?, _ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
+    if let cameraPositionName = cameraPosition {
+      if (self.isInitialized) {
+        self.swapCameraAsync(onReceiveCameraPreview)
+      } else {
+        self.initialCameraPosition = self.getCameraPosition(cameraPositionName)
       }
     }
   }
@@ -286,17 +286,6 @@ class IVSBroadcastSessionService: NSObject {
       self.cameraPreviewAspectMode = self.getAspectMode(aspectModeName)
       if (self.isInitialized) {
         self.getCameraPreviewAsync(onReceiveCameraPreview)
-      }
-    }
-  }
-  
-  public func setCameraPosition(_ cameraPosition: NSString?, _ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
-    if let cameraPositionName = cameraPosition {
-      if (self.isInitialized) {
-        self.checkBroadcastSessionOrThrow()
-        self.swapCameraAsync(onReceiveCameraPreview)
-      } else {
-        self.initialCameraPosition = self.getCameraPosition(cameraPositionName)
       }
     }
   }
