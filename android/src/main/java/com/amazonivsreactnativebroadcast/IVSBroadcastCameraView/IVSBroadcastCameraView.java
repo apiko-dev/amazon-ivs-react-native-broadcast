@@ -71,16 +71,15 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
   private void initBroadcastSession() {
     if (ivsBroadcastSession.isInitialized()) return;
 
-    String broadcastSessionId = ivsBroadcastSession.getBroadcastSessionId();
-
     try {
-      BroadcastSession.Listener broadcastListener = new IVSBroadcastSessionListener(
-        this::sendEvent,
-        broadcastSessionId
-      ).broadcastListener;
-      ivsBroadcastSession.setListener(broadcastListener);
+      IVSBroadcastSessionListener broadcastSessionListener = new IVSBroadcastSessionListener(
+        this::sendEvent
+      );
+      ivsBroadcastSession.setListener(broadcastSessionListener.listener);
 
-      ivsBroadcastSession.init();
+      String broadcastSessionId = ivsBroadcastSession.init();
+      broadcastSessionListener.setBroadcastSessionId(broadcastSessionId);
+
       ivsBroadcastSession.getCameraPreviewAsync((cameraPreview) -> {
         onReceiveCameraPreviewHandler(cameraPreview);
 

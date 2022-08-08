@@ -15,11 +15,14 @@ interface RunnableCallback {
 
 public class IVSBroadcastSessionListener {
   private String broadcastSessionId;
-  public BroadcastSession.Listener broadcastListener;
 
-  IVSBroadcastSessionListener(RunnableCallback runnable, String sessionId) {
+  public BroadcastSession.Listener listener;
+  public void setBroadcastSessionId(String sessionId) {
     broadcastSessionId = sessionId;
-    broadcastListener =
+  }
+
+  IVSBroadcastSessionListener(RunnableCallback runnable) {
+    listener =
       new BroadcastSession.Listener() {
         @Override
         public void onStateChanged(@NonNull BroadcastSession.State state) {

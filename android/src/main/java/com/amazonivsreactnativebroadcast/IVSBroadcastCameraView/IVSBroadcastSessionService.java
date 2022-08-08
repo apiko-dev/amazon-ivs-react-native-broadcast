@@ -125,55 +125,59 @@ public class IVSBroadcastSessionService {
   }
 
   private void setCustomVideoConfig() {
-    config = config.changing($ -> {
-      boolean isWidth = customVideoConfig.hasKey("width");
-      boolean isHeight = customVideoConfig.hasKey("height");
-      if (isWidth || isHeight) {
-        if (isWidth && isHeight) {
-          $.video.setSize(
-            customVideoConfig.getInt("width"),
-            customVideoConfig.getInt("height")
-          );
-        } else {
-          throw new RuntimeException("The `width` and `height` are interrelated and thus can not be used separately.");
+    if (customVideoConfig != null) {
+      config = config.changing($ -> {
+        boolean isWidth = customVideoConfig.hasKey("width");
+        boolean isHeight = customVideoConfig.hasKey("height");
+        if (isWidth || isHeight) {
+          if (isWidth && isHeight) {
+            $.video.setSize(
+              customVideoConfig.getInt("width"),
+              customVideoConfig.getInt("height")
+            );
+          } else {
+            throw new RuntimeException("The `width` and `height` are interrelated and thus can not be used separately.");
+          }
         }
-      }
 
-      if (customVideoConfig.hasKey("bitrate")) {
-        $.video.setInitialBitrate(customVideoConfig.getInt("bitrate"));
-      }
-      if (customVideoConfig.hasKey("targetFrameRate")) {
-        $.video.setTargetFramerate(customVideoConfig.getInt("targetFrameRate"));
-      }
-      if (customVideoConfig.hasKey("keyframeInterval")) {
-        $.video.setKeyframeInterval(customVideoConfig.getInt("keyframeInterval"));
-      }
-      if (customVideoConfig.hasKey("isBFrames")) {
-        $.video.setUseBFrames(customVideoConfig.getBoolean("isBFrames"));
-      }
-      if (customVideoConfig.hasKey("isAutoBitrate")) {
-        $.video.setUseAutoBitrate(customVideoConfig.getBoolean("isAutoBitrate"));
-      }
-      if (customVideoConfig.hasKey("maxBitrate")) {
-        $.video.setMaxBitrate(customVideoConfig.getInt("maxBitrate"));
-      }
-      if (customVideoConfig.hasKey("minBitrate")) {
-        $.video.setMinBitrate(customVideoConfig.getInt("minBitrate"));
-      }
-      return $;
-    });
+        if (customVideoConfig.hasKey("bitrate")) {
+          $.video.setInitialBitrate(customVideoConfig.getInt("bitrate"));
+        }
+        if (customVideoConfig.hasKey("targetFrameRate")) {
+          $.video.setTargetFramerate(customVideoConfig.getInt("targetFrameRate"));
+        }
+        if (customVideoConfig.hasKey("keyframeInterval")) {
+          $.video.setKeyframeInterval(customVideoConfig.getInt("keyframeInterval"));
+        }
+        if (customVideoConfig.hasKey("isBFrames")) {
+          $.video.setUseBFrames(customVideoConfig.getBoolean("isBFrames"));
+        }
+        if (customVideoConfig.hasKey("isAutoBitrate")) {
+          $.video.setUseAutoBitrate(customVideoConfig.getBoolean("isAutoBitrate"));
+        }
+        if (customVideoConfig.hasKey("maxBitrate")) {
+          $.video.setMaxBitrate(customVideoConfig.getInt("maxBitrate"));
+        }
+        if (customVideoConfig.hasKey("minBitrate")) {
+          $.video.setMinBitrate(customVideoConfig.getInt("minBitrate"));
+        }
+        return $;
+      });
+    }
   }
 
   private void setCustomAudioConfig() {
-    config = config.changing($ -> {
-      if (customAudioConfig.hasKey("bitrate")) {
-        $.audio.setBitrate(customAudioConfig.getInt("bitrate"));
-      }
-      if (customAudioConfig.hasKey("channels")) {
-        $.audio.setChannels(customAudioConfig.getInt("channels"));
-      }
-      return $;
-    });
+    if (customAudioConfig != null) {
+      config = config.changing($ -> {
+        if (customAudioConfig.hasKey("bitrate")) {
+          $.audio.setBitrate(customAudioConfig.getInt("bitrate"));
+        }
+        if (customAudioConfig.hasKey("channels")) {
+          $.audio.setChannels(customAudioConfig.getInt("channels"));
+        }
+        return $;
+      });
+    }
   }
 
   private void swapCameraAsync(CameraPreviewHandler callback) {
@@ -230,8 +234,8 @@ public class IVSBroadcastSessionService {
     mReactContext = reactContext;
   }
 
-  public void init() {
-    if (isInitialized) return;
+  public String init() {
+    if (isInitialized) return broadcastSession.getSessionId();
 
     preInitialization();
 
@@ -246,6 +250,8 @@ public class IVSBroadcastSessionService {
     isInitialized = true;
 
     postInitialization();
+
+    return broadcastSession.getSessionId();
   }
 
   public void releaseResources() {
@@ -275,10 +281,6 @@ public class IVSBroadcastSessionService {
   @Deprecated
   public void swapCamera(CameraPreviewHandler callback) {
     swapCameraAsync(callback);
-  }
-
-  public String getBroadcastSessionId() {
-    return broadcastSession.getSessionId();
   }
 
   public void getCameraPreviewAsync(CameraPreviewHandler callback) {
