@@ -1,4 +1,5 @@
 export {
+  LogLevel,
   CameraPosition,
   CameraPreviewAspectMode,
   StateStatusUnion,

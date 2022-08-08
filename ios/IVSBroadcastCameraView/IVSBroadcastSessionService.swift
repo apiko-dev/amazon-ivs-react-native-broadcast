@@ -320,11 +320,11 @@ class IVSBroadcastSessionService: NSObject {
   public func start(ivsRTMPSUrl: NSString, ivsStreamKey: NSString) throws {
     self.checkBroadcastSessionOrThrow()
     
-    if let url = URL(string: ivsRTMPSUrl as String) {
-      try self.broadcastSession?.start(with: url, streamKey: ivsStreamKey as String)
-    } else {
+    guard let url = URL(string: ivsRTMPSUrl as String) else {
       self.onError?(IVSBroadcastCameraViewError("[start] Can not create a URL instance from the provided ivsRTMPSUrl: \(ivsRTMPSUrl)"))
+      return
     }
+    try self.broadcastSession?.start(with: url, streamKey: ivsStreamKey as String)
   }
   
   public func stop() {

@@ -36,7 +36,7 @@ export enum StateStatusEnum {
 
 export type StateStatusUnion = keyof typeof StateStatusEnum;
 
-type LogLevel = 'debug' | 'error' | 'info' | 'warning';
+export type LogLevel = 'debug' | 'error' | 'info' | 'warning';
 
 export type CameraPosition = 'front' | 'back';
 

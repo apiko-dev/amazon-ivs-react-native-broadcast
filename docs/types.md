@@ -47,8 +47,8 @@ type ConfigurationPreset =
 | :---: | :---: | :---: | :---: | --- |
 | `bitrate` | `number?` | `64000` - `160000` | iOS, Android | The average bitrate for the final output audio stream |
 | `channels` | [`AudioChannel?`](#audiochannel) | | iOS, Android | The number of channels for the output audio stream |
-| `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | | iOS | A value representing how the broadcast session will interact with `AVAudioSession`. |
-| `quality` | [`AudioQuality?`](#audioquality-ios-only) | | iOS | The quality of the audio encoding. |
+| `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | | iOS | A value representing how the broadcast session will interact with `AVAudioSession` |
+| `quality` | [`AudioQuality?`](#audioquality-ios-only) | | iOS | The quality of the audio encoding |
 
 ## `AudioChannel`
 
