@@ -71,8 +71,13 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
   private void initBroadcastSession() {
     if (ivsBroadcastSession.isInitialized()) return;
 
+    String broadcastSessionId = ivsBroadcastSession.getBroadcastSessionId();
+
     try {
-      BroadcastSession.Listener broadcastListener = new IVSBroadcastSessionListener(this::sendEvent).broadcastListener;
+      BroadcastSession.Listener broadcastListener = new IVSBroadcastSessionListener(
+        this::sendEvent,
+        broadcastSessionId
+      ).broadcastListener;
       ivsBroadcastSession.setListener(broadcastListener);
 
       ivsBroadcastSession.init();
@@ -158,6 +163,10 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
 
   protected void setLogLevel(String logLevel) {
     ivsBroadcastSession.setLogLevel(logLevel);
+  }
+
+  protected void setConfigurationPreset(String configurationPreset) {
+    ivsBroadcastSession.setConfigurationPreset(configurationPreset);
   }
 
   protected void setVideoConfig(ReadableMap videoConfig) {

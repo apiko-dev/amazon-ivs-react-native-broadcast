@@ -21,9 +21,11 @@ public class IVSBroadcastSessionService {
 
   private boolean isInitialMuted = false;
   private Device.Descriptor.Position initialCameraPosition = Device.Descriptor.Position.BACK;
+  private BroadcastConfiguration.LogLevel initialSessionLogLevel = BroadcastConfiguration.LogLevel.ERROR;
   private boolean isCameraPreviewMirrored = false;
   private BroadcastConfiguration.AspectMode cameraPreviewAspectMode = BroadcastConfiguration.AspectMode.NONE;
-  private BroadcastConfiguration.LogLevel sessionLogLevel = BroadcastConfiguration.LogLevel.ERROR;
+  private ReadableMap customVideoConfig;
+  private ReadableMap customAudioConfig;
 
   private Device.Descriptor attachedCameraDescriptor;
   private Device.Descriptor attachedMicrophoneDescriptor;
@@ -89,6 +91,26 @@ public class IVSBroadcastSessionService {
     }
   }
 
+  private BroadcastConfiguration getConfigurationPreset(String configurationPresetName) {
+    switch (configurationPresetName) {
+      case "standardPortrait": {
+        return Presets.Configuration.STANDARD_PORTRAIT;
+      }
+      case "standardLandscape": {
+        return Presets.Configuration.STANDARD_LANDSCAPE;
+      }
+      case "basicPortrait": {
+        return Presets.Configuration.BASIC_PORTRAIT;
+      }
+      case "basicLandscape": {
+        return Presets.Configuration.BASIC_LANDSCAPE;
+      }
+      default: {
+        throw new RuntimeException("Does not support configuration preset: " + configurationPresetName);
+      }
+    }
+  }
+
   private ImagePreviewView getCameraPreview() {
     ImagePreviewView preview = broadcastSession.getPreviewView(cameraPreviewAspectMode);
     preview.setMirrored(isCameraPreviewMirrored);
@@ -100,6 +122,58 @@ public class IVSBroadcastSessionService {
     return initialCameraPosition == Device.Descriptor.Position.BACK
       ? Presets.Devices.BACK_CAMERA(mReactContext)
       : Presets.Devices.FRONT_CAMERA(mReactContext);
+  }
+
+  private void setCustomVideoConfig() {
+    config = config.changing($ -> {
+      boolean isWidth = customVideoConfig.hasKey("width");
+      boolean isHeight = customVideoConfig.hasKey("height");
+      if (isWidth || isHeight) {
+        if (isWidth && isHeight) {
+          $.video.setSize(
+            customVideoConfig.getInt("width"),
+            customVideoConfig.getInt("height")
+          );
+        } else {
+          throw new RuntimeException("The `width` and `height` are interrelated and thus can not be used separately.");
+        }
+      }
+
+      if (customVideoConfig.hasKey("bitrate")) {
+        $.video.setInitialBitrate(customVideoConfig.getInt("bitrate"));
+      }
+      if (customVideoConfig.hasKey("targetFrameRate")) {
+        $.video.setTargetFramerate(customVideoConfig.getInt("targetFrameRate"));
+      }
+      if (customVideoConfig.hasKey("keyframeInterval")) {
+        $.video.setKeyframeInterval(customVideoConfig.getInt("keyframeInterval"));
+      }
+      if (customVideoConfig.hasKey("isBFrames")) {
+        $.video.setUseBFrames(customVideoConfig.getBoolean("isBFrames"));
+      }
+      if (customVideoConfig.hasKey("isAutoBitrate")) {
+        $.video.setUseAutoBitrate(customVideoConfig.getBoolean("isAutoBitrate"));
+      }
+      if (customVideoConfig.hasKey("maxBitrate")) {
+        $.video.setMaxBitrate(customVideoConfig.getInt("maxBitrate"));
+      }
+      if (customVideoConfig.hasKey("minBitrate")) {
+        $.video.setMinBitrate(customVideoConfig.getInt("minBitrate"));
+      }
+      return $;
+    });
+  }
+
+  private void setCustomAudioConfig() {
+    config = config.changing($ -> {
+      if (customAudioConfig.hasKey("bitrate")) {
+        $.audio.setBitrate(customAudioConfig.getInt("bitrate"));
+      }
+      if (customAudioConfig.hasKey("channels")) {
+        $.audio.setChannels(customAudioConfig.getInt("channels"));
+      }
+      return $;
+    });
   }
 
   private void swapCameraAsync(CameraPreviewHandler callback) {
@@ -130,14 +204,19 @@ public class IVSBroadcastSessionService {
     });
   }
 
+  private void preInitialization() {
+    setCustomVideoConfig();
+    setCustomAudioConfig();
+  }
+
   private void postInitialization() {
-    broadcastSession.setLogLevel(sessionLogLevel);
+    broadcastSession.setLogLevel(initialSessionLogLevel);
     if (isInitialMuted) {
       muteAsync(isInitialMuted);
     }
   }
 
-  private void saveInitialDevices(@NonNull Device.Descriptor[] deviceDescriptors) {
+  private void saveInitialDevicesDescriptor(@NonNull Device.Descriptor[] deviceDescriptors) {
     for (Device.Descriptor deviceDescriptor : deviceDescriptors) {
       if (deviceDescriptor.type == Device.Descriptor.DeviceType.CAMERA) {
         attachedCameraDescriptor = deviceDescriptor;
@@ -154,15 +233,18 @@ public class IVSBroadcastSessionService {
   public void init() {
     if (isInitialized) return;
 
+    preInitialization();
+
     broadcastSession = new BroadcastSession(
       mReactContext,
       broadcastSessionListener,
       config,
       getInitialDeviceDescriptorList()
     );
+
+    saveInitialDevicesDescriptor(getInitialDeviceDescriptorList());
     isInitialized = true;
 
-    saveInitialDevices(getInitialDeviceDescriptorList());
     postInitialization();
   }
 
@@ -193,6 +275,10 @@ public class IVSBroadcastSessionService {
   @Deprecated
   public void swapCamera(CameraPreviewHandler callback) {
     swapCameraAsync(callback);
+  }
+
+  public String getBroadcastSessionId() {
+    return broadcastSession.getSessionId();
   }
 
   public void getCameraPreviewAsync(CameraPreviewHandler callback) {
@@ -231,11 +317,16 @@ public class IVSBroadcastSessionService {
     } else {
       isInitialMuted = isMuted;
     }
-
   }
 
   public void setSessionLogLevel(String sessionLogLevelName) {
-    sessionLogLevel = getLogLevel(sessionLogLevelName);
+    BroadcastConfiguration.LogLevel sessionLogLevel = getLogLevel(sessionLogLevelName);
+    if (isInitialized) {
+      checkBroadcastSessionOrThrow();
+      broadcastSession.setLogLevel(sessionLogLevel);
+    } else {
+      initialSessionLogLevel = sessionLogLevel;
+    }
   }
 
   public void setLogLevel(String logLevel) {
@@ -249,49 +340,15 @@ public class IVSBroadcastSessionService {
     broadcastSessionListener = broadcastListener;
   }
 
+  public void setConfigurationPreset(String configurationPreset) {
+    config = getConfigurationPreset(configurationPreset);
+  }
+
   public void setVideoConfig(ReadableMap videoConfig) {
-    if (videoConfig.hasKey("width")
-      && videoConfig.hasKey("height")
-      && videoConfig.hasKey("bitrate")
-      && videoConfig.hasKey("targetFrameRate")
-      && videoConfig.hasKey("keyframeInterval")
-    ) {
-      config = config.changing($ -> {
-        if (videoConfig.hasKey("isBFrames")) {
-          $.video.setUseBFrames(videoConfig.getBoolean("isBFrames"));
-        }
-        if (videoConfig.hasKey("isAutoBitrate")) {
-          $.video.setUseAutoBitrate(videoConfig.getBoolean("isAutoBitrate"));
-        }
-        if (videoConfig.hasKey("maxBitrate")) {
-          $.video.setMaxBitrate(videoConfig.getInt("maxBitrate"));
-        }
-        if (videoConfig.hasKey("minBitrate")) {
-          $.video.setMinBitrate(videoConfig.getInt("minBitrate"));
-        }
-
-        $.video.setSize(videoConfig.getInt("width"), videoConfig.getInt("height"));
-        $.video.setInitialBitrate(videoConfig.getInt("bitrate"));
-        $.video.setTargetFramerate(videoConfig.getInt("targetFrameRate"));
-        $.video.setKeyframeInterval(videoConfig.getInt("keyframeInterval"));
-
-        return $;
-      });
-    } else {
-      // https://docs.aws.amazon.com/ivs/latest/userguide/streaming-config.html
-      throw new RuntimeException("'width', 'height', 'bitrate', 'keyframeInterval', 'targetFrameRate' are required since they are interrelated.");
-    }
+    customVideoConfig = videoConfig;
   }
 
   public void setAudioConfig(ReadableMap audioConfig) {
-    config = config.changing($ -> {
-      if (audioConfig.hasKey("bitrate")) {
-        $.audio.setBitrate(audioConfig.getInt("bitrate"));
-      }
-      if (audioConfig.hasKey("channels")) {
-        $.audio.setChannels(audioConfig.getInt("channels"));
-      }
-      return $;
-    });
+    customAudioConfig = audioConfig;
   }
 }

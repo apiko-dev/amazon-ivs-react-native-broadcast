@@ -108,6 +108,11 @@ public class IVSBroadcastCameraViewManger extends ViewGroupManager<IVSBroadcastC
     view.setSessionLogLevel(sessionLogLevel);
   }
 
+  @ReactProp(name = "configurationPreset")
+  public void setConfigurationPreset(@NonNull IVSBroadcastCameraView view, String configurationPreset) {
+    view.setConfigurationPreset(configurationPreset);
+  }
+
   @ReactProp(name = "videoConfig")
   public void setVideoConfig(@NonNull IVSBroadcastCameraView view, ReadableMap videoConfig) {
     view.setVideoConfig(videoConfig);

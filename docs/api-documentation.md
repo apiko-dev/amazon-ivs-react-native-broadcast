@@ -36,28 +36,39 @@
 | :---: | :---: | :---: |
 | `string` | Yes | iOS, Android |
 
+#### `configurationPreset`
+
+📌 Video preset configuration for broadcast session.
+
+| Type | Required | Platform |
+| :---: | :---: | :---: |
+| [`ConfigurationPreset`](./types.md#configurationpreset) | No | iOS, Android |
+
+⚠️ _Changing property after providing it to `IVSBroadcastCameraView` component will not have any effect._
+⚠️ _Properties of preset configuration can be overridden by providing [`videoConfig`](./api-documentation.md#videoconfig) prop._
+
 #### `videoConfig`
 
 📌 A configuration object describing the desired format of the final output Video stream.
 
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
-| Type | Required | Platform |
-| :---: | :---: | :---: |
-| [`IVideoConfig`](./types.md#ivideoconfig) | No | iOS, Android |
-
-_**Default video config:**_
-| Key | Value |
+| Type | Required |
 | :---: | :---: |
-| `width` | `720` |
-| `height` | `1280` |
-| `bitrate` | `2100000` |
-| `targetFrameRate` | `30` |
-| `keyframeInterval` | `2` |
-| `isBFrames` | `true` |
-| `isAutoBitrate` | `true` |
-| `maxBitrate` | `6000000` |
-| `minBitrate` | `300000` |
+| [`IVideoConfig`](./types.md#ivideoconfig) | No |
+
+_**Default video config unless [`configurationPreset`](./api-documentation.md#configurationpreset) is provided:**_
+| Key | Value | Platform |
+| :---: | :---: | :---: |
+| `width` | `720` | iOS, Android |
+| `height` | `1280` | iOS, Android |
+| `bitrate` | `2100000` | iOS, Android |
+| `targetFrameRate` | `30` | iOS, Android |
+| `keyframeInterval` | `2` | iOS, Android |
+| `isBFrames` | `true` | iOS, Android |
+| `isAutoBitrate` | `true` | iOS, Android |
+| `maxBitrate` | `6000000` | iOS, Android |
+| `minBitrate` | `300000` | iOS, Android |
 
 #### `audioConfig`
 
@@ -65,17 +76,17 @@ _**Default video config:**_
 
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
-| Type | Required | Platform |
-| :---: | :---: | :---: |
-| [`IAudioConfig`](./types.md#iaudioconfig) | No | [`Check out`](./types.md#iaudioconfig) |
+| Type | Required |
+| :---: | :---: |
+| [`IAudioConfig`](./types.md#iaudioconfig) | No |
 
 _**Default audio config:**_
-| Key | Value |
-| :---: | :---: |
-| `bitrate` | `96000` |
-| `channels` | `2` |
-| `audioSessionStrategy` | `playAndRecord` |
-| `quality` | `medium` |
+| Key | Value | Platform |
+| :---: | :---: | :---: |
+| `bitrate` | `96000` | iOS, Android |
+| `channels` | `2` | iOS, Android |
+| `audioSessionStrategy` | `playAndRecord` | iOS |
+| `quality` | `medium` | iOS |
 
 #### `logLevel`
 
@@ -116,6 +127,16 @@ _**Default audio config:**_
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
 | [`CameraPosition`](./types.md#cameraposition) | No | iOS, Android | `back` |
+
+#### `isMuted`
+
+📌 Put the active microphone on mute.
+
+| Type | Required | Platform | Default value |
+| :---: | :---: | :---: | :---: |
+| `boolean` | No | iOS, Android | `false` |
+
+⚠️ _Muting does not detach a microphone from session but only adjusts the gain which means that device will still receive all the real audio samples. By putting the microphone on mute - the `peak` and `rms` values of [`IAudioStats`](./types.md#iaudiostats) are equal to `-100`._
 
 ### 🔶 _**Handlers**_
 
@@ -187,7 +208,7 @@ _**Default audio config:**_
 | :---: | :---: | :---: |
 | `onAudioSessionInterrupted(): void` | No | iOS |
 
-⚠️ _There are several scenarios where the SDK may not have exclusive access to audio-input hardware. Some example scenarios that you need to handle are:_
+⚠️ _There are several scenarios where the SDK may not have exclusive access to audio-input hardware. Some example scenarios that should be handled are:_
 * _User receives a phone call or FaceTime call_
 * _User activates Siri_
 
@@ -240,6 +261,7 @@ Respond by notifying consumers that they can broadcast again. Depending on the c
 ⚠️ _Stopping the stream happens asynchronously while the SDK attempts to gracefully end the broadcast. Observe state changes to know when a new stream could be started._
 
 #### `swapCamera`
+🚧 DEPRECATED in favor of declarative way using [`cameraPosition`](./api-documentation.md#cameraposition) prop
 
 📌 Swap back camera to front camera and vice versa.
 

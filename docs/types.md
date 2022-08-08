@@ -1,22 +1,46 @@
 # **Types**
 
+## `ConfigurationPreset`
+
+Amazon IVS supports two channel types. Channel type determines the allowable resolution and bitrate.
+
+| Type | Description |
+| :---: | --- |
+| `standard` | Multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Resolution can be up to 1080p and bitrate can be up to 8.5 Mbps. Audio is transcoded only for renditions 360p and below; above that, audio is passed through. This is the default |
+| `basic` | Amazon IVS delivers the original input to viewers. The viewer’s video-quality choice is limited to the original input. Resolution can be up to 480p and bitrate can be up to 1.5 Mbps |
+
+```ts
+type ConfigurationPreset =
+  | 'standardPortrait'
+  | 'standardLandscape'
+  | 'basicPortrait'
+  | 'basicLandscape'
+```
+
+| Value | Description |
+| :---: | --- |
+| `standardPortrait` | A preset appropriate for streaming basic content in Portrait |
+| `standardLandscape` | A preset appropriate for streaming basic content in Landscape |
+| `basicPortrait` | A preset that is usable with the Basic channel type |
+| `basicLandscape` | A preset that is usable with the Basic channel type |
+
 ## `IVideoConfig`
 
-| Key | Type | Range | Description |
-| :---: | :---: | :---: | --- |
-| `width` | `number` | `160` - `1920` | The width of the output video stream |
-| `height` | `number` | `160` - `1920` | The height of the output video stream |
-| `bitrate` | `number` | `100000` - `8500000` | Initial bitrate for the output video stream |
-| `targetFrameRate` | `number` | `10` - `60`| The target framerate of the output video stream |
-| `keyframeInterval` | `number` | `1` - `5` | The keyframe interval for the output video stream |
-| `isBFrames` | `boolean?` | | Whether the output video stream uses B (Bidirectional predicted picture) frames |
-| `isAutoBitrate` | `boolean?` | | Whether the output video stream will automatically adjust the bitrate based on network conditions. Use `minBitrate` and `maxBitrate` values to specify the bounds when this value is `true` |
-| `maxBitrate` | `number?` | `100000` - `8500000` | The maximum bitrate for the output video stream |
-| `minBitrate` | `number?` | `100000` - `8500000` | The minimum bitrate for the output video stream |
+| Key | Type | Range | Platform | Description |
+| :---: | :---: | :---: | :---: | --- |
+| `width` | `number?` | `160` - `1920` | iOS, Android | The width of the output video stream |
+| `height` | `number?` | `160` - `1920` | iOS, Android | The height of the output video stream |
+| `bitrate` | `number?` | `100000` - `8500000` | iOS, Android | Initial bitrate for the output video stream |
+| `targetFrameRate` | `number?` | `10` - `60`| iOS, Android | The target framerate of the output video stream |
+| `keyframeInterval` | `number?` | `1` - `5` | iOS, Android | The keyframe interval for the output video stream |
+| `isBFrames` | `boolean?` | | iOS, Android | Whether the output video stream uses B (Bidirectional predicted picture) frames |
+| `isAutoBitrate` | `boolean?` | | iOS, Android | Whether the output video stream will automatically adjust the bitrate based on network conditions. Use `minBitrate` and `maxBitrate` values to specify the bounds when this value is `true` |
+| `maxBitrate` | `number?` | `100000` - `8500000` | iOS, Android | The maximum bitrate for the output video stream |
+| `minBitrate` | `number?` | `100000` - `8500000` | iOS, Android | The minimum bitrate for the output video stream |
+
+⚠️ _The `width` and `height` are interrelated and thus can not be used separately._
 
 ⚠️ _The `width` and `height` must both be between `160` and `1920`, and the maximum total number of pixels is `2,073,600.` So the smallest size is `160x160`, and the largest is either `1080x1920` or `1920x1080`. However something like `1920x1200` would not be worked. `1280x180` however is supported._
-
-⚠️ _Bitrate, FPS, and resolution are interrelated that's why they are mandatory when `videoConfig` prop is in use._
 
 ## `IAudioConfig`
 | Key | Type | Range | Platform | Description |
@@ -116,6 +140,7 @@ interface IBroadcastSessionError {
   readonly source: string;
   readonly detail: string;
   readonly isFatal: boolean;
+  readonly sessionId: string;
 }
 ```
 

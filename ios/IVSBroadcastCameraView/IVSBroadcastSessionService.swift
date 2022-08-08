@@ -16,10 +16,12 @@ class IVSBroadcastSessionService: NSObject {
   private var isInitialized: Bool = false
   
   private var isInitialMuted: Bool = false
+  private var initialSessionLogLevel: IVSBroadcastSession.LogLevel = .error
   private var initialCameraPosition: IVSDevicePosition = IVSDevicePosition.back
   private var isCameraPreviewMirrored: Bool = false
   private var cameraPreviewAspectMode: IVSBroadcastConfiguration.AspectMode = .none
-  private var sessionLogLevel: IVSBroadcastSession.LogLevel = .error
+  private var customVideoConfig: NSDictionary?
+  private var customAudioConfig: NSDictionary?
   
   private var attachedCameraUrn: String = ""
   private var attachedMicrophoneUrn: String = ""
@@ -114,6 +116,22 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
+  private func getConfigurationPreset(_ configurationPresetName: NSString) -> IVSBroadcastConfiguration {
+    switch configurationPresetName {
+      case "standardPortrait":
+        return IVSPresets.configurations().standardPortrait()
+      case "standardLandscape":
+        return IVSPresets.configurations().standardLandscape()
+      case "basicPortrait":
+        return IVSPresets.configurations().basicPortrait()
+      case "basicLandscape":
+        return IVSPresets.configurations().basicLandscape()
+      default:
+        assertionFailure("Does not support configuration preset: \(configurationPresetName).")
+        return IVSPresets.configurations().standardPortrait()
+    }
+  }
+  
   private func getInitialDeviceDescriptorList() -> [IVSDeviceDescriptor] {
     return self.initialCameraPosition == .front ? IVSPresets.devices().frontCamera() : IVSPresets.devices().backCamera()
   }
@@ -140,11 +158,66 @@ class IVSBroadcastSessionService: NSObject {
     let wantedDeviceList = attachedDevices?.filter { $0.descriptor().urn.contains(urn) }
     
     guard let wantedDevice = wantedDeviceList?.first else {
-      self.onError?(IVSBroadcastCameraViewError("[getAttachedDeviceByUrn] Can not get attached device by urn. \(urn)"))
+      self.onError?(IVSBroadcastCameraViewError("[getAttachedDeviceByUrn] Can not get attached device by urn: \(urn)"))
       return nil
     }
     
     return wantedDevice
+  }
+  
+  private func setCustomVideoConfig() throws {
+    guard let videoConfig = self.customVideoConfig else { return }
+    
+    let width = videoConfig["width"]
+    let height = videoConfig["height"]
+    if (width != nil || height != nil) {
+      if (width != nil && height != nil) {
+        try self.config.video.setSize(CGSize(width: width as! Int, height: height as! Int))
+      } else {
+        self.onError?(IVSBroadcastCameraViewError("[setCustomVideoConfig] The `width` and `height` are interrelated and thus can not be used separately."))
+      }
+    }
+    
+    if let bitrate = videoConfig["bitrate"] {
+      try self.config.video.setInitialBitrate(bitrate as! Int)
+    }
+    if let targetFrameRate = videoConfig["targetFrameRate"] {
+      try self.config.video.setTargetFramerate(targetFrameRate as! Int)
+    }
+    if let keyframeInterval = videoConfig["keyframeInterval"] {
+      try self.config.video.setKeyframeInterval(Float(keyframeInterval as! Int))
+    }
+    if let isBFrames = videoConfig["isBFrames"] {
+      self.config.video.usesBFrames = isBFrames as! Bool
+    }
+    if let isAutoBitrate = videoConfig["isAutoBitrate"] {
+      self.config.video.useAutoBitrate = isAutoBitrate as! Bool
+    }
+    if let maxBitrate = videoConfig["maxBitrate"] {
+      try self.config.video.setMaxBitrate(maxBitrate as! Int)
+    }
+    if let minBitrate = videoConfig["minBitrate"] {
+      try self.config.video.setMinBitrate(minBitrate as! Int)
+    }
+  }
+  
+  private func setCustomAudioConfig() throws {
+    guard let audioConfig = self.customAudioConfig else { return }
+    
+    if let audioBitrate = audioConfig["bitrate"] {
+      try self.config.audio.setBitrate(audioBitrate as! Int)
+    }
+    if let channels = audioConfig["channels"] {
+      try self.config.audio.setChannels(channels as! Int)
+    }
+    if let audioQualityName = audioConfig["quality"] {
+      let audioQuality = self.getAudioQuality(audioQualityName as! NSString)
+      self.config.audio.setQuality(audioQuality)
+    }
+    if let audioSessionStrategyName = audioConfig["audioSessionStrategy"] {
+      // https://aws.github.io/amazon-ivs-broadcast-docs/1.0.0/ios/Classes/IVSBroadcastSession.html#/c:objc(cs)IVSBroadcastSession(cpy)applicationAudioSessionStrategy
+      IVSBroadcastSession.applicationAudioSessionStrategy = self.getAudioSessionStrategy(audioSessionStrategyName as! NSString)
+    }
   }
   
   private func swapCameraAsync(_ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
@@ -183,8 +256,13 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
+  private func preInitiation() throws {
+    try self.setCustomVideoConfig()
+    try self.setCustomAudioConfig()
+  }
+  
   private func postInitiation() {
-    self.broadcastSession?.logLevel = self.sessionLogLevel
+    self.broadcastSession?.logLevel = self.initialSessionLogLevel
     
     if (self.isInitialMuted) {
       self.muteAsync(self.isInitialMuted)
@@ -200,20 +278,18 @@ class IVSBroadcastSessionService: NSObject {
   public func initiate() throws {
     if (!self.isInitialized) {
       
+      try self.preInitiation()
       let initialDeviceDescriptorList = getInitialDeviceDescriptorList()
       
-      do {
-        self.broadcastSession = try IVSBroadcastSession(
-          configuration: self.config,
-          descriptors: initialDeviceDescriptorList,
-          delegate: self
-        )
-        self.isInitialized = true
-      } catch {
-        throw IVSBroadcastCameraViewError("[initiate] Can not initiate IVSBroadcastSessionService. \(error.localizedDescription)")
-      }
+      self.broadcastSession = try IVSBroadcastSession(
+        configuration: self.config,
+        descriptors: initialDeviceDescriptorList,
+        delegate: self
+      )
       
       self.saveInitialDevicesUrn(initialDeviceDescriptorList)
+      self.isInitialized = true
+      
       self.postInitiation()
     } else {
       assertionFailure("Broadcast session has been already initialized.")
@@ -244,11 +320,10 @@ class IVSBroadcastSessionService: NSObject {
   public func start(ivsRTMPSUrl: NSString, ivsStreamKey: NSString) throws {
     self.checkBroadcastSessionOrThrow()
     
-    do {
-      guard let url = URL(string: ivsRTMPSUrl as String) else { throw IVSBroadcastCameraViewError("[start] Can not create a URL instance from the provided ivsRTMPSUrl: \(ivsRTMPSUrl)") }
+    if let url = URL(string: ivsRTMPSUrl as String) {
       try self.broadcastSession?.start(with: url, streamKey: ivsStreamKey as String)
-    } catch {
-      throw IVSBroadcastCameraViewError("[start] Can not start the configured broadcast session. \(error.localizedDescription)")
+    } else {
+      self.onError?(IVSBroadcastCameraViewError("[start] Can not create a URL instance from the provided ivsRTMPSUrl: \(ivsRTMPSUrl)"))
     }
   }
   
@@ -308,7 +383,13 @@ class IVSBroadcastSessionService: NSObject {
   
   public func setSessionLogLevel(_ logLevel: NSString?) {
     if let logLevelName = logLevel {
-      self.sessionLogLevel = self.getLogLevel(logLevelName)
+      let sessionLogLevel = self.getLogLevel(logLevelName)
+      if (self.isInitialized) {
+        self.checkBroadcastSessionOrThrow()
+        self.broadcastSession?.logLevel = sessionLogLevel
+      } else {
+        self.initialSessionLogLevel = sessionLogLevel
+      }
     }
   }
   
@@ -318,64 +399,18 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
-  public func setVideoConfig(_ videoConfig: NSDictionary?) throws {
-    guard let videoConfig = videoConfig else { return }
-    
-    let width = videoConfig["width"]
-    let height = videoConfig["height"]
-    let bitrate = videoConfig["bitrate"]
-    let targetFrameRate = videoConfig["targetFrameRate"]
-    let keyframeInterval = videoConfig["keyframeInterval"]
-    
-    if (width != nil && height != nil && bitrate != nil && targetFrameRate != nil && keyframeInterval != nil) {
-      do {
-        try self.config.video.setSize(CGSize(width: width as! Int, height: height as! Int))
-        try self.config.video.setInitialBitrate(bitrate as! Int)
-        try self.config.video.setTargetFramerate(targetFrameRate as! Int)
-        try self.config.video.setKeyframeInterval(Float(keyframeInterval as! Int))
-        
-        if let isBFrames = videoConfig["isBFrames"] {
-          self.config.video.usesBFrames = isBFrames as! Bool
-        }
-        if let isAutoBitrate = videoConfig["isAutoBitrate"] {
-          self.config.video.useAutoBitrate = isAutoBitrate as! Bool
-        }
-        if let maxBitrate = videoConfig["maxBitrate"] {
-          try self.config.video.setMaxBitrate(maxBitrate as! Int)
-        }
-        if let minBitrate = videoConfig["minBitrate"] {
-          try self.config.video.setMinBitrate(minBitrate as! Int)
-        }
-      } catch {
-        throw IVSBroadcastCameraViewError("[setVideoConfig] Setting video config error: \(error.localizedDescription)")
-      }
-    } else {
-      // https://docs.aws.amazon.com/ivs/latest/userguide/streaming-config.html
-      throw IVSBroadcastCameraViewError("[setVideoConfig] 'width', 'height', 'bitrate', 'keyframeInterval', 'targetFrameRate' are required since they are interrelated")
+  public func setConfigurationPreset(_ configurationPreset: NSString?) {
+    if let configurationPresetName = configurationPreset {
+      self.config = self.getConfigurationPreset(configurationPresetName)
     }
   }
   
+  public func setVideoConfig(_ videoConfig: NSDictionary?) throws {
+    self.customVideoConfig = videoConfig
+  }
+  
   public func setAudioConfig(_ audioConfig: NSDictionary?) throws {
-    guard let audioConfig = audioConfig else { return }
-    
-    do {
-      if let audioBitrate = audioConfig["bitrate"] {
-        try self.config.audio.setBitrate(audioBitrate as! Int)
-      }
-      if let audioQualityName = audioConfig["quality"] {
-        let audioQuality = self.getAudioQuality(audioQualityName as! NSString)
-        self.config.audio.setQuality(audioQuality)
-      }
-      if let channels = audioConfig["channels"] {
-        try self.config.audio.setChannels(channels as! Int)
-      }
-      if let audioSessionStrategyName = audioConfig["audioSessionStrategy"] {
-        // https://aws.github.io/amazon-ivs-broadcast-docs/1.0.0/ios/Classes/IVSBroadcastSession.html#/c:objc(cs)IVSBroadcastSession(cpy)applicationAudioSessionStrategy
-        IVSBroadcastSession.applicationAudioSessionStrategy = self.getAudioSessionStrategy(audioSessionStrategyName as! NSString)
-      }
-    } catch {
-      throw IVSBroadcastCameraViewError("[setAudioConfig] Setting audio config error: \(error.localizedDescription)")
-    }
+    self.customAudioConfig = audioConfig
   }
   
   public func setBroadcastStateChangedHandler(_ onBroadcastStateChangedHandler: RCTDirectEventBlock?) {
@@ -435,6 +470,7 @@ extension IVSBroadcastSessionService: IVSBroadcastSession.Delegate {
           "detail": error.localizedDescription,
           "source": IVSBroadcastSourceDescription,
           "isFatal": IVSBroadcastErrorIsFatalKey,
+          "sessionId": self.broadcastSession?.sessionId,
         ]
       ])
     }

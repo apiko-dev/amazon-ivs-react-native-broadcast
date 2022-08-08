@@ -50,6 +50,12 @@ type KeyframeInterval = 1 | 2 | 3 | 4 | 5;
 
 type AudioSessionStrategy = 'recordOnly' | 'playAndRecord' | 'noAction';
 
+type ConfigurationPreset =
+  | 'standardPortrait'
+  | 'standardLandscape'
+  | 'basicPortrait'
+  | 'basicLandscape';
+
 interface IEventHandler<T extends Record<string, unknown>> {
   (event: NativeSyntheticEvent<T>): void;
 }
@@ -60,6 +66,7 @@ export interface IBroadcastSessionError {
   readonly source: string;
   readonly detail: string;
   readonly isFatal: boolean;
+  readonly sessionId: string;
 }
 
 export interface IAudioStats {
@@ -68,11 +75,11 @@ export interface IAudioStats {
 }
 
 interface IVideoConfig {
-  readonly width: number;
-  readonly height: number;
-  readonly bitrate: number;
-  readonly targetFrameRate: number;
-  readonly keyframeInterval: KeyframeInterval;
+  readonly width?: number;
+  readonly height?: number;
+  readonly bitrate?: number;
+  readonly targetFrameRate?: number;
+  readonly keyframeInterval?: KeyframeInterval;
   readonly isBFrames?: boolean;
   readonly isAutoBitrate?: boolean;
   readonly maxBitrate?: number;
@@ -96,6 +103,7 @@ export interface INativeEventHandlers {
         readonly source?: string;
         readonly detail?: string;
         readonly isFatal?: boolean;
+        readonly sessionId?: string;
       };
     }>
   >;
@@ -124,6 +132,7 @@ export interface IIVSBroadcastCameraNativeViewProps
 interface IBaseProps {
   readonly rtmpsUrl: string;
   readonly streamKey: string;
+  readonly configurationPreset?: ConfigurationPreset;
   readonly videoConfig?: IVideoConfig;
   readonly audioConfig?: IAudioConfig;
   readonly logLevel?: LogLevel;

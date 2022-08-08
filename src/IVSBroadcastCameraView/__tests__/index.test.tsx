@@ -185,6 +185,7 @@ describe('Event handlers work as expected', () => {
       isFatal: true,
       detail: 'detail',
       source: 'source',
+      sessionId: 'sessionId',
     };
 
     await testEventHandler(

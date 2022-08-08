@@ -37,6 +37,11 @@ class IVSBroadcastCameraView: UIView {
       self.broadcastSession.setLogLevel(logLevel)
     }
   }
+  @objc var configurationPreset: NSString? {
+    didSet{
+      self.broadcastSession.setConfigurationPreset(configurationPreset)
+    }
+  }
   @objc var videoConfig: NSDictionary? {
     didSet {
       do {

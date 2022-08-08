@@ -107,7 +107,7 @@ const IVSBroadcastCameraView = forwardRef<
   const onBroadcastErrorHandler: IIVSBroadcastCameraNativeViewProps['onBroadcastError'] =
     ({ nativeEvent }) => {
       const exception = nativeEvent[BroadcastErrorHandler];
-      const { code, type, detail, source, isFatal } = exception;
+      const { code, type, detail, source, isFatal, sessionId } = exception;
 
       onBroadcastError?.({
         code: String(code) ?? UNKNOWN,
@@ -115,6 +115,7 @@ const IVSBroadcastCameraView = forwardRef<
         source: source ?? UNKNOWN,
         detail: detail ?? '',
         isFatal: !!isFatal,
+        sessionId: sessionId ?? UNKNOWN,
       });
     };
 

@@ -14,9 +14,11 @@ interface RunnableCallback {
 }
 
 public class IVSBroadcastSessionListener {
+  private String broadcastSessionId;
   public BroadcastSession.Listener broadcastListener;
 
-  IVSBroadcastSessionListener(RunnableCallback runnable) {
+  IVSBroadcastSessionListener(RunnableCallback runnable, String sessionId) {
+    broadcastSessionId = sessionId;
     broadcastListener =
       new BroadcastSession.Listener() {
         @Override
@@ -43,6 +45,7 @@ public class IVSBroadcastSessionListener {
           broadcastException.putString("source", source);
           broadcastException.putBoolean("isFatal", isFatal);
           broadcastException.putString("type", type);
+          broadcastException.putString("sessionId", broadcastSessionId);
 
           eventPayload.putMap("exception", broadcastException);
 

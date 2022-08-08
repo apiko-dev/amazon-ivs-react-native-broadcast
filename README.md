@@ -62,6 +62,7 @@ Props | Type | iOS | Android |
 :---: | :---: | :---: | :---: |
 `rtmpsUrl` | `string` | ✅ | ✅ |
 `streamKey` | `string` | ✅ | ✅ |
+`configurationPreset` | `ConfigurationPreset?` | ✅ | ✅ |
 `videoConfig` | `IVideoConfig?` | ✅ | ✅ |
 `audioConfig` | `IAudioConfig?` | ✅ | ✅ |
 `logLevel` | `LogLevel?` | ✅ | ✅ |
@@ -69,6 +70,7 @@ Props | Type | iOS | Android |
 `cameraPreviewAspectMode` | `CameraPreviewAspectMode?` | ✅ | ✅ |
 `isCameraPreviewMirrored` | `boolean?` | ✅ | ✅ |
 `cameraPosition` | `CameraPosition?` | ✅  | ✅|
+`isMuted` | `boolean?` | ✅  | ✅|
 
 Handlers | Type | iOS | Android
 :---: | :---: | :---: | :---:  
@@ -88,7 +90,6 @@ Methods | Type | iOS | Android
 :---: | :---: | :---: | :---:  
 `start` | `(): void` | ✅  | ✅  |
 `stop` | `(): void` | ✅  | ✅  |
-`swapCamera` | `(): void` | ✅  | ✅  |
 
 👉 Read more detailed [API documentation](docs/api-documentation.md).
 
