@@ -38,23 +38,21 @@ The broadcaster’s stream key that has been provided by IVS.
 
 #### `configurationPreset`
 
-Video preset configuration for broadcast session. Can be overridden by providing [`videoConfig`](./api-documentation.md#videoconfig) prop.
+Preset of video configuration for broadcast session. Can be overridden by providing [`videoConfig`](./api-documentation.md#videoconfig) prop.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | [`ConfigurationPreset`](./types.md#configurationpreset) | No | iOS, Android |
 
-⚠️ _Changing property after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
-
 #### `videoConfig`
 
 A configuration object describing the desired format of the final output Video stream.
 
-⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
-
 | Type | Required |
 | :---: | :---: |
 | [`IVideoConfig`](./types.md#ivideoconfig) | No |
+
+⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
 _**Default video config unless [`configurationPreset`](./api-documentation.md#configurationpreset) is provided:**_
 | Key | Value | Platform |
@@ -73,11 +71,11 @@ _**Default video config unless [`configurationPreset`](./api-documentation.md#co
 
 A configuration object describing the desired format of the final output Audio stream.
 
-⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
-
 | Type | Required |
 | :---: | :---: |
 | [`IAudioConfig`](./types.md#iaudioconfig) | No |
+
+⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
 _**Default audio config:**_
 | Key | Value | Platform |
@@ -97,7 +95,7 @@ In order to catch logs at a more granular level than `Error` during the initiali
 
 #### `sessionLogLevel`
 
-Logging level for the broadcast session. Can be changed after broadcast session initialization.
+Logging level for the broadcast session.
 
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
@@ -105,7 +103,7 @@ Logging level for the broadcast session. Can be changed after broadcast session 
 
 #### `cameraPreviewAspectMode`
 
-Determines how view's aspect ratio will be maintained. Can be changed after broadcast session initialization.
+Determines how view's aspect ratio will be maintained.
  
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
@@ -113,7 +111,7 @@ Determines how view's aspect ratio will be maintained. Can be changed after broa
 
 #### `isCameraPreviewMirrored`
 
-Flips the camera preview horizontally. Can be changed after broadcast session initialization.
+Flips the camera preview horizontally.
 
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
@@ -121,7 +119,7 @@ Flips the camera preview horizontally. Can be changed after broadcast session in
 
 #### `cameraPosition`
 
-The position of the input device relative to the host device. Can be changed after broadcast session initialization.
+The position of the input camera relative to the host device. Can be used to swap camera during session live.
 
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
@@ -129,7 +127,7 @@ The position of the input device relative to the host device. Can be changed aft
 
 #### `isMuted`
 
-Puts the active microphone on mute. Can be changed after broadcast session initialization.
+Puts the active microphone on mute.
 
 | Type | Required | Platform | Default value |
 | :---: | :---: | :---: | :---: |
@@ -183,21 +181,21 @@ Indicates that the broadcast state changed.
 
 Represents the quality of the stream.
 
-`quality` is a number between `0` and `1` that represents the quality of the stream based on minimum and maximum bitrate provided in the [`videoConfig`](#videoconfig). `0` means the stream is at the lowest possible quality, or streaming is not possible at all. `1` means the bitrate is near the maximum allowed.
-
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onBroadcastQualityChanged(quality: number): void` | No | iOS, Android |
+
+`quality` is a number between `0` and `1` that represents the quality of the stream based on minimum and maximum bitrate provided in the [`videoConfig`](#videoconfig). `0` means the stream is at the lowest possible quality, or streaming is not possible at all. `1` means the bitrate is near the maximum allowed.
 
 #### `onNetworkHealthChanged`
 
 Provides updates when the instantaneous quality of the network changes. It can be used to provide feedback about when the broadcast might have temporary disruptions.
 
-`networkHealth` is a number between `0` and `1` that represents the current health of the network. `0` means the network is struggling to keep up and the broadcast may be experiencing latency spikes. The SDK may also reduce the quality of the broadcast on low values in order to keep it stable, depending on the minimum allowed bitrate in the [`videoConfig`](#videoconfig). A value of `1` means the network is easily able to keep up with the current demand and the SDK will be trying to increase the broadcast quality over time, depending on the maximum allowed bitrate. Lower values like `0.5` are not necessarily bad, it just means the network is being saturated, but it is still able to keep up.
-
 | Type | Required | Platform |
 | :---: | :---: | :---: |
 | `onNetworkHealthChanged(networkHealth: number): void` | No | iOS, Android |
+
+`networkHealth` is a number between `0` and `1` that represents the current health of the network. `0` means the network is struggling to keep up and the broadcast may be experiencing latency spikes. The SDK may also reduce the quality of the broadcast on low values in order to keep it stable, depending on the minimum allowed bitrate in the [`videoConfig`](#videoconfig). A value of `1` means the network is easily able to keep up with the current demand and the SDK will be trying to increase the broadcast quality over time, depending on the maximum allowed bitrate. Lower values like `0.5` are not necessarily bad, it just means the network is being saturated, but it is still able to keep up.
 
 #### `onAudioSessionInterrupted`
 
