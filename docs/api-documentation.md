@@ -77,6 +77,8 @@ A configuration object describing the desired format of the final output Audio s
 
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
+⚠️ _Default sample rate is 48 Khz (it is best to match production audio flow)._
+
 _**Default audio config:**_
 | Key | Value | Platform |
 | :---: | :---: | :---: |
