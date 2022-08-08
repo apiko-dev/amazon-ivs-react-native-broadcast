@@ -50,10 +50,6 @@ type ConfigurationPreset =
 | `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | | iOS | A value representing how the broadcast session will interact with `AVAudioSession`. |
 | `quality` | [`AudioQuality?`](#audioquality-ios-only) | | iOS | The quality of the audio encoding. |
 
-⚠️ _AirPods do not record any audio if the `audioSessionStrategy` is set to `recordOnly`. By default, the `playAndRecord` value is used, so this issue manifests only if the value is changed to `recordOnly`._
-
-⚠️ _Reducing the audio `quality` can have a large impact on CPU usage._
-
 ## `AudioChannel`
 
 ```ts
@@ -75,11 +71,15 @@ type AudioSessionStrategy = 'recordOnly' | 'playAndRecord' | 'noAction';
 | `playAndRecord` | Controls `AVAudioSession` completely and will set the category to `playAndRecord`. |
 | `noAction` | Does not control `AVAudioSession` at all. If this strategy is selected, only custom audio sources will be allowed. Microphone based sources will not be returned or added by any APIs. |
 
+⚠️ _AirPods do not record any audio if the `audioSessionStrategy` is set to `recordOnly`. By default, the `playAndRecord` value is used, so this issue manifests only if the value is changed to `recordOnly`._
+
 ## `AudioQuality` (iOS only)
 
 ```ts
 type AudioQuality = 'minimum' | 'low' | 'medium' | 'high' | 'maximum';
 ```
+
+⚠️ _Reducing the audio `quality` can have a large impact on CPU usage._
 
 ## `LogLevel`
 
