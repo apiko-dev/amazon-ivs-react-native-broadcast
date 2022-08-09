@@ -38,7 +38,7 @@ The broadcaster’s stream key that has been provided by IVS.
 
 #### `configurationPreset`
 
-Preset of video configuration for broadcast session. Can be overridden by providing [`videoConfig`](./api-documentation.md#videoconfig) prop.
+Predefined video configuration for broadcast session. Can be overridden by providing [`videoConfig`](./api-documentation.md#videoconfig) prop.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
@@ -77,7 +77,7 @@ A configuration object describing the desired format of the final output Audio s
 
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
-⚠️ _Default sample rate is 48 Khz (it is best to match production audio flow)._
+⚠️ _Default sample rate is 48 Khz and can not be changed (it is best to match production audio flow)._
 
 _**Default audio config:**_
 | Key | Value | Platform |

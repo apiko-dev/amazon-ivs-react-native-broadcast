@@ -144,6 +144,10 @@ interface IBroadcastSessionError {
 }
 ```
 
+| Key | Description |
+| :---: | --- |
+| `sessionId` | The unique ID of this broadcast session. This will be updated every time the stream is stopped |
+
 👉 See iOS `code` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.2.0/ios/Enums/IVSBroadcastError.html#/c:@E@IVSBroadcastError@IVSBroadcastErrorDeviceExchangeIncompatibleTypes).
 
 👉 See Android `type` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.2.1/android/reference/com/amazonaws/ivs/broadcast/ErrorType.html).

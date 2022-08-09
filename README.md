@@ -92,6 +92,7 @@ Methods | Type | iOS | Android
 `stop` | `(): void` | ✅  | ✅  |
 
 👉 Read more detailed [API documentation](docs/api-documentation.md).
+👉 [iOS](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast-ios.html#broadcast-ios-issues) and [Android](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast-android.html#broadcast-android-issues) known issues and workarounds.
 
 ## Usage
 A complex usage could be found in the [`./example/src/App.tsx`](./example/src/App.tsx) file or just go to the [`./example`](./example/) folder and read _Setting up and running application_ section how to set up and run the example app to see `IVSBroadcastCameraView` component in action.
