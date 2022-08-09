@@ -92,6 +92,7 @@ Methods | Type | iOS | Android
 `stop` | `(): void` | ✅  | ✅  |
 
 👉 Read more detailed [API documentation](docs/api-documentation.md).
+
 👉 [iOS](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast-ios.html#broadcast-ios-issues) and [Android](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast-android.html#broadcast-android-issues) known issues and workarounds.
 
 ## Usage
