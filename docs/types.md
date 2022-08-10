@@ -43,6 +43,7 @@ type ConfigurationPreset =
 ⚠️ _The `width` and `height` must both be between `160` and `1920`, and the maximum total number of pixels is `2,073,600.` So the smallest size is `160x160`, and the largest is either `1080x1920` or `1920x1080`. However something like `1920x1200` would not be worked. `1280x180` however is supported._
 
 ## `IAudioConfig`
+
 | Key | Type | Range | Platform | Description |
 | :---: | :---: | :---: | :---: | --- |
 | `bitrate` | `number?` | `64000` - `160000` | iOS, Android | The average bitrate for the final output audio stream |
@@ -55,6 +56,7 @@ type ConfigurationPreset =
 ```ts
 type AudioChannel = 1 | 2;
 ```
+
 | Value | Description |
 | :---: | --- |
 | `1` | Mono audio channel |
@@ -65,6 +67,7 @@ type AudioChannel = 1 | 2;
 ```ts
 type AudioSessionStrategy = 'recordOnly' | 'playAndRecord' | 'noAction';
 ```
+
 | Value | Description |
 | :---: | --- |
 | `recordOnly` | Controls `AVAudioSession` completely and will set the category to `record`. There is a known issue with the `recordOnly` category and AirPods. Use `playAndRecord` category to make AirPods work. |

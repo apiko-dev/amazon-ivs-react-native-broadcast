@@ -58,8 +58,9 @@ Add `CAMERA` and  `RECORD_AUDIO` permissions to the `AndroidManifest.xml` file:
 
 Example of requesting Android dangerous permissions at runtime could be found in the [`./example/src/index.android.tsx`](./example/src/index.android.tsx) file.
 ## API
-Props | Type | iOS | Android |
-:---: | :---: | :---: | :---: |
+
+Props | Type | iOS | Android
+:---: | :---: | :---: | :---:
 `rtmpsUrl` | `string` | ✅ | ✅ |
 `streamKey` | `string` | ✅ | ✅ |
 `configurationPreset` | `ConfigurationPreset?` | ✅ | ✅ |

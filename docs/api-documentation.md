@@ -55,8 +55,9 @@ A configuration object describing the desired format of the final output Video s
 ⚠️ _Changing any properties on this object after providing it to `IVSBroadcastCameraView` component will not have any effect. A copy of the configuration is made and kept internally._
 
 _**Default video config unless [`configurationPreset`](./api-documentation.md#configurationpreset) is provided:**_
-| Key | Value | Platform |
-| :---: | :---: | :---: |
+
+| Key | Value | Platform
+| :---: | :---: | :---:
 | `width` | `720` | iOS, Android |
 | `height` | `1280` | iOS, Android |
 | `bitrate` | `2100000` | iOS, Android |
@@ -80,8 +81,9 @@ A configuration object describing the desired format of the final output Audio s
 ⚠️ _Default sample rate is 48 Khz and can not be changed (it is best to match production audio flow)._
 
 _**Default audio config:**_
-| Key | Value | Platform |
-| :---: | :---: | :---: |
+
+| Key | Value | Platform
+| :---: | :---: | :---:
 | `bitrate` | `96000` | iOS, Android |
 | `channels` | `2` | iOS, Android |
 | `audioSessionStrategy` | `playAndRecord` | iOS |
