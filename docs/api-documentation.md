@@ -1,5 +1,9 @@
 # **API Documentation**
 
+### Reference documentation
+[iOS SDK](https://aws.github.io/amazon-ivs-broadcast-docs/1.5.1/ios/index.html)
+[Android SDK](https://aws.github.io/amazon-ivs-broadcast-docs/1.5.0/android/reference/com/amazonaws/ivs/broadcast/package-summary.html)
+
 ## `IVSBroadcastCameraView` component
 
 ### 📌 _**Props**_
