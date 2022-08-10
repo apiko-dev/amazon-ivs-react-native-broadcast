@@ -101,5 +101,10 @@ A complex usage could be found in the [`./example/src/App.tsx`](./example/src/Ap
 
 ***
 
+## Credits
+This project has been built and is maintained thanks to the support from [Apiko](https://apiko.com/).
+
+<img alt="Apiko" src="./assets/ApikoLogo.png"/>
+
 ## License
 [MIT](LICENSE)
