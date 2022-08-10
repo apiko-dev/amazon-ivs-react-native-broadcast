@@ -1,4 +1,4 @@
-# **API Documentation**
+# **API**
 
 ### Reference documentation
 👉 [iOS SDK](https://aws.github.io/amazon-ivs-broadcast-docs/1.5.1/ios/index.html)
