@@ -129,7 +129,7 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
 
   protected void cleanUp() {
     removeAllViews();
-    ivsBroadcastSession.releaseResources();
+    ivsBroadcastSession.deinit();
   }
 
   protected void setIsMuted(boolean isMuted) {

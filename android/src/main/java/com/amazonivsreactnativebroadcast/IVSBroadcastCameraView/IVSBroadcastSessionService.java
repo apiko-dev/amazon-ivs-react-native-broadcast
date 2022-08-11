@@ -254,9 +254,12 @@ public class IVSBroadcastSessionService {
     return broadcastSession.getSessionId();
   }
 
-  public void releaseResources() {
+  public void deinit() {
     checkBroadcastSessionOrThrow();
+
     broadcastSession.release();
+    broadcastSession = null;
+    isInitialized = false;
   }
 
   public boolean isInitialized() {
