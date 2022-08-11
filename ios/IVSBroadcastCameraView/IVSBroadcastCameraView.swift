@@ -44,20 +44,12 @@ class IVSBroadcastCameraView: UIView {
   }
   @objc var videoConfig: NSDictionary? {
     didSet {
-      do {
-        try self.broadcastSession.setVideoConfig(videoConfig)
-      } catch {
-        self.onErrorHandler(error)
-      }
+      self.broadcastSession.setVideoConfig(videoConfig)
     }
   }
   @objc var audioConfig: NSDictionary? {
     didSet {
-      do {
-        try self.broadcastSession.setAudioConfig(audioConfig)
-      } catch {
-        self.onErrorHandler(error)
-      }
+      self.broadcastSession.setAudioConfig(audioConfig)
     }
   }
   
@@ -172,20 +164,18 @@ class IVSBroadcastCameraView: UIView {
     fatalError("init(coder:) has not been implemented.")
   }
   
-  override func didMoveToWindow() {
-    if self.window != nil {
-      // Disable the Application Idle Timer. Prevents device from going to sleep while using the broadcast SDK, which would interrupt the broadcast
-      UIApplication.shared.isIdleTimerDisabled = true
-      if (!self.broadcastSession.isInitiated()) {
-        do {
-          try self.broadcastSession.initiate()
-        } catch {
-          self.onErrorHandler(error)
-        }
-        self.subscribeToNotificationCenter()
+  override func didMoveToSuperview() {
+    if (self.superview != nil && !self.broadcastSession.isInitiated()) {
+      do {
+        try self.broadcastSession.initiate()
         self.broadcastSession.getCameraPreviewAsync(self.onReceiveCameraPreviewHandler)
+        // Disable the Application Idle Timer. Prevents device from going to sleep while using the broadcast SDK, which would interrupt the broadcast
+        UIApplication.shared.isIdleTimerDisabled = true
+        self.subscribeToNotificationCenter()
+      } catch {
+        self.onErrorHandler(error)
       }
-    } else {
+    } else if (self.superview == nil && self.broadcastSession.isInitiated()) {
       UIApplication.shared.isIdleTimerDisabled = false
       self.unsubscribeNotificationCenter()
       self.subviews.forEach { $0.removeFromSuperview() }

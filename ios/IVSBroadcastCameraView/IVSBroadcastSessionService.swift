@@ -405,11 +405,11 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
-  public func setVideoConfig(_ videoConfig: NSDictionary?) throws {
+  public func setVideoConfig(_ videoConfig: NSDictionary?) {
     self.customVideoConfig = videoConfig
   }
   
-  public func setAudioConfig(_ audioConfig: NSDictionary?) throws {
+  public func setAudioConfig(_ audioConfig: NSDictionary?) {
     self.customAudioConfig = audioConfig
   }
   
