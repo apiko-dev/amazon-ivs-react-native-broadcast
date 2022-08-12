@@ -1,7 +1,6 @@
 import AmazonIVSBroadcast
 import Foundation
 
-typealias onErrorHandler = (_: Error) -> Void
 typealias onReceiveCameraPreviewHandler = (_: IVSImagePreviewView) -> Void
 
 enum BuiltInCameraUrns: String {
@@ -12,9 +11,6 @@ enum BuiltInCameraUrns: String {
 
 // Guide: https://docs.aws.amazon.com/ivs/latest/userguide//broadcast-ios.html
 class IVSBroadcastSessionService: NSObject {
-  
-  private var isInitialized: Bool = false
-  
   private var isInitialMuted: Bool = false
   private var initialSessionLogLevel: IVSBroadcastSession.LogLevel = .error
   private var initialCameraPosition: IVSDevicePosition = IVSDevicePosition.back
@@ -29,18 +25,11 @@ class IVSBroadcastSessionService: NSObject {
   private var broadcastSession: IVSBroadcastSession?
   private var config = IVSBroadcastConfiguration()
   
-  private var onError: onErrorHandler?
   private var onBroadcastError: RCTDirectEventBlock?
   private var onBroadcastAudioStats: RCTDirectEventBlock?
   private var onBroadcastStateChanged: RCTDirectEventBlock?
   private var onBroadcastQualityChanged: RCTDirectEventBlock?
   private var onNetworkHealthChanged: RCTDirectEventBlock?
-  
-  private func checkBroadcastSessionOrThrow() {
-    if (self.broadcastSession == nil || !self.isInitialized) {
-      assertionFailure("Broadcast session is not initialized.")
-    }
-  }
   
   private func getLogLevel(_ logLevelName: NSString) -> IVSBroadcastSession.LogLevel {
     switch logLevelName {
@@ -145,24 +134,15 @@ class IVSBroadcastSessionService: NSObject {
   }
   
   private func getCameraPreview() -> IVSImagePreviewView? {
-    guard let preview = try? self.broadcastSession?.previewView(with: self.cameraPreviewAspectMode) else {
-      self.onError?(IVSBroadcastCameraViewError("[getCameraPreview] Can not get camera preview."))
-      return nil
-    }
-    preview.setMirrored(self.isCameraPreviewMirrored)
+    let preview = try? self.broadcastSession?.previewView(with: self.cameraPreviewAspectMode)
+    preview?.setMirrored(self.isCameraPreviewMirrored)
     return preview
   }
   
   private func getAttachedDeviceByUrn(_ urn: String) -> IVSDevice? {
     let attachedDevices = self.broadcastSession?.listAttachedDevices()
     let wantedDeviceList = attachedDevices?.filter { $0.descriptor().urn.contains(urn) }
-    
-    guard let wantedDevice = wantedDeviceList?.first else {
-      self.onError?(IVSBroadcastCameraViewError("[getAttachedDeviceByUrn] Can not get attached device by urn: \(urn)"))
-      return nil
-    }
-    
-    return wantedDevice
+    return wantedDeviceList?.first
   }
   
   private func setCustomVideoConfig() throws {
@@ -174,7 +154,7 @@ class IVSBroadcastSessionService: NSObject {
       if (width != nil && height != nil) {
         try self.config.video.setSize(CGSize(width: width as! Int, height: height as! Int))
       } else {
-        self.onError?(IVSBroadcastCameraViewError("[setCustomVideoConfig] The `width` and `height` are interrelated and thus can not be used separately."))
+        throw IVSBroadcastCameraViewError("[setCustomVideoConfig] The `width` and `height` are interrelated and thus can not be used separately.")
       }
     }
     
@@ -221,15 +201,12 @@ class IVSBroadcastSessionService: NSObject {
   }
   
   private func swapCameraAsync(_ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
-    self.checkBroadcastSessionOrThrow()
-    
     self.broadcastSession?.awaitDeviceChanges { () -> Void in
       guard let attachedCamera = self.getAttachedDeviceByUrn(self.attachedCameraUrn) else {
         return
       }
       
       guard let nextCameraDescriptorToSwap = self.getNextCameraDescriptorToSwap(attachedCamera) else {
-        self.onError?(IVSBroadcastCameraViewError("[swapCameraAsync] Can not get next camera to swap."))
         return
       }
       
@@ -240,8 +217,6 @@ class IVSBroadcastSessionService: NSObject {
           if let newCameraPreview = self.getCameraPreview() {
             onReceiveCameraPreview(newCameraPreview)
           }
-        } else {
-          self.onError?(IVSBroadcastCameraViewError("[swapCameraAsync] New device is empty."))
         }
       }
     }
@@ -254,6 +229,12 @@ class IVSBroadcastSessionService: NSObject {
         (attachedMicrophone as? IVSAudioDevice)?.setGain(gain)
       }
     }
+  }
+  
+  private func saveInitialDevicesUrn(_ initialDescriptors: [IVSDeviceDescriptor]) {
+    let attachedDevices = initialDescriptors.filter { $0.type == .camera || $0.type == .microphone }
+    self.attachedCameraUrn = attachedDevices.first { $0.type == .camera }?.urn ?? ""
+    self.attachedMicrophoneUrn = attachedDevices.first { $0.type == .microphone }?.urn ?? ""
   }
   
   private func preInitiation() throws {
@@ -269,15 +250,8 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
-  private func saveInitialDevicesUrn(_ initialDescriptors: [IVSDeviceDescriptor]) {
-    let attachedDevices = initialDescriptors.filter { $0.type == .camera || $0.type == .microphone }
-    self.attachedCameraUrn = attachedDevices.first { $0.type == .camera }?.urn ?? ""
-    self.attachedMicrophoneUrn = attachedDevices.first { $0.type == .microphone }?.urn ?? ""
-  }
-  
   public func initiate() throws {
-    if (!self.isInitialized) {
-      
+    if (!self.isInitialized()) {
       try self.preInitiation()
       let initialDeviceDescriptorList = getInitialDeviceDescriptorList()
       
@@ -288,8 +262,6 @@ class IVSBroadcastSessionService: NSObject {
       )
       
       self.saveInitialDevicesUrn(initialDeviceDescriptorList)
-      self.isInitialized = true
-      
       self.postInitiation()
     } else {
       assertionFailure("Broadcast session has been already initialized.")
@@ -297,20 +269,15 @@ class IVSBroadcastSessionService: NSObject {
   }
   
   public func deinitiate() {
-    self.checkBroadcastSessionOrThrow()
-    
     self.broadcastSession?.stop()
     self.broadcastSession = nil
-    self.isInitialized = false
   }
   
-  public func isInitiated() -> Bool {
-    self.isInitialized
+  public func isInitialized() -> Bool {
+    return self.broadcastSession != nil
   }
   
   public func isReady() -> Bool {
-    self.checkBroadcastSessionOrThrow()
-    
     guard let isReady = self.broadcastSession?.isReady else {
       return false
     }
@@ -318,17 +285,13 @@ class IVSBroadcastSessionService: NSObject {
   }
   
   public func start(ivsRTMPSUrl: NSString, ivsStreamKey: NSString) throws {
-    self.checkBroadcastSessionOrThrow()
-    
     guard let url = URL(string: ivsRTMPSUrl as String) else {
-      self.onError?(IVSBroadcastCameraViewError("[start] Can not create a URL instance from the provided ivsRTMPSUrl: \(ivsRTMPSUrl)"))
-      return
+      throw IVSBroadcastCameraViewError("[start] Can not create a URL instance for: \(ivsRTMPSUrl)")
     }
     try self.broadcastSession?.start(with: url, streamKey: ivsStreamKey as String)
   }
   
   public func stop() {
-    self.checkBroadcastSessionOrThrow()
     self.broadcastSession?.stop()
   }
   
@@ -338,7 +301,6 @@ class IVSBroadcastSessionService: NSObject {
   }
   
   public func getCameraPreviewAsync(_ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
-    self.checkBroadcastSessionOrThrow()
     self.broadcastSession?.awaitDeviceChanges { () -> Void in
       if let cameraPreview = self.getCameraPreview() {
         onReceiveCameraPreview(cameraPreview)
@@ -348,7 +310,7 @@ class IVSBroadcastSessionService: NSObject {
   
   public func setCameraPosition(_ cameraPosition: NSString?, _ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
     if let cameraPositionName = cameraPosition {
-      if (self.isInitialized) {
+      if (self.isInitialized()) {
         self.swapCameraAsync(onReceiveCameraPreview)
       } else {
         self.initialCameraPosition = self.getCameraPosition(cameraPositionName)
@@ -359,7 +321,8 @@ class IVSBroadcastSessionService: NSObject {
   public func setCameraPreviewAspectMode(_ aspectMode: NSString?, _ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
     if let aspectModeName = aspectMode {
       self.cameraPreviewAspectMode = self.getAspectMode(aspectModeName)
-      if (self.isInitialized) {
+      
+      if (self.isInitialized()) {
         self.getCameraPreviewAsync(onReceiveCameraPreview)
       }
     }
@@ -367,14 +330,14 @@ class IVSBroadcastSessionService: NSObject {
   
   public func setIsCameraPreviewMirrored(_ isMirrored: Bool, _ onReceiveCameraPreview: @escaping onReceiveCameraPreviewHandler) {
     self.isCameraPreviewMirrored = isMirrored
-    if (self.isInitialized) {
+    
+    if (self.isInitialized()) {
       self.getCameraPreviewAsync(onReceiveCameraPreview)
     }
   }
   
   public func setIsMuted(_ isMuted: Bool) {
-    if (self.isInitialized) {
-      self.checkBroadcastSessionOrThrow()
+    if (self.isInitialized()) {
       self.muteAsync(isMuted)
     } else {
       self.isInitialMuted = isMuted
@@ -384,8 +347,8 @@ class IVSBroadcastSessionService: NSObject {
   public func setSessionLogLevel(_ logLevel: NSString?) {
     if let logLevelName = logLevel {
       let sessionLogLevel = self.getLogLevel(logLevelName)
-      if (self.isInitialized) {
-        self.checkBroadcastSessionOrThrow()
+      
+      if (self.isInitialized()) {
         self.broadcastSession?.logLevel = sessionLogLevel
       } else {
         self.initialSessionLogLevel = sessionLogLevel
@@ -415,10 +378,6 @@ class IVSBroadcastSessionService: NSObject {
   
   public func setBroadcastStateChangedHandler(_ onBroadcastStateChangedHandler: RCTDirectEventBlock?) {
     self.onBroadcastStateChanged = onBroadcastStateChangedHandler
-  }
-  
-  public func setErrorHandler(_ onErrorHandler: @escaping onErrorHandler) {
-    self.onError = onErrorHandler
   }
   
   public func setBroadcastErrorHandler(_ onBroadcastErrorHandler: RCTDirectEventBlock?) {

@@ -2,7 +2,6 @@ import UIKit
 import AVFoundation
 
 class IVSBroadcastCameraView: UIView {
-  private var wasInitialSubViewAdded: Bool = false
   private let broadcastSession: IVSBroadcastSessionService = IVSBroadcastSessionService()
   
   @objc var streamKey: NSString?
@@ -143,7 +142,7 @@ class IVSBroadcastCameraView: UIView {
     self.onError?(["message": error.localizedDescription])
   }
   
-  private func onReceiveCameraPreviewHandler(preview: UIView) {
+  private func onReceiveCameraPreviewHandler(_ preview: UIView) {
     self.subviews.forEach { $0.removeFromSuperview() }
     preview.translatesAutoresizingMaskIntoConstraints = false
     self.addSubview(preview)
@@ -157,36 +156,33 @@ class IVSBroadcastCameraView: UIView {
   
   override init(frame: CGRect) {
     super.init(frame: frame)
-    self.broadcastSession.setErrorHandler(self.onErrorHandler)
   }
   
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented.")
   }
   
+  deinit {
+    UIApplication.shared.isIdleTimerDisabled = false
+    self.unsubscribeNotificationCenter()
+    self.subviews.forEach { $0.removeFromSuperview() }
+    self.broadcastSession.deinitiate()
+  }
+  
   override func didMoveToSuperview() {
-    if (self.superview != nil && !self.broadcastSession.isInitiated()) {
+    if (self.superview != nil && !self.broadcastSession.isInitialized()) {
       do {
         try self.broadcastSession.initiate()
-        self.broadcastSession.getCameraPreviewAsync(self.onReceiveCameraPreviewHandler)
         // Disable the Application Idle Timer. Prevents device from going to sleep while using the broadcast SDK, which would interrupt the broadcast
         UIApplication.shared.isIdleTimerDisabled = true
         self.subscribeToNotificationCenter()
+        self.broadcastSession.getCameraPreviewAsync { (preview: UIView) -> Void in
+          self.onReceiveCameraPreviewHandler(preview)
+          self.onIsBroadcastReady?(["isReady": self.broadcastSession.isReady()])
+        }
       } catch {
         self.onErrorHandler(error)
       }
-    } else if (self.superview == nil && self.broadcastSession.isInitiated()) {
-      UIApplication.shared.isIdleTimerDisabled = false
-      self.unsubscribeNotificationCenter()
-      self.subviews.forEach { $0.removeFromSuperview() }
-      self.broadcastSession.deinitiate()
-    }
-  }
-  
-  override func didAddSubview(_ subview: UIView) {
-    if (!self.wasInitialSubViewAdded) {
-      self.wasInitialSubViewAdded = true
-      self.onIsBroadcastReady?(["isReady": self.broadcastSession.isReady()])
     }
   }
   
