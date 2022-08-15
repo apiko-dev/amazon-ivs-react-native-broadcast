@@ -17,8 +17,6 @@ interface CameraPreviewHandler {
 public class IVSBroadcastSessionService {
   private ThemedReactContext mReactContext;
 
-  private boolean isInitialized = false;
-
   private boolean isInitialMuted = false;
   private Device.Descriptor.Position initialCameraPosition = Device.Descriptor.Position.BACK;
   private BroadcastConfiguration.LogLevel initialSessionLogLevel = BroadcastConfiguration.LogLevel.ERROR;
@@ -33,12 +31,6 @@ public class IVSBroadcastSessionService {
   private BroadcastSession broadcastSession;
   private BroadcastSession.Listener broadcastSessionListener;
   private BroadcastConfiguration config = new BroadcastConfiguration();
-
-  private void checkBroadcastSessionOrThrow() {
-    if (broadcastSession == null || !isInitialized) {
-      throw new RuntimeException("Broadcast session is not initialized.");
-    }
-  }
 
   private BroadcastConfiguration.LogLevel getLogLevel(String logLevelName) {
     switch (logLevelName) {
@@ -114,7 +106,6 @@ public class IVSBroadcastSessionService {
   private ImagePreviewView getCameraPreview() {
     ImagePreviewView preview = broadcastSession.getPreviewView(cameraPreviewAspectMode);
     preview.setMirrored(isCameraPreviewMirrored);
-
     return preview;
   }
 
@@ -181,8 +172,6 @@ public class IVSBroadcastSessionService {
   }
 
   private void swapCameraAsync(CameraPreviewHandler callback) {
-    checkBroadcastSessionOrThrow();
-
     broadcastSession.awaitDeviceChanges(() -> {
       for (Device.Descriptor deviceDescriptor : broadcastSession.listAvailableDevices(mReactContext)) {
         if (deviceDescriptor.type == Device.Descriptor.DeviceType.CAMERA && deviceDescriptor.position != attachedCameraDescriptor.position) {
@@ -235,7 +224,7 @@ public class IVSBroadcastSessionService {
   }
 
   public String init() {
-    if (isInitialized) return broadcastSession.getSessionId();
+    if (isInitialized()) return broadcastSession.getSessionId();
 
     preInitialization();
 
@@ -247,7 +236,6 @@ public class IVSBroadcastSessionService {
     );
 
     saveInitialDevicesDescriptor(getInitialDeviceDescriptorList());
-    isInitialized = true;
 
     postInitialization();
 
@@ -255,29 +243,23 @@ public class IVSBroadcastSessionService {
   }
 
   public void deinit() {
-    checkBroadcastSessionOrThrow();
-
     broadcastSession.release();
     broadcastSession = null;
-    isInitialized = false;
   }
 
   public boolean isInitialized() {
-    return isInitialized;
+    return broadcastSession != null;
   }
 
   public boolean isReady() {
-    checkBroadcastSessionOrThrow();
     return broadcastSession.isReady();
   }
 
   public void start(@Nullable String ivsRTMPSUrl, @Nullable String ivsStreamKey) {
-    checkBroadcastSessionOrThrow();
     broadcastSession.start(ivsRTMPSUrl, ivsStreamKey);
   }
 
   public void stop() {
-    checkBroadcastSessionOrThrow();
     broadcastSession.stop();
   }
 
@@ -287,14 +269,13 @@ public class IVSBroadcastSessionService {
   }
 
   public void getCameraPreviewAsync(CameraPreviewHandler callback) {
-    checkBroadcastSessionOrThrow();
     broadcastSession.awaitDeviceChanges(() -> {
       callback.run(getCameraPreview());
     });
   }
 
   public void setCameraPosition(String cameraPositionName, CameraPreviewHandler callback) {
-    if (isInitialized) {
+    if (isInitialized()) {
       swapCameraAsync(callback);
     } else {
       initialCameraPosition = getCameraPosition(cameraPositionName);
@@ -303,21 +284,20 @@ public class IVSBroadcastSessionService {
 
   public void setCameraPreviewAspectMode(String cameraPreviewAspectModeName, CameraPreviewHandler callback) {
     cameraPreviewAspectMode = getAspectMode(cameraPreviewAspectModeName);
-    if (isInitialized) {
+    if (isInitialized()) {
       getCameraPreviewAsync(callback);
     }
   }
 
   public void setIsCameraPreviewMirrored(boolean isPreviewMirrored, CameraPreviewHandler callback) {
     isCameraPreviewMirrored = isPreviewMirrored;
-    if (isInitialized) {
+    if (isInitialized()) {
       getCameraPreviewAsync(callback);
     }
   }
 
   public void setIsMuted(boolean isMuted) {
-    if (isInitialized) {
-      checkBroadcastSessionOrThrow();
+    if (isInitialized()) {
       muteAsync(isMuted);
     } else {
       isInitialMuted = isMuted;
@@ -326,8 +306,7 @@ public class IVSBroadcastSessionService {
 
   public void setSessionLogLevel(String sessionLogLevelName) {
     BroadcastConfiguration.LogLevel sessionLogLevel = getLogLevel(sessionLogLevelName);
-    if (isInitialized) {
-      checkBroadcastSessionOrThrow();
+    if (isInitialized()) {
       broadcastSession.setLogLevel(sessionLogLevel);
     } else {
       initialSessionLogLevel = sessionLogLevel;

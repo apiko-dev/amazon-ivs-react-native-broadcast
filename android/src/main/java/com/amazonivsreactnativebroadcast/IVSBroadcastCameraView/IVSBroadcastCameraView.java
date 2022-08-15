@@ -106,7 +106,7 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
         sendErrorEvent(error.toString());
       }
     } else {
-      throw new RuntimeException("'rtmpsUrl' and 'streamKey' props are required!");
+      sendErrorEvent("'rtmpsUrl' and 'streamKey' props are required.");
     }
   }
 
