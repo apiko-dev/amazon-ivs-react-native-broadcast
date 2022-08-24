@@ -33,7 +33,7 @@ The RTMPS endpoint provided by IVS.
 | :---: | :---: | :---: |
 | `string` | No | iOS, Android |
 
-⚠️ _The RTMPS url can be also provided via [`start`](./api-documentation.md#start) method._
+The RTMPS url can be also provided via [`start`](./api-documentation.md#start) method.
 
 #### `streamKey`
 
@@ -43,7 +43,7 @@ The broadcaster’s stream key that has been provided by IVS.
 | :---: | :---: | :---: |
 | `string` | No | iOS, Android |
 
-⚠️ _The stream key can be also provided via [`start`](./api-documentation.md#start) method._
+The stream key can be also provided via [`start`](./api-documentation.md#start) method.
 
 #### `configurationPreset`
 
@@ -168,7 +168,7 @@ Indicates that broadcast session error occurred. Errors may or may not be fatal.
 
 #### `onIsBroadcastReady`
 
-Fires(once) when initialization (including adding camera preview to the view hierarchy) is done.
+Fires(**once**) when initialization(including adding camera preview to the view hierarchy) is done.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
