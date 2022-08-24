@@ -53,7 +53,7 @@ async function testEventHandler<TName extends keyof IEventHandlers>(
   nativeSyntheticEvent: Partial<
     Parameters<NonNullable<INativeEventHandlers[TName]>>[number]
   >,
-  nativeEvent: Parameters<NonNullable<IEventHandlers[TName]>>[number]
+  nativeEvent?: Parameters<NonNullable<IEventHandlers[TName]>>[number][]
 ) {
   const mockEventHandler = jest.fn();
   const ivsBroadcastCameraViewInstance = await getIVSBroadcastCameraView({
@@ -66,7 +66,7 @@ async function testEventHandler<TName extends keyof IEventHandlers>(
     nativeSyntheticEvent
   );
   nativeEvent
-    ? expect(mockEventHandler).toHaveBeenCalledWith(nativeEvent)
+    ? expect(mockEventHandler).toHaveBeenCalledWith(...nativeEvent)
     : expect(mockEventHandler).toHaveBeenCalled();
 }
 
@@ -135,6 +135,7 @@ describe('Event handlers work as expected', () => {
       eventHandlerName: 'onBroadcastStateChanged' as const,
       ...nativeSyntheticEventFactory<'onBroadcastStateChanged'>({
         stateStatus: 'CONNECTED',
+        metadata: { sessionId: 'sessionId' },
       }),
     },
     {
@@ -173,7 +174,7 @@ describe('Event handlers work as expected', () => {
       await testEventHandler(
         eventHandlerName,
         nativeSyntheticEvent,
-        nativeEvent ? Object.values(nativeEvent)[0] : undefined
+        nativeEvent ? Object.values(nativeEvent) : undefined
       );
     }
   );
@@ -198,10 +199,12 @@ describe('Event handlers work as expected', () => {
           },
         },
       },
-      {
-        code: String(errorCode),
-        ...errorBasePayload,
-      }
+      [
+        {
+          code: String(errorCode),
+          ...errorBasePayload,
+        },
+      ]
     );
   });
 });
