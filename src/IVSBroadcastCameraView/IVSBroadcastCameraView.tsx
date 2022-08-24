@@ -9,7 +9,6 @@ import {
 import {
   Command,
   StateStatusEnum,
-  EventPayloadKey,
   StateStatusUnion,
   IIVSBroadcastCameraView,
   IIVSBroadcastCameraViewProps,
@@ -38,16 +37,6 @@ export const getCommandIdByPlatform = (command: Command) => {
     }
   }
 };
-
-const {
-  ErrorHandler,
-  BroadcastErrorHandler,
-  IsBroadcastReadyHandler,
-  BroadcastAudioStatsHandler,
-  NetworkHealthChangedHandler,
-  BroadcastStateChangedHandler,
-  BroadcastQualityChangedHandler,
-} = EventPayloadKey;
 
 const IVSBroadcastCameraView = forwardRef<
   IIVSBroadcastCameraView,
@@ -81,15 +70,20 @@ const IVSBroadcastCameraView = forwardRef<
     () => {
       const reactTag = findNodeHandle(nativeViewRef.current);
 
-      const dispatchViewManagerCommand = (command: Command) =>
+      const dispatchViewManagerCommand = (
+        command: Command,
+        ...params: unknown[]
+      ) =>
         UIManager.dispatchViewManagerCommand(
           reactTag,
           getCommandIdByPlatform(command),
-          []
+          params ?? []
         );
 
       return {
-        start: () => dispatchViewManagerCommand(Command.Start),
+        start: (
+          options: Parameters<IIVSBroadcastCameraView['start']>[number] = {}
+        ) => dispatchViewManagerCommand(Command.Start, options),
         stop: () => dispatchViewManagerCommand(Command.Stop),
         /**
          * @deprecated in favor of {@link cameraPosition}
@@ -102,12 +96,12 @@ const IVSBroadcastCameraView = forwardRef<
 
   const onErrorHandler: IIVSBroadcastCameraNativeViewProps['onError'] = ({
     nativeEvent,
-  }) => onError?.(nativeEvent[ErrorHandler]);
+  }) => onError?.(nativeEvent.message);
 
   const onBroadcastErrorHandler: IIVSBroadcastCameraNativeViewProps['onBroadcastError'] =
     ({ nativeEvent }) => {
-      const exception = nativeEvent[BroadcastErrorHandler];
-      const { code, type, detail, source, isFatal, sessionId } = exception;
+      const { code, type, detail, source, isFatal, sessionId } =
+        nativeEvent.exception;
 
       onBroadcastError?.({
         code: String(code) ?? UNKNOWN,
@@ -120,31 +114,27 @@ const IVSBroadcastCameraView = forwardRef<
     };
 
   const onIsBroadcastReadyHandler: IIVSBroadcastCameraNativeViewProps['onIsBroadcastReady'] =
-    ({ nativeEvent }) =>
-      onIsBroadcastReady?.(nativeEvent[IsBroadcastReadyHandler]);
+    ({ nativeEvent }) => onIsBroadcastReady?.(nativeEvent.isReady);
 
   const onBroadcastAudioStatsHandler: IIVSBroadcastCameraNativeViewProps['onBroadcastAudioStats'] =
-    ({ nativeEvent }) =>
-      onBroadcastAudioStats?.(nativeEvent[BroadcastAudioStatsHandler]);
+    ({ nativeEvent }) => onBroadcastAudioStats?.(nativeEvent.audioStats);
 
   const onBroadcastStateChangedHandler: IIVSBroadcastCameraNativeViewProps['onBroadcastStateChanged'] =
     ({ nativeEvent }) => {
-      const incomingStateStatus = nativeEvent[BroadcastStateChangedHandler];
+      const { stateStatus: incomingStateStatus, metadata } = nativeEvent;
       const outcomingStateStatus = (
         typeof incomingStateStatus === 'number'
           ? StateStatusEnum[incomingStateStatus]
           : incomingStateStatus
       ) as StateStatusUnion;
-      onBroadcastStateChanged?.(outcomingStateStatus);
+      onBroadcastStateChanged?.(outcomingStateStatus, metadata);
     };
 
   const onNetworkHealthChangedHandler: IIVSBroadcastCameraNativeViewProps['onNetworkHealthChanged'] =
-    ({ nativeEvent }) =>
-      onNetworkHealthChanged?.(nativeEvent[NetworkHealthChangedHandler]);
+    ({ nativeEvent }) => onNetworkHealthChanged?.(nativeEvent.networkHealth);
 
   const onBroadcastQualityChangedHandler: IIVSBroadcastCameraNativeViewProps['onBroadcastQualityChanged'] =
-    ({ nativeEvent }) =>
-      onBroadcastQualityChanged?.(nativeEvent[BroadcastQualityChangedHandler]);
+    ({ nativeEvent }) => onBroadcastQualityChanged?.(nativeEvent.quality);
 
   const onAudioSessionInterruptedHandler: IIVSBroadcastCameraNativeViewProps['onAudioSessionInterrupted'] =
     () => onAudioSessionInterrupted?.();

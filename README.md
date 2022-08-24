@@ -61,8 +61,8 @@ Example of requesting Android dangerous permissions at runtime could be found in
 
 Props | Type | iOS | Android
 :---: | :---: | :---: | :---:
-`rtmpsUrl` | `string` | ✅ | ✅ |
-`streamKey` | `string` | ✅ | ✅ |
+`rtmpsUrl` | `string?` | ✅ | ✅ |
+`streamKey` | `string?` | ✅ | ✅ |
 `configurationPreset` | `ConfigurationPreset?` | ✅ | ✅ |
 `videoConfig` | `IVideoConfig?` | ✅ | ✅ |
 `audioConfig` | `IAudioConfig?` | ✅ | ✅ |
@@ -79,7 +79,7 @@ Handlers | Type | iOS | Android
 `onBroadcastError` | `(error: IBroadcastSessionError): void?` | ✅  | ✅  |
 `onIsBroadcastReady` | `(isReady: boolean): void?` | ✅  | ✅  |
 `onBroadcastAudioStats` | `(audioStats: IAudioStats): void?` | ✅  | ✅  |
-`onBroadcastStateChanged` | `(stateStatus: StateStatusUnion): void?` | ✅  | ✅  |
+`onBroadcastStateChanged` | `(stateStatus: StateStatusUnion, metadata?: StateChangedMetadata): void?` | ✅  | ✅  |
 `onBroadcastQualityChanged` | `(quality: number): void?` | ✅  | ✅  |
 `onNetworkHealthChanged` | `(networkHealth: number): void?` | ✅  | ✅  |
 `onAudioSessionInterrupted` | `(): void?` | ✅  | 🚫 |
@@ -89,7 +89,7 @@ Handlers | Type | iOS | Android
 
 Methods | Type | iOS | Android
 :---: | :---: | :---: | :---:  
-`start` | `(): void` | ✅  | ✅  |
+`start` | `(options?: StartMethodOptions): void` | ✅  | ✅  |
 `stop` | `(): void` | ✅  | ✅  |
 
 👉 Read more detailed [API documentation](docs/api-documentation.md).
@@ -101,10 +101,10 @@ A complex usage could be found in the [`./example/src/App.tsx`](./example/src/Ap
 
 ***
 
+## License
+[MIT](LICENSE)
+
 ## Credits
 This project has been built and is maintained thanks to the support from [Apiko](https://apiko.com/).
 
 <img alt="Apiko" src="./assets/ApikoLogo.png"/>
-
-## License
-[MIT](LICENSE)

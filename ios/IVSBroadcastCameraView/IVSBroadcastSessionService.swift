@@ -399,7 +399,13 @@ class IVSBroadcastSessionService: NSObject {
 
 extension IVSBroadcastSessionService: IVSBroadcastSession.Delegate {
   func broadcastSession(_ session: IVSBroadcastSession, didChange state: IVSBroadcastSession.State) {
-    self.onBroadcastStateChanged?(["stateStatus": state.rawValue])
+    var eventPayload = ["stateStatus": state.rawValue] as [AnyHashable : Any]
+    
+    if (state == .connected) {
+      eventPayload["metadata"] = ["sessionId": self.broadcastSession?.sessionId]
+    }
+    
+    self.onBroadcastStateChanged?(eventPayload)
   }
   
   func broadcastSession(_ session: IVSBroadcastSession, networkHealthChanged health: Double) {

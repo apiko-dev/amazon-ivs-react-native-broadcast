@@ -40,7 +40,7 @@ public class IVSBroadcastCameraViewManger extends ViewGroupManager<IVSBroadcastC
   public void receiveCommand(IVSBroadcastCameraView view, @NonNull String commandId, @Nullable ReadableArray args) {
     switch (commandId) {
       case IVSBroadcastCameraView.START_COMMAND_NAME: {
-        view.start();
+        view.start(args);
         break;
       }
       case IVSBroadcastCameraView.STOP_COMMAND_NAME: {

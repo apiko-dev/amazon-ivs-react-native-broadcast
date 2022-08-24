@@ -19,7 +19,7 @@ type ConfigurationPreset =
   | 'standardPortrait'
   | 'standardLandscape'
   | 'basicPortrait'
-  | 'basicLandscape'
+  | 'basicLandscape';
 ```
 
 | Value | Description |
@@ -31,15 +31,29 @@ type ConfigurationPreset =
 
 ## `IVideoConfig`
 
+```ts
+interface IVideoConfig {
+  readonly width?: number;
+  readonly height?: number;
+  readonly bitrate?: number;
+  readonly targetFrameRate?: number;
+  readonly keyframeInterval?: KeyframeInterval;
+  readonly isBFrames?: boolean;
+  readonly isAutoBitrate?: boolean;
+  readonly maxBitrate?: number;
+  readonly minBitrate?: number;
+}
+```
+
 | Key | Type | Range | Platform | Description |
 | :---: | :---: | :---: | :---: | --- |
 | `width` | `number?` | `160` - `1920` | iOS, Android | The width of the output video stream |
 | `height` | `number?` | `160` - `1920` | iOS, Android | The height of the output video stream |
 | `bitrate` | `number?` | `100000` - `8500000` | iOS, Android | Initial bitrate for the output video stream |
 | `targetFrameRate` | `number?` | `10` - `60`| iOS, Android | The target framerate of the output video stream |
-| `keyframeInterval` | `number?` | `1` - `5` | iOS, Android | The keyframe interval for the output video stream |
-| `isBFrames` | `boolean?` | | iOS, Android | Whether the output video stream uses B (Bidirectional predicted picture) frames |
-| `isAutoBitrate` | `boolean?` | | iOS, Android | Whether the output video stream will automatically adjust the bitrate based on network conditions. Use `minBitrate` and `maxBitrate` values to specify the bounds when this value is `true` |
+| `keyframeInterval` | [`KeyframeInterval?`](./types.md#keyframeinterval) | `1` - `5` | iOS, Android | The keyframe interval for the output video stream |
+| `isBFrames` | `boolean?` | - | iOS, Android | Whether the output video stream uses B (Bidirectional predicted picture) frames |
+| `isAutoBitrate` | `boolean?` | - | iOS, Android | Whether the output video stream will automatically adjust the bitrate based on network conditions. Use `minBitrate` and `maxBitrate` values to specify the bounds when this value is `true` |
 | `maxBitrate` | `number?` | `100000` - `8500000` | iOS, Android | The maximum bitrate for the output video stream |
 | `minBitrate` | `number?` | `100000` - `8500000` | iOS, Android | The minimum bitrate for the output video stream |
 
@@ -47,14 +61,29 @@ type ConfigurationPreset =
 
 ⚠️ _The `width` and `height` must both be between `160` and `1920`, and the maximum total number of pixels is `2,073,600.` So the smallest size is `160x160`, and the largest is either `1080x1920` or `1920x1080`. However something like `1920x1200` would not be worked. `1280x180` however is supported._
 
+## `KeyframeInterval`
+
+```ts
+type KeyframeInterval = 1 | 2 | 3 | 4 | 5;
+```
+
 ## `IAudioConfig`
+
+```ts
+interface IAudioConfig {
+  readonly bitrate?: number;
+  readonly channels?: AudioChannel;
+  readonly audioSessionStrategy?: AudioSessionStrategy;
+  readonly quality?: AudioQuality;
+}
+```
 
 | Key | Type | Range | Platform | Description |
 | :---: | :---: | :---: | :---: | --- |
 | `bitrate` | `number?` | `64000` - `160000` | iOS, Android | The average bitrate for the final output audio stream |
-| `channels` | [`AudioChannel?`](#audiochannel) | | iOS, Android | The number of channels for the output audio stream |
-| `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | | iOS | A value representing how the broadcast session will interact with `AVAudioSession` |
-| `quality` | [`AudioQuality?`](#audioquality-ios-only) | | iOS | The quality of the audio encoding |
+| `channels` | [`AudioChannel?`](#audiochannel) | - | iOS, Android | The number of channels for the output audio stream |
+| `audioSessionStrategy` | [`AudioSessionStrategy?`](#audiosessionstrategy-ios-only) | - | iOS | A value representing how the broadcast session will interact with `AVAudioSession` |
+| `quality` | [`AudioQuality?`](#audioquality-ios-only) | - | iOS | The quality of the audio encoding |
 
 ## `AudioChannel`
 
@@ -75,9 +104,9 @@ type AudioSessionStrategy = 'recordOnly' | 'playAndRecord' | 'noAction';
 
 | Value | Description |
 | :---: | --- |
-| `recordOnly` | Controls `AVAudioSession` completely and will set the category to `record`. There is a known issue with the `recordOnly` category and AirPods. Use `playAndRecord` category to make AirPods work. |
-| `playAndRecord` | Controls `AVAudioSession` completely and will set the category to `playAndRecord`. |
-| `noAction` | Does not control `AVAudioSession` at all. If this strategy is selected, only custom audio sources will be allowed. Microphone based sources will not be returned or added by any APIs. |
+| `recordOnly` | Controls `AVAudioSession` completely and will set the category to `record`. There is a known issue with the `recordOnly` category and AirPods. Use `playAndRecord` category to make AirPods work |
+| `playAndRecord` | Controls `AVAudioSession` completely and will set the category to `playAndRecord` |
+| `noAction` | Does not control `AVAudioSession` at all. If this strategy is selected, only custom audio sources will be allowed. Microphone based sources will not be returned or added by any APIs |
 
 ⚠️ _AirPods do not record any audio if the `audioSessionStrategy` is set to `recordOnly`. By default, the `playAndRecord` value is used, so this issue manifests only if the value is changed to `recordOnly`._
 
@@ -128,7 +157,7 @@ type CameraPosition = 'front' | 'back';
 ## `StateStatusUnion`
 
 ```ts
-type StateStatusUnion = "INVALID" | "DISCONNECTED" | "CONNECTING" | "CONNECTED" | "ERROR"
+type StateStatusUnion = "INVALID" | "DISCONNECTED" | "CONNECTING" | "CONNECTED" | "ERROR";
 ```
 
 | Value | Description |
@@ -154,7 +183,7 @@ interface IBroadcastSessionError {
 
 | Key | Description |
 | :---: | --- |
-| `sessionId` | The unique `ID` of this broadcast session. This will be updated every time the stream is stopped |
+| `sessionId` | The unique `ID` of the broadcast session. It is updated every time the stream is stopped |
 
 👉 See iOS `code` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.2.0/ios/Enums/IVSBroadcastError.html#/c:@E@IVSBroadcastError@IVSBroadcastErrorDeviceExchangeIncompatibleTypes).
 
@@ -162,9 +191,48 @@ interface IBroadcastSessionError {
 
 ## `IAudioStats`
 
-| Key | Type | Range | Description |
-| :---: | :---: | :---: | --- |
-| `peak` | `number?` | `-100` - `0` | Audio Peak over the time period |
-| `rms` | `number?` | `-100` - `0` | Audio RMS over the time period |
+```ts
+interface IAudioStats {
+  readonly peak: number;
+  readonly rms: number;
+}
+```
+
+| Key | Range | Description |
+| :---: | :---: | --- |
+| `peak` | `-100` - `0` | Audio Peak over the time period |
+| `rms` | `-100` - `0` | Audio RMS over the time period |
 
 A value of `-100` means silent.
+
+## `StartMethodOptions`
+
+```ts
+type StartMethodOptions = {
+  readonly rtmpsUrl?: string;
+  readonly streamKey?: string;
+}
+```
+
+| Key | Description |
+| :---: | --- |
+| `rtmpsUrl` | [rtmpsUrl](./api-documentation.md#rtmpsurl) |
+| `streamKey` | [streamKey](./api-documentation.md#streamkey) |
+
+## `StateChangedMetadata`
+
+```ts
+type StateChangedMetadata = IConnectedStateMetadata;
+```
+
+##### `IConnectedStateMetadata`
+
+```ts
+interface IConnectedStateMetadata {
+  sessionId: string;
+}
+```
+
+| Value | Description |
+| :---: | --- |
+| `sessionId` | The unique `ID` of the broadcast session. It is updated every time the stream is stopped |

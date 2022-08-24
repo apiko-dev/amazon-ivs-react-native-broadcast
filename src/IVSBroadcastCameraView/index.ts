@@ -3,6 +3,7 @@ export {
   CameraPosition,
   CameraPreviewAspectMode,
   StateStatusUnion,
+  StateChangedMetadata,
   IAudioStats,
   IBroadcastSessionError,
   IIVSBroadcastCameraView,

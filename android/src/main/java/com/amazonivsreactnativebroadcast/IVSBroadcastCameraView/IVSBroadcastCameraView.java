@@ -6,9 +6,9 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.amazonaws.ivs.broadcast.BroadcastSession;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -21,12 +21,13 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
   public static final String SWAP_CAMERA_COMMAND_NAME = "SWAP_CAMERA";
 
   public enum Events {
-    ON_BROADCAST_STATE_CHANGED("onBroadcastStateChanged"),
     ON_BROADCAST_ERROR("onBroadcastError"),
+    ON_BROADCAST_STATE_CHANGED("onBroadcastStateChanged"),
     ON_BROADCAST_QUALITY_CHANGED("onBroadcastQualityChanged"),
-    ON_BROADCAST_AUDIO_STATS("onBroadcastAudioStats"),
-    ON_IS_BROADCAST_READY("onIsBroadcastReady"),
     ON_NETWORK_HEALTH_CHANGED("onNetworkHealthChanged"),
+    ON_BROADCAST_AUDIO_STATS("onBroadcastAudioStats"),
+    ON_BROADCAST_SESSION_ID("onBroadcastSessionId"),
+    ON_IS_BROADCAST_READY("onIsBroadcastReady"),
     ON_ERROR("onError");
 
     private String title;
@@ -58,7 +59,37 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
   private void sendEvent(String eventName, @Nullable WritableMap eventPayload) {
     ThemedReactContext reactContext = (ThemedReactContext) super.getContext();
     RCTEventEmitter eventEmitter = reactContext.getJSModule(RCTEventEmitter.class);
+
     eventEmitter.receiveEvent(getId(), eventName, eventPayload);
+  }
+
+  private void onBroadcastEventHandler(IVSBroadcastSessionService.Events event, @Nullable WritableMap eventPayload) {
+    switch (event) {
+      case ON_ERROR: {
+        sendEvent(Events.ON_BROADCAST_ERROR.toString(), eventPayload);
+        break;
+      }
+      case ON_STATE_CHANGED: {
+        sendEvent(Events.ON_BROADCAST_STATE_CHANGED.toString(), eventPayload);
+        break;
+      }
+      case ON_QUALITY_CHANGED: {
+        sendEvent(Events.ON_BROADCAST_QUALITY_CHANGED.toString(), eventPayload);
+        break;
+      }
+      case ON_NETWORK_HEALTH_CHANGED: {
+        sendEvent(Events.ON_NETWORK_HEALTH_CHANGED.toString(), eventPayload);
+        break;
+      }
+      case ON_AUDIO_STATS: {
+        sendEvent(Events.ON_BROADCAST_AUDIO_STATS.toString(), eventPayload);
+        break;
+      }
+      case ON_SESSION_ID: {
+        sendEvent(Events.ON_BROADCAST_SESSION_ID.toString(), eventPayload);
+        break;
+      }
+    }
   }
 
   private void sendErrorEvent(String errorMessage) {
@@ -72,14 +103,8 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
     if (ivsBroadcastSession.isInitialized()) return;
 
     try {
-      IVSBroadcastSessionListener broadcastSessionListener = new IVSBroadcastSessionListener(
-        this::sendEvent
-      );
-      ivsBroadcastSession.setListener(broadcastSessionListener.listener);
-
-      String broadcastSessionId = ivsBroadcastSession.init();
-      broadcastSessionListener.setBroadcastSessionId(broadcastSessionId);
-
+      ivsBroadcastSession.setEventHandler(this::onBroadcastEventHandler);
+      ivsBroadcastSession.init();
       ivsBroadcastSession.getCameraPreviewAsync((cameraPreview) -> {
         onReceiveCameraPreviewHandler(cameraPreview);
 
@@ -98,15 +123,28 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
     ivsBroadcastSession = new IVSBroadcastSessionService(reactContext);
   }
 
-  protected void start() {
-    if (RTMPS_URL != null && STREAM_KEY != null) {
-      try {
-        ivsBroadcastSession.start(RTMPS_URL, STREAM_KEY);
-      } catch (RuntimeException error) {
-        sendErrorEvent(error.toString());
-      }
-    } else {
-      sendErrorEvent("'rtmpsUrl' and 'streamKey' props are required.");
+  protected void start(ReadableArray args) {
+    ReadableMap options = args.getMap(0);
+    String rtmpsUrl = options.getString("rtmpsUrl");
+    String streamKey = options.getString("streamKey");
+
+    String finalRtmpsUrl = rtmpsUrl != null ? rtmpsUrl : RTMPS_URL;
+    String finalStreamKey = streamKey != null ? streamKey : STREAM_KEY;
+
+    if (finalRtmpsUrl == null) {
+      sendErrorEvent("'rtmpsUrl' is empty.");
+      return;
+    }
+
+    if (finalStreamKey == null) {
+      sendErrorEvent("'streamKey' is empty.");
+      return;
+    }
+
+    try {
+      ivsBroadcastSession.start(finalRtmpsUrl, finalStreamKey);
+    } catch (RuntimeException error) {
+      sendErrorEvent(error.toString());
     }
   }
 

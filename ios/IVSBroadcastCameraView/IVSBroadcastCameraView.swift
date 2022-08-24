@@ -186,19 +186,22 @@ class IVSBroadcastCameraView: UIView {
     }
   }
   
-  public func start() {
-    guard let rtmpsUrl = self.rtmpsUrl else {
-      assertionFailure("'rtmpsUrl' prop is required.")
-      return;
+  public func start(_ options: NSDictionary) {
+    let rtmpsUrl = options["rtmpsUrl"] != nil ? options["rtmpsUrl"] : self.rtmpsUrl
+    let streamKey = options["streamKey"] != nil ? options["streamKey"] : self.streamKey
+
+    guard let finalRtmpsUrl = rtmpsUrl else {
+      assertionFailure("'rtmpsUrl' is empty.")
+      return
     }
-    
-    guard let streamKey = self.streamKey else {
-      assertionFailure("'streamKey' prop is required.")
-      return;
+
+    guard let finalStreamKey = streamKey else {
+      assertionFailure("'streamKey' is empty.")
+      return
     }
     
     do {
-      try self.broadcastSession.start(ivsRTMPSUrl: rtmpsUrl , ivsStreamKey: streamKey)
+      try self.broadcastSession.start(ivsRTMPSUrl: finalRtmpsUrl as! NSString, ivsStreamKey: finalStreamKey as! NSString)
     } catch {
       self.onErrorHandler(error)
     }

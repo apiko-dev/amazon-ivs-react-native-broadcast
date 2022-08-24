@@ -219,7 +219,7 @@ describe('Static methods work as expected', () => {
      * @deprecated in favor of 'cameraPosition' prop.
      */
     { methodName: 'swapCamera' as const, calledWithSecondArg: SwapCamera },
-  ])('$method', ({ methodName, calledWithSecondArg }) => {
+  ])('$methodName', ({ methodName, calledWithSecondArg }) => {
     Platform.OS = 'android';
 
     renderIVSBroadcastCameraView({ ref: ivsBroadcastCameraViewRef });

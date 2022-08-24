@@ -31,7 +31,9 @@ The RTMPS endpoint provided by IVS.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
-| `string` | Yes | iOS, Android |
+| `string` | No | iOS, Android |
+
+⚠️ _The RTMPS url can be also provided via [`start`](./api-documentation.md#start) method._
 
 #### `streamKey`
 
@@ -39,7 +41,9 @@ The broadcaster’s stream key that has been provided by IVS.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
-| `string` | Yes | iOS, Android |
+| `string` | No | iOS, Android |
+
+⚠️ _The stream key can be also provided via [`start`](./api-documentation.md#start) method._
 
 #### `configurationPreset`
 
@@ -184,7 +188,9 @@ Indicates that the broadcast state changed.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
-| `onBroadcastStateChanged(stateStatus: `[`StateStatusUnion`](./types.md#statestatusunion)`): void` | No | iOS, Android |
+| `onBroadcastStateChanged(stateStatus: `[`StateStatusUnion`](./types.md#statestatusunion)`, metadata?: `[`StateChangedMetadata`](./types.md#statechangedmetadata)`): void` | No | iOS, Android |
+
+⚠️ _As of now, the metadata is available with `CONNECTED` state status only._
 
 #### `onBroadcastQualityChanged`
 
@@ -254,7 +260,9 @@ Start the configured broadcast session.
 
 | Type | Required | Platform |
 | :---: | :---: | :---: |
-| `(): void` | No | iOS, Android |
+| `(options?: `[`StartMethodOptions`](./types.md#startmethodoptions)`): void` | No | iOS, Android |
+
+⚠️ _The `rtmpsUrl` and `streamKey` which are passed to the `start` method take precedence over the equivalent component props._
 
 #### `stop`
 

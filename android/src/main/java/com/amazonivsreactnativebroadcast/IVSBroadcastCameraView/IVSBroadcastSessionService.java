@@ -5,12 +5,19 @@ import com.amazonaws.ivs.broadcast.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 
 @FunctionalInterface
 interface CameraPreviewHandler {
   void run(ImagePreviewView cameraPreview);
+}
+
+@FunctionalInterface
+interface RunnableCallback {
+  void run(IVSBroadcastSessionService.Events event, @Nullable WritableMap eventPayload);
 }
 
 // Guide: https://docs.aws.amazon.com/ivs/latest/userguide//broadcast-android.html
@@ -28,9 +35,78 @@ public class IVSBroadcastSessionService {
   private Device.Descriptor attachedCameraDescriptor;
   private Device.Descriptor attachedMicrophoneDescriptor;
 
+  private String sessionId;
   private BroadcastSession broadcastSession;
-  private BroadcastSession.Listener broadcastSessionListener;
   private BroadcastConfiguration config = new BroadcastConfiguration();
+
+  private RunnableCallback broadcastEventHandler;
+  private final BroadcastSession.Listener broadcastSessionListener = new BroadcastSession.Listener() {
+    @Override
+    public void onStateChanged(@NonNull BroadcastSession.State state) {
+      WritableMap eventPayload = Arguments.createMap();
+      eventPayload.putString("stateStatus", state.toString());
+
+      if (state == BroadcastSession.State.CONNECTED) {
+        WritableMap metadata = Arguments.createMap();
+        metadata.putString("sessionId", sessionId);
+        eventPayload.putMap("metadata", metadata);
+      }
+
+      broadcastEventHandler.run(Events.ON_STATE_CHANGED, eventPayload);
+    }
+
+    @Override
+    public void onError(@NonNull BroadcastException exception) {
+      int code = exception.getCode();
+      String detail = exception.getDetail();
+      String source = exception.getSource();
+      boolean isFatal = exception.isFatal();
+      String type = exception.getError().name();
+
+      WritableMap eventPayload = Arguments.createMap();
+      WritableMap broadcastException = Arguments.createMap();
+
+      broadcastException.putInt("code", code);
+      broadcastException.putString("detail", detail);
+      broadcastException.putString("source", source);
+      broadcastException.putBoolean("isFatal", isFatal);
+      broadcastException.putString("type", type);
+      broadcastException.putString("sessionId", sessionId);
+
+      eventPayload.putMap("exception", broadcastException);
+
+      broadcastEventHandler.run(Events.ON_ERROR, eventPayload);
+    }
+
+    @Override
+    public void onBroadcastQualityChanged(double quality) {
+      WritableMap eventPayload = Arguments.createMap();
+      eventPayload.putDouble("quality", quality);
+
+      broadcastEventHandler.run(Events.ON_QUALITY_CHANGED, eventPayload);
+    }
+
+    @Override
+    public void onNetworkHealthChanged(double health) {
+      WritableMap eventPayload = Arguments.createMap();
+      eventPayload.putDouble("networkHealth", health);
+
+      broadcastEventHandler.run(Events.ON_NETWORK_HEALTH_CHANGED, eventPayload);
+    }
+
+    @Override
+    public void onAudioStats(double peak, double rms) {
+      WritableMap eventPayload = Arguments.createMap();
+      WritableMap audioStats = Arguments.createMap();
+
+      audioStats.putDouble("peak", peak);
+      audioStats.putDouble("rms", rms);
+
+      eventPayload.putMap("audioStats", audioStats);
+
+      broadcastEventHandler.run(Events.ON_AUDIO_STATS, eventPayload);
+    }
+  };
 
   private BroadcastConfiguration.LogLevel getLogLevel(String logLevelName) {
     switch (logLevelName) {
@@ -205,7 +281,7 @@ public class IVSBroadcastSessionService {
   private void postInitialization() {
     broadcastSession.setLogLevel(initialSessionLogLevel);
     if (isInitialMuted) {
-      muteAsync(isInitialMuted);
+      muteAsync(true);
     }
   }
 
@@ -219,27 +295,47 @@ public class IVSBroadcastSessionService {
     }
   }
 
+  public enum Events {
+    ON_ERROR("onError"),
+    ON_STATE_CHANGED("onStateChanged"),
+    ON_QUALITY_CHANGED("onQualityChanged"),
+    ON_NETWORK_HEALTH_CHANGED("onNetworkHealthChanged"),
+    ON_AUDIO_STATS("onAudioStats"),
+    ON_SESSION_ID("onSessionId");
+
+    private String title;
+
+    Events(String title) {
+      this.title = title;
+    }
+
+    @Override
+    public String toString() {
+      return title;
+    }
+  }
+
   public IVSBroadcastSessionService(ThemedReactContext reactContext) {
     mReactContext = reactContext;
   }
 
-  public String init() {
-    if (isInitialized()) return broadcastSession.getSessionId();
+  public void init() {
+    if (isInitialized()) {
+      throw new RuntimeException("Broadcast session has been already initialized.");
+    } else {
+      preInitialization();
 
-    preInitialization();
+      broadcastSession = new BroadcastSession(
+        mReactContext,
+        broadcastSessionListener,
+        config,
+        getInitialDeviceDescriptorList()
+      );
 
-    broadcastSession = new BroadcastSession(
-      mReactContext,
-      broadcastSessionListener,
-      config,
-      getInitialDeviceDescriptorList()
-    );
+      saveInitialDevicesDescriptor(getInitialDeviceDescriptorList());
 
-    saveInitialDevicesDescriptor(getInitialDeviceDescriptorList());
-
-    postInitialization();
-
-    return broadcastSession.getSessionId();
+      postInitialization();
+    }
   }
 
   public void deinit() {
@@ -257,6 +353,7 @@ public class IVSBroadcastSessionService {
 
   public void start(@Nullable String ivsRTMPSUrl, @Nullable String ivsStreamKey) {
     broadcastSession.start(ivsRTMPSUrl, ivsStreamKey);
+    sessionId = broadcastSession.getSessionId();
   }
 
   public void stop() {
@@ -320,10 +417,6 @@ public class IVSBroadcastSessionService {
     });
   }
 
-  public void setListener(BroadcastSession.Listener broadcastListener) {
-    broadcastSessionListener = broadcastListener;
-  }
-
   public void setConfigurationPreset(String configurationPreset) {
     config = getConfigurationPreset(configurationPreset);
   }
@@ -334,5 +427,9 @@ public class IVSBroadcastSessionService {
 
   public void setAudioConfig(ReadableMap audioConfig) {
     customAudioConfig = audioConfig;
+  }
+
+  public void setEventHandler(RunnableCallback handler) {
+    broadcastEventHandler = handler;
   }
 }

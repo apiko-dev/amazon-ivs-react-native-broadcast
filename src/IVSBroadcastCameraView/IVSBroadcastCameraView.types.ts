@@ -16,16 +16,6 @@ export enum Command {
   SwapCamera = 'SWAP_CAMERA',
 }
 
-export enum EventPayloadKey {
-  ErrorHandler = 'message',
-  BroadcastErrorHandler = 'exception',
-  IsBroadcastReadyHandler = 'isReady',
-  BroadcastAudioStatsHandler = 'audioStats',
-  BroadcastQualityChangedHandler = 'quality',
-  BroadcastStateChangedHandler = 'stateStatus',
-  NetworkHealthChangedHandler = 'networkHealth',
-}
-
 export enum StateStatusEnum {
   INVALID = 0,
   DISCONNECTED = 1,
@@ -93,6 +83,12 @@ interface IAudioConfig {
   readonly quality?: AudioQuality;
 }
 
+interface IConnectedStateMetadata {
+  sessionId: string;
+}
+
+export type StateChangedMetadata = IConnectedStateMetadata;
+
 export interface INativeEventHandlers {
   onError: IEventHandler<Readonly<{ message: string }>>;
   onBroadcastError: IEventHandler<
@@ -112,6 +108,7 @@ export interface INativeEventHandlers {
   onBroadcastStateChanged: IEventHandler<
     Readonly<{
       stateStatus: StateStatusUnion | number;
+      metadata?: StateChangedMetadata;
     }>
   >;
   onBroadcastQualityChanged: IEventHandler<Readonly<{ quality: number }>>;
@@ -130,8 +127,8 @@ export interface IIVSBroadcastCameraNativeViewProps
 }
 
 interface IBaseProps {
-  readonly rtmpsUrl: string;
-  readonly streamKey: string;
+  readonly rtmpsUrl?: string;
+  readonly streamKey?: string;
   readonly configurationPreset?: ConfigurationPreset;
   readonly videoConfig?: IVideoConfig;
   readonly audioConfig?: IAudioConfig;
@@ -148,7 +145,10 @@ export interface IEventHandlers {
   onBroadcastError?(error: IBroadcastSessionError): void;
   onIsBroadcastReady?(isReady: boolean): void;
   onBroadcastAudioStats?(audioStats: IAudioStats): void;
-  onBroadcastStateChanged?(stateStatus: StateStatusUnion): void;
+  onBroadcastStateChanged?(
+    stateStatus: StateStatusUnion,
+    metadata?: StateChangedMetadata
+  ): void;
   onBroadcastQualityChanged?(quality: number): void;
   onNetworkHealthChanged?(networkHealth: number): void;
   onAudioSessionInterrupted?(): void;
@@ -164,8 +164,10 @@ export interface IIVSBroadcastCameraViewProps
   readonly testID?: string;
 }
 
+type StartMethodOptions = Pick<IBaseProps, 'rtmpsUrl' | 'streamKey'>;
+
 export interface IIVSBroadcastCameraView {
-  start(): void;
+  start(options?: StartMethodOptions): void;
   stop(): void;
   /**
    * @deprecated in favor of {@link CameraPosition}

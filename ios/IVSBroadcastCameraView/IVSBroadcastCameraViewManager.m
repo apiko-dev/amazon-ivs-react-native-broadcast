@@ -29,7 +29,7 @@ RCT_EXPORT_VIEW_PROPERTY(onMediaServicesWereReset, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onNetworkHealthChanged, RCTDirectEventBlock)
 
 // Methods
-RCT_EXTERN_METHOD(START:(nonnull NSNumber *)node)
+RCT_EXTERN_METHOD(START:(nonnull NSNumber *)node options:(NSDictionary)options)
 RCT_EXTERN_METHOD(STOP:(nonnull NSNumber *)node)
 // @Deprecated in favor of cameraPosition prop.
 RCT_EXTERN_METHOD(SWAP_CAMERA:(nonnull NSNumber *)node)
