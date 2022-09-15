@@ -255,6 +255,7 @@ public class IVSBroadcastSessionService {
             attachedCameraDescriptor = newCamera.getDescriptor();
             callback.run(getCameraPreview());
           });
+          break;
         }
       }
     });

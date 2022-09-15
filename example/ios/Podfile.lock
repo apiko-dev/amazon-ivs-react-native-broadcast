@@ -1,5 +1,5 @@
 PODS:
-  - amazon-ivs-react-native-broadcast (1.0.1):
+  - amazon-ivs-react-native-broadcast (1.1.0):
     - AmazonIVSBroadcast (~> 1.5.1)
     - React-Core
   - AmazonIVSBroadcast (1.5.1)
@@ -416,17 +416,17 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amazon-ivs-react-native-broadcast: fbbe4efc15438ff08ff7a700605f790b60ae74bf
+  amazon-ivs-react-native-broadcast: 12bb9784e4ea0656666cb91fd330927887fba4f1
   AmazonIVSBroadcast: 9cfcfe1b6777cde40bb0fd8266961759747e1e24
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   FBLazyVector: 244195e30d63d7f564c55da4410b9a24e8fbceaa
   FBReactNativeSpec: c94002c1d93da3658f4d5119c6994d19961e3d52
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
+  glog: bbaccdf9af7ec106ed6f0eb086217dc2bf37414c
   hermes-engine: bf7577d12ac6ccf53ab8b5af3c6ccf0dd8458c5c
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  RCT-Folly: 803a9cfd78114b2ec0f140cfa6fa2a6bafb2d685
+  RCT-Folly: e2884a9690756d04e97bae28f6acad987433dccd
   RCTRequired: cd47794163052d2b8318c891a7a14fcfaccc75ab
   RCTTypeSafety: 393bb40b3e357b224cde53d3fec26813c52428b1
   React: dec6476bc27155b250eeadfc11ea779265f53ebf
