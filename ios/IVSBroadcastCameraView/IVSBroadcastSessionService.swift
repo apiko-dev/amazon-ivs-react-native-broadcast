@@ -105,6 +105,18 @@ class IVSBroadcastSessionService: NSObject {
     }
   }
   
+  private func getAutomaticBitrateProfile(_ automaticBitrateProfileName: NSString) -> IVSVideoConfiguration.AutomaticBitrateProfile {
+    switch automaticBitrateProfileName {
+      case "conservative":
+        return .conservative
+      case "fastIncrease":
+        return .fastIncrease
+      default:
+        assertionFailure("Does not support automatic bitrate profile: \(automaticBitrateProfileName).")
+        return .conservative
+    }
+  }
+  
   private func getConfigurationPreset(_ configurationPresetName: NSString) -> IVSBroadcastConfiguration {
     switch configurationPresetName {
       case "standardPortrait":
@@ -178,6 +190,10 @@ class IVSBroadcastSessionService: NSObject {
     }
     if let minBitrate = videoConfig["minBitrate"] {
       try self.config.video.setMinBitrate(minBitrate as! Int)
+    }
+    if let autoBitrateProfileName = videoConfig["autoBitrateProfile"] {
+      let autoBitrateProfile = self.getAutomaticBitrateProfile(autoBitrateProfileName as! NSString)
+      self.config.video.autoBitrateProfile = autoBitrateProfile
     }
   }
   

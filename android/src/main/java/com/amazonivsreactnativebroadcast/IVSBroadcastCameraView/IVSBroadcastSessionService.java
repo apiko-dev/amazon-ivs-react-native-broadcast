@@ -179,6 +179,20 @@ public class IVSBroadcastSessionService {
     }
   }
 
+  private BroadcastConfiguration.AutomaticBitrateProfile getAutomaticBitrateProfile(String automaticBitrateProfileName) {
+    switch (automaticBitrateProfileName) {
+      case "conservative": {
+        return BroadcastConfiguration.AutomaticBitrateProfile.CONSERVATIVE;
+      }
+      case "fastIncrease": {
+        return BroadcastConfiguration.AutomaticBitrateProfile.FAST_INCREASE;
+      }
+      default: {
+        throw new RuntimeException("Does not support automatic bitrate profile: " + automaticBitrateProfileName);
+      }
+    }
+  }
+
   private ImagePreviewView getCameraPreview() {
     ImagePreviewView preview = broadcastSession.getPreviewView(cameraPreviewAspectMode);
     preview.setMirrored(isCameraPreviewMirrored);
@@ -228,6 +242,12 @@ public class IVSBroadcastSessionService {
         if (customVideoConfig.hasKey("minBitrate")) {
           $.video.setMinBitrate(customVideoConfig.getInt("minBitrate"));
         }
+        if (customVideoConfig.hasKey("autoBitrateProfile")) {
+          String autoBitrateProfileName = customVideoConfig.getString("autoBitrateProfile");
+          BroadcastConfiguration.AutomaticBitrateProfile autoBitrateProfile = getAutomaticBitrateProfile(autoBitrateProfileName);
+          $.video.setAutoBitrateProfile(autoBitrateProfile);
+        }
+
         return $;
       });
     }

@@ -12,7 +12,7 @@ A React Native wrapper for the Amazon IVS iOS and Android broadcast SDKs.
 
 ⚠️ _Apps using `amazon-ivs-react-native-broadcast` must target **iOS 11** and **Android 12 (API 31)**._
 
-***
+---
 
 👉 [Read more](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast.html) about broadcasting to Amazon IVS.
 
@@ -28,15 +28,17 @@ $ cd ios && pod install && cd ..
 ```
 
 # `IVSBroadcastCameraView` component
-Allows consumers to stream video from an active phone camera.
 
+Allows consumers to stream video from an active phone camera.
 
 ## ⚠️ Requirements
 
 An application must request permission to access the user’s camera and microphone. This isn't specific to the component but required for any application that needs access to the cameras and microphones.
 
 #### **iOS**
+
 Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys to the `Info.plist` file:
+
 ```xml
 ...
 <key>NSCameraUsageDescription</key>
@@ -47,64 +49,71 @@ Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys to the `I
 ```
 
 #### **Android**
-Add `CAMERA` and  `RECORD_AUDIO` permissions to the `AndroidManifest.xml` file:
+
+Add `CAMERA` and `RECORD_AUDIO` permissions to the `AndroidManifest.xml` file:
+
 ```xml
 ...
 <uses-permission android:name="android.permission.CAMERA" />
 <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 ...
 ```
->⚠️ _On devices before SDK version 23, the permissions are automatically granted if they appear in the manifest, so check should always result to `true` and request should always resolve to `PermissionsAndroid.RESULTS.GRANTED`, however if your app is installed on a device that runs Android 6.0 or higher, **you must request** the _dangerous permissions_ at runtime manually._
+
+> ⚠️ _On devices before SDK version 23, the permissions are automatically granted if they appear in the manifest, so check should always result to `true` and request should always resolve to `PermissionsAndroid.RESULTS.GRANTED`, however if your app is installed on a device that runs Android 6.0 or higher, **you must request** the \_dangerous permissions_ at runtime manually.\_
 
 Example of requesting Android dangerous permissions at runtime could be found in the [`./example/src/index.android.tsx`](./example/src/index.android.tsx) file.
+
 ## API
 
-Props | Type | iOS | Android
-:---: | :---: | :---: | :---:
-`rtmpsUrl` | `string?` | ✅ | ✅ |
-`streamKey` | `string?` | ✅ | ✅ |
-`configurationPreset` | `ConfigurationPreset?` | ✅ | ✅ |
-`videoConfig` | `IVideoConfig?` | ✅ | ✅ |
-`audioConfig` | `IAudioConfig?` | ✅ | ✅ |
-`logLevel` | `LogLevel?` | ✅ | ✅ |
-`sessionLogLevel` | `LogLevel?` | ✅ | ✅ |
-`cameraPreviewAspectMode` | `CameraPreviewAspectMode?` | ✅ | ✅ |
-`isCameraPreviewMirrored` | `boolean?` | ✅ | ✅ |
-`cameraPosition` | `CameraPosition?` | ✅  | ✅|
-`isMuted` | `boolean?` | ✅  | ✅|
+|           Props           |            Type            | iOS | Android |
+| :-----------------------: | :------------------------: | :-: | :-----: |
+|        `rtmpsUrl`         |         `string?`          | ✅  |   ✅    |
+|        `streamKey`        |         `string?`          | ✅  |   ✅    |
+|   `configurationPreset`   |   `ConfigurationPreset?`   | ✅  |   ✅    |
+|       `videoConfig`       |      `IVideoConfig?`       | ✅  |   ✅    |
+|       `audioConfig`       |      `IAudioConfig?`       | ✅  |   ✅    |
+|        `logLevel`         |        `LogLevel?`         | ✅  |   ✅    |
+|     `sessionLogLevel`     |        `LogLevel?`         | ✅  |   ✅    |
+| `cameraPreviewAspectMode` | `CameraPreviewAspectMode?` | ✅  |   ✅    |
+| `isCameraPreviewMirrored` |         `boolean?`         | ✅  |   ✅    |
+|     `cameraPosition`      |     `CameraPosition?`      | ✅  |   ✅    |
+|         `isMuted`         |         `boolean?`         | ✅  |   ✅    |
 
-Handlers | Type | iOS | Android
-:---: | :---: | :---: | :---:  
-`onError` | `(errorMessage: string): void?` | ✅  | ✅  |
-`onBroadcastError` | `(error: IBroadcastSessionError): void?` | ✅  | ✅  |
-`onIsBroadcastReady` | `(isReady: boolean): void?` | ✅  | ✅  |
-`onBroadcastAudioStats` | `(audioStats: IAudioStats): void?` | ✅  | ✅  |
-`onBroadcastStateChanged` | `(stateStatus: StateStatusUnion, metadata?: StateChangedMetadata): void?` | ✅  | ✅  |
-`onBroadcastQualityChanged` | `(quality: number): void?` | ✅  | ✅  |
-`onNetworkHealthChanged` | `(networkHealth: number): void?` | ✅  | ✅  |
-`onAudioSessionInterrupted` | `(): void?` | ✅  | 🚫 |
-`onAudioSessionResumed` | `(): void?` | ✅  | 🚫 |
-`onMediaServicesWereLost` | `(): void?` | ✅  | 🚫 |
-`onMediaServicesWereReset` | `(): void?` | ✅  | 🚫 |
+|          Handlers           |                                   Type                                    | iOS | Android |
+| :-------------------------: | :-----------------------------------------------------------------------: | :-: | :-----: |
+|          `onError`          |                      `(errorMessage: string): void?`                      | ✅  |   ✅    |
+|     `onBroadcastError`      |                 `(error: IBroadcastSessionError): void?`                  | ✅  |   ✅    |
+|    `onIsBroadcastReady`     |                        `(isReady: boolean): void?`                        | ✅  |   ✅    |
+|   `onBroadcastAudioStats`   |                    `(audioStats: IAudioStats): void?`                     | ✅  |   ✅    |
+|  `onBroadcastStateChanged`  | `(stateStatus: StateStatusUnion, metadata?: StateChangedMetadata): void?` | ✅  |   ✅    |
+| `onBroadcastQualityChanged` |                        `(quality: number): void?`                         | ✅  |   ✅    |
+|  `onNetworkHealthChanged`   |                     `(networkHealth: number): void?`                      | ✅  |   ✅    |
+| `onAudioSessionInterrupted` |                                `(): void?`                                | ✅  |   🚫    |
+|   `onAudioSessionResumed`   |                                `(): void?`                                | ✅  |   🚫    |
+|  `onMediaServicesWereLost`  |                                `(): void?`                                | ✅  |   🚫    |
+| `onMediaServicesWereReset`  |                                `(): void?`                                | ✅  |   🚫    |
 
-Methods | Type | iOS | Android
-:---: | :---: | :---: | :---:  
-`start` | `(options?: StartMethodOptions): void` | ✅  | ✅  |
-`stop` | `(): void` | ✅  | ✅  |
+| Methods |                  Type                  | iOS | Android |
+| :-----: | :------------------------------------: | :-: | :-----: |
+| `start` | `(options?: StartMethodOptions): void` | ✅  |   ✅    |
+| `stop`  |               `(): void`               | ✅  |   ✅    |
 
 👉 Read more detailed [API documentation](docs/api-documentation.md).
 
 👉 [iOS](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast-ios.html#broadcast-ios-issues) and [Android](https://docs.aws.amazon.com/ivs/latest/userguide/broadcast-android.html#broadcast-android-issues) known issues and workarounds.
 
 ## Usage
+
 A complex usage could be found in the [`./example/src/App.tsx`](./example/src/App.tsx) file or just go to the [`./example`](./example/) folder and read _Setting up and running application_ section how to set up and run the example app to see `IVSBroadcastCameraView` component in action.
 
-***
+---
 
 ## License
+
 [MIT](LICENSE)
 
 ## Credits
+
 This project has been built and is maintained thanks to the support from [Apiko](https://apiko.com/).
 
 <img alt="Apiko" src="./assets/ApikoLogo.png"/>

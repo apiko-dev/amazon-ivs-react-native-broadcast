@@ -215,6 +215,13 @@ describe('Static methods work as expected', () => {
 
   const ivsBroadcastCameraViewRef = createRef<IIVSBroadcastCameraView>();
 
+  beforeAll(() => {
+    Platform.OS = 'android';
+  });
+  beforeEach(() => {
+    mockCommandFn.mockClear();
+  });
+
   test.each([
     { methodName: 'start' as const, calledWithSecondArg: Start },
     { methodName: 'stop' as const, calledWithSecondArg: Stop },
@@ -223,15 +230,11 @@ describe('Static methods work as expected', () => {
      */
     { methodName: 'swapCamera' as const, calledWithSecondArg: SwapCamera },
   ])('$methodName', ({ methodName, calledWithSecondArg }) => {
-    Platform.OS = 'android';
-
     renderIVSBroadcastCameraView({ ref: ivsBroadcastCameraViewRef });
 
-    mockCommandFn.mockClear();
     ivsBroadcastCameraViewRef.current?.[methodName]();
 
     expect(mockCommandFn).toHaveBeenCalled();
-
     const secondArg = mockCommandFn.mock.calls[0][1];
     expect(secondArg).toBe(calledWithSecondArg);
   });

@@ -46,6 +46,8 @@ type ConfigurationPreset =
   | 'basicPortrait'
   | 'basicLandscape';
 
+type AutomaticBitrateProfile = 'conservative' | 'fastIncrease';
+
 interface IEventHandler<T extends Record<string, unknown>> {
   (event: NativeSyntheticEvent<T>): void;
 }
@@ -74,6 +76,7 @@ interface IVideoConfig {
   readonly isAutoBitrate?: boolean;
   readonly maxBitrate?: number;
   readonly minBitrate?: number;
+  readonly autoBitrateProfile?: AutomaticBitrateProfile;
 }
 
 interface IAudioConfig {
