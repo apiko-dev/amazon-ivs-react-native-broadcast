@@ -38,7 +38,11 @@ type AudioQuality = 'minimum' | 'low' | 'medium' | 'high' | 'maximum';
 
 type KeyframeInterval = 1 | 2 | 3 | 4 | 5;
 
-type AudioSessionStrategy = 'recordOnly' | 'playAndRecord' | 'noAction';
+type AudioSessionStrategy =
+  | 'recordOnly'
+  | 'playAndRecord'
+  | 'playAndRecordDefaultToSpeaker'
+  | 'noAction';
 
 type ConfigurationPreset =
   | 'standardPortrait'

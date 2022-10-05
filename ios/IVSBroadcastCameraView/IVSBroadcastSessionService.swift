@@ -34,56 +34,58 @@ class IVSBroadcastSessionService: NSObject {
   private func getLogLevel(_ logLevelName: NSString) -> IVSBroadcastSession.LogLevel {
     switch logLevelName {
       case "debug":
-        return IVSBroadcastSession.LogLevel.debug
+        return .debug
       case "error":
-        return IVSBroadcastSession.LogLevel.error
+        return .error
       case "info":
-        return IVSBroadcastSession.LogLevel.info
+        return .info
       case "warning":
-        return IVSBroadcastSession.LogLevel.warn
+        return .warn
       default:
         assertionFailure("Does not support log level: \(logLevelName)")
-        return IVSBroadcastSession.LogLevel.error
+        return .error
     }
   }
   
   private func getAspectMode(_ aspectModeName: NSString) -> IVSBroadcastConfiguration.AspectMode {
     switch aspectModeName {
       case "fit":
-        return IVSBroadcastConfiguration.AspectMode.fit
+        return .fit
       case "fill":
-        return IVSBroadcastConfiguration.AspectMode.fill
+        return .fill
       case "none":
-        return IVSBroadcastConfiguration.AspectMode.none
+        return .none
       default:
         assertionFailure("Does not support aspect mode: \(aspectModeName)")
-        return IVSBroadcastConfiguration.AspectMode.fill
+        return .fill
     }
   }
   
   private func getCameraPosition(_ cameraPositionName: NSString) -> IVSDevicePosition {
     switch(cameraPositionName) {
       case "front":
-        return IVSDevicePosition.front
+        return .front
       case "back":
-        return IVSDevicePosition.back
+        return .back
       default:
         assertionFailure("Does not support camera position: \(cameraPositionName)")
-        return IVSDevicePosition.back
+        return .back
     }
   }
   
   private func getAudioSessionStrategy(_ audioSessionStrategyName: NSString) -> IVSBroadcastSession.AudioSessionStrategy {
     switch audioSessionStrategyName {
       case "recordOnly":
-        return IVSBroadcastSession.AudioSessionStrategy.recordOnly
+        return .recordOnly
       case "playAndRecord":
-        return IVSBroadcastSession.AudioSessionStrategy.playAndRecord
+        return .playAndRecord
+      case "playAndRecordDefaultToSpeaker":
+        return .playAndRecordDefaultToSpeaker
       case "noAction":
-        return IVSBroadcastSession.AudioSessionStrategy.noAction
+        return .noAction
       default:
         assertionFailure("Does not support audio session strategy: \(audioSessionStrategyName).")
-        return IVSBroadcastSession.AudioSessionStrategy.playAndRecord
+        return .playAndRecord
     }
   }
   
