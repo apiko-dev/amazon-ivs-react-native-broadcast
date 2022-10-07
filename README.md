@@ -79,19 +79,18 @@ Example of requesting Android dangerous permissions at runtime could be found in
 |     `cameraPosition`      |     `CameraPosition?`      | ✅  |   ✅    |
 |         `isMuted`         |         `boolean?`         | ✅  |   ✅    |
 
-|          Handlers           |                                   Type                                    | iOS | Android |
-| :-------------------------: | :-----------------------------------------------------------------------: | :-: | :-----: |
-|          `onError`          |                      `(errorMessage: string): void?`                      | ✅  |   ✅    |
-|     `onBroadcastError`      |                 `(error: IBroadcastSessionError): void?`                  | ✅  |   ✅    |
-|    `onIsBroadcastReady`     |                        `(isReady: boolean): void?`                        | ✅  |   ✅    |
-|   `onBroadcastAudioStats`   |                    `(audioStats: IAudioStats): void?`                     | ✅  |   ✅    |
-|  `onBroadcastStateChanged`  | `(stateStatus: StateStatusUnion, metadata?: StateChangedMetadata): void?` | ✅  |   ✅    |
-| `onBroadcastQualityChanged` |                        `(quality: number): void?`                         | ✅  |   ✅    |
-|  `onNetworkHealthChanged`   |                     `(networkHealth: number): void?`                      | ✅  |   ✅    |
-| `onAudioSessionInterrupted` |                                `(): void?`                                | ✅  |   🚫    |
-|   `onAudioSessionResumed`   |                                `(): void?`                                | ✅  |   🚫    |
-|  `onMediaServicesWereLost`  |                                `(): void?`                                | ✅  |   🚫    |
-| `onMediaServicesWereReset`  |                                `(): void?`                                | ✅  |   🚫    |
+|             Handlers              |                                   Type                                    | iOS | Android |
+| :-------------------------------: | :-----------------------------------------------------------------------: | :-: | :-----: |
+|             `onError`             |                      `(errorMessage: string): void?`                      | ✅  |   ✅    |
+|        `onBroadcastError`         |                 `(error: IBroadcastSessionError): void?`                  | ✅  |   ✅    |
+|       `onIsBroadcastReady`        |                        `(isReady: boolean): void?`                        | ✅  |   ✅    |
+|      `onBroadcastAudioStats`      |                    `(audioStats: IAudioStats): void?`                     | ✅  |   ✅    |
+|     `onBroadcastStateChanged`     | `(stateStatus: StateStatusUnion, metadata?: StateChangedMetadata): void?` | ✅  |   ✅    |
+| `onTransmissionStatisticsChanged` |        `(transmissionStatistics: ITransmissionStatistics): void?`         | ✅  |   ✅    |
+|    `onAudioSessionInterrupted`    |                                `(): void?`                                | ✅  |   🚫    |
+|      `onAudioSessionResumed`      |                                `(): void?`                                | ✅  |   🚫    |
+|     `onMediaServicesWereLost`     |                                `(): void?`                                | ✅  |   🚫    |
+|    `onMediaServicesWereReset`     |                                `(): void?`                                | ✅  |   🚫    |
 
 | Methods |                  Type                  | iOS | Android |
 | :-----: | :------------------------------------: | :-: | :-----: |

@@ -193,7 +193,19 @@ Indicates that the broadcast state changed.
 
 ⚠️ _As of now, the metadata is available with `CONNECTED` state status only._
 
+#### `onTransmissionStatisticsChanged`
+
+Periodically called with current statistics on the broadcast, such as the measured bitrate, recommended bitrate by the SDK's adaptive bitrate algorithm, average round trip time, broadcast quality (relative to configured minimum and maximum bitrates), and network health.
+
+|                                                                Type                                                                | Required |   Platform   |
+| :--------------------------------------------------------------------------------------------------------------------------------: | :------: | :----------: |
+| `onTransmissionStatisticsChanged(transmissionStatistics: `[`ITransmissionStatistics`](./types.md#itransmissionstatistics)`): void` |    No    | iOS, Android |
+
+⚠️ _Expect this callback to be triggered quite frequently (approximately twice per second) as the measured and recommended bitrates change._
+
 #### `onBroadcastQualityChanged`
+
+🚧 **DEPRECATED** in favor of [`onTransmissionStatisticsChanged`](./api-documentation.md#ontransmissionstatisticschanged) event handler.
 
 Represents the quality of the stream.
 
@@ -204,6 +216,8 @@ Represents the quality of the stream.
 `quality` is a number between `0` and `1` that represents the quality of the stream based on minimum and maximum bitrate provided in the [`videoConfig`](#videoconfig). `0` means the stream is at the lowest possible quality, or streaming is not possible at all. `1` means the bitrate is near the maximum allowed.
 
 #### `onNetworkHealthChanged`
+
+🚧 **DEPRECATED** in favor of [`onTransmissionStatisticsChanged`](./api-documentation.md#ontransmissionstatisticschanged) event handler.
 
 Provides updates when the instantaneous quality of the network changes. It can be used to provide feedback about when the broadcast might have temporary disruptions.
 
@@ -278,7 +292,7 @@ Stop the broadcast session, but do not deallocate resources.
 
 #### `swapCamera`
 
-🚧 DEPRECATED in favor of declarative way using [`cameraPosition`](./api-documentation.md#cameraposition) prop.
+🚧 **DEPRECATED** in favor of declarative way using [`cameraPosition`](./api-documentation.md#cameraposition) prop.
 
 Swap back camera to front camera and vice versa.
 

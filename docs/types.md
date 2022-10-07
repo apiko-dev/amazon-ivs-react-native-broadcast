@@ -46,17 +46,17 @@ interface IVideoConfig {
 }
 ```
 
-|        Key         |                        Type                        |        Range         |   Platform   | Description                                                                                                                                                                                 |
-| :----------------: | :------------------------------------------------: | :------------------: | :----------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|      `width`       |                     `number?`                      |    `160` - `1920`    | iOS, Android | The width of the output video stream                                                                                                                                                        |
-|      `height`      |                     `number?`                      |    `160` - `1920`    | iOS, Android | The height of the output video stream                                                                                                                                                       |
-|     `bitrate`      |                     `number?`                      | `100000` - `8500000` | iOS, Android | Initial bitrate for the output video stream                                                                                                                                                 |
-| `targetFrameRate`  |                     `number?`                      |     `10` - `60`      | iOS, Android | The target framerate of the output video stream                                                                                                                                             |
-| `keyframeInterval` | [`KeyframeInterval?`](./types.md#keyframeinterval) |      `1` - `5`       | iOS, Android | The keyframe interval for the output video stream                                                                                                                                           |
-|    `isBFrames`     |                     `boolean?`                     |          -           | iOS, Android | Whether the output video stream uses B (Bidirectional predicted picture) frames                                                                                                             |
-|  `isAutoBitrate`   |                     `boolean?`                     |          -           | iOS, Android | Whether the output video stream will automatically adjust the bitrate based on network conditions. Use `minBitrate` and `maxBitrate` values to specify the bounds when this value is `true` |
-|    `maxBitrate`    |                     `number?`                      | `100000` - `8500000` | iOS, Android | The maximum bitrate for the output video stream                                                                                                                                             |
-|    `minBitrate`    |                     `number?`                      | `100000` - `8500000` | iOS, Android | The minimum bitrate for the output video stream                                                                                                                                             |
+|        Key         |                   Type                   |        Range         |   Platform   | Description                                                                                                                                                                                 |
+| :----------------: | :--------------------------------------: | :------------------: | :----------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|      `width`       |                `number?`                 |    `160` - `1920`    | iOS, Android | The width of the output video stream                                                                                                                                                        |
+|      `height`      |                `number?`                 |    `160` - `1920`    | iOS, Android | The height of the output video stream                                                                                                                                                       |
+|     `bitrate`      |                `number?`                 | `100000` - `8500000` | iOS, Android | Initial bitrate for the output video stream                                                                                                                                                 |
+| `targetFrameRate`  |                `number?`                 |     `10` - `60`      | iOS, Android | The target framerate of the output video stream                                                                                                                                             |
+| `keyframeInterval` | [`KeyframeInterval?`](#keyframeinterval) |      `1` - `5`       | iOS, Android | The keyframe interval for the output video stream                                                                                                                                           |
+|    `isBFrames`     |                `boolean?`                |          -           | iOS, Android | Whether the output video stream uses B (Bidirectional predicted picture) frames                                                                                                             |
+|  `isAutoBitrate`   |                `boolean?`                |          -           | iOS, Android | Whether the output video stream will automatically adjust the bitrate based on network conditions. Use `minBitrate` and `maxBitrate` values to specify the bounds when this value is `true` |
+|    `maxBitrate`    |                `number?`                 | `100000` - `8500000` | iOS, Android | The maximum bitrate for the output video stream                                                                                                                                             |
+|    `minBitrate`    |                `number?`                 | `100000` - `8500000` | iOS, Android | The minimum bitrate for the output video stream                                                                                                                                             |
 
 ⚠️ _The `width` and `height` are interrelated and thus can not be used separately._
 
@@ -107,12 +107,12 @@ type AudioSessionStrategy =
   | 'noAction';
 ```
 
-|      Value      | Description                                                                                                                                                                                      |
-| :-------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|  `recordOnly`   | Controls `AVAudioSession` completely and will set the category to `record`. There is a known issue with the `recordOnly` category and AirPods. Use `playAndRecord` category to make AirPods work |
-| `playAndRecord` | Controls `AVAudioSession` completely and will set the category to `playAndRecord`                                                                                                                |
-|  `playAndRecordDefaultToSpeaker`   | Controls the `AVAudioSession` completely and will set the category to `playAndRecord`. On devices with both handset and speaker, the speaker will be preferred |
-|   `noAction`    | Does not control `AVAudioSession` at all. If this strategy is selected, only custom audio sources will be allowed. Microphone based sources will not be returned or added by any APIs            |
+|              Value              | Description                                                                                                                                                                                      |
+| :-----------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|          `recordOnly`           | Controls `AVAudioSession` completely and will set the category to `record`. There is a known issue with the `recordOnly` category and AirPods. Use `playAndRecord` category to make AirPods work |
+|         `playAndRecord`         | Controls `AVAudioSession` completely and will set the category to `playAndRecord`                                                                                                                |
+| `playAndRecordDefaultToSpeaker` | Controls the `AVAudioSession` completely and will set the category to `playAndRecord`. On devices with both handset and speaker, the speaker will be preferred                                   |
+|           `noAction`            | Does not control `AVAudioSession` at all. If this strategy is selected, only custom audio sources will be allowed. Microphone based sources will not be returned or added by any APIs            |
 
 ⚠️ _AirPods do not record any audio if the `audioSessionStrategy` is set to `recordOnly`. By default, the `playAndRecord` value is used, so this issue manifests only if the value is changed to `recordOnly`._
 
@@ -247,3 +247,58 @@ interface IConnectedStateMetadata {
 |    Value    | Description                                                                              |
 | :---------: | ---------------------------------------------------------------------------------------- |
 | `sessionId` | The unique `ID` of the broadcast session. It is updated every time the stream is stopped |
+
+## `ITransmissionStatistics`
+
+```ts
+interface ITransmissionStatistics {
+  rtt: number;
+  recommendedBitrate: number;
+  measuredBitrate: number;
+  networkHealth: NetworkHealth;
+  broadcastQuality: BroadcastQuality;
+}
+```
+
+|                  Value                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| :-------------------------------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|                  `rtt`                  | The current average round trip time for network packets (not image or audio samples)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|          `recommendedBitrate`           | The bitrate currently recommended by the SDK. Depending on network conditions, the SDK may recommend a higher or lower bitrate to preserve the stability of the broadcast, within the constraints of the minimum, maximum, and initial bitrates configured by the application in BroadcastConfiguration                                                                                                                                                                                                                                                                                                                                                                                                              |
+|            `measuredBitrate`            | The current measured average sending bitrate. Note that the device’s video encoder is often unable to match exactly the SDK’s recommended bitrate. There can be some delay between the SDK’s recommended bitrate and the video encoder responding to the recommendation                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+|    [`NetworkHealth`](#networkhealth)    | Represents the current health of the network. `BAD` means the network is struggling to keep up and the broadcast may be experiencing latency spikes. The SDK may also reduce the quality of the broadcast on low values in order to keep it stable, depending on the minimum allowed bitrate in the broadcast configuration. A value of `EXCELLENT` means the network is easily able to keep up with the current demand and the SDK will be trying to increase the broadcast quality over time, depending on the maximum allowed bitrate. Values like `MEDIUM` or `LOW` are not necessarily bad, it just means the network is being saturated, but it is still able to keep up. The broadcast is still likely stable |
+| [`BroadcastQuality`](#broadcastquality) | Represents the quality of the stream based on the bitrate minimum and maximum provided on session configuration. If the video configuration looks like: initial bitrate = 1000 kbps minimum bitrate = 300 kbps maximum bitrate = 5,000 kbps It will be expected that a nearMinimum quality is provided to this callback initially, since the initial bitrate is much closer to the minimum allowed bitrate than the maximum. If network conditions are good, the quality should improve over time towards nearMaximum                                                                                                                                                                                                |
+
+⚠️ _**Measured** versus **recommended** bitrate behavior can vary significantly between platforms._
+
+##### `NetworkHealth`
+
+```ts
+type NetworkHealth = 'EXCELLENT' | 'HIGH' | 'MEDIUM' | 'LOW' | 'BAD';
+```
+
+|     Key     | Description                                                                                            |
+| :---------: | ------------------------------------------------------------------------------------------------------ |
+| `EXCELLENT` | The network is easily able to keep up with the current broadcast                                       |
+|   `HIGH`    | The network keeping up with the broadcast well but the connection is not perfect                       |
+|  `MEDIUM`   | The network is experiencing some congestion but it can still keep up with the correct quality          |
+|    `LOW`    | The network is struggling to keep up with the current video quality and may reduce quality             |
+|    `BAD`    | The network can not keep up with the current video quality and will be reducing the quality if allowed |
+
+##### `BroadcastQuality`
+
+```ts
+type BroadcastQuality =
+  | 'NEAR_MAXIMUM'
+  | 'HIGH'
+  | 'MEDIUM'
+  | 'LOW'
+  | 'NEAR_MINIMUM';
+```
+
+|      Key       | Description                                                                                                      |
+| :------------: | ---------------------------------------------------------------------------------------------------------------- |
+| `NEAR_MAXIMUM` | Bitrate is near the maximum allowed (the configured maximum bitrate)                                             |
+|     `HIGH`     | The broadcast is at a high quality relative to the provided bounds                                               |
+|    `MEDIUM`    | The broadcast is at a medium quality relative to the provided bounds                                             |
+|     `LOW`      | The broadcast is at a low quality relative to the provided bounds                                                |
+| `NEAR_MINIMUM` | Stream is near the lowest possible quality (the configured minimum bitrate), or streaming is not possible at all |
