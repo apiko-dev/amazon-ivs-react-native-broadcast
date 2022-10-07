@@ -114,9 +114,9 @@ interface IVideoConfig {
   readonly keyframeInterval?: KeyframeInterval;
   readonly isBFrames?: boolean;
   readonly isAutoBitrate?: boolean;
+  readonly autoBitrateProfile?: AutomaticBitrateProfile;
   readonly maxBitrate?: number;
   readonly minBitrate?: number;
-  readonly autoBitrateProfile?: AutomaticBitrateProfile;
 }
 
 interface IAudioConfig {

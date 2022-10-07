@@ -66,17 +66,18 @@ A configuration object describing the desired format of the final output Video s
 
 _**Default video config unless [`configurationPreset`](./api-documentation.md#configurationpreset) is provided:**_
 
-|        Key         |   Value   |   Platform   |
-| :----------------: | :-------: | :----------: |
-|      `width`       |   `720`   | iOS, Android |
-|      `height`      |  `1280`   | iOS, Android |
-|     `bitrate`      | `2100000` | iOS, Android |
-| `targetFrameRate`  |   `30`    | iOS, Android |
-| `keyframeInterval` |    `2`    | iOS, Android |
-|    `isBFrames`     |  `true`   | iOS, Android |
-|  `isAutoBitrate`   |  `true`   | iOS, Android |
-|    `maxBitrate`    | `6000000` | iOS, Android |
-|    `minBitrate`    | `300000`  | iOS, Android |
+|         Key          |     Value      |   Platform   |
+| :------------------: | :------------: | :----------: |
+|       `width`        |     `720`      | iOS, Android |
+|       `height`       |     `1280`     | iOS, Android |
+|      `bitrate`       |   `2100000`    | iOS, Android |
+|  `targetFrameRate`   |      `30`      | iOS, Android |
+|  `keyframeInterval`  |      `2`       | iOS, Android |
+|     `isBFrames`      |     `true`     | iOS, Android |
+|   `isAutoBitrate`    |     `true`     | iOS, Android |
+| `autoBitrateProfile` | `conservative` | iOS, Android |
+|     `maxBitrate`     |   `6000000`    | iOS, Android |
+|     `minBitrate`     |    `300000`    | iOS, Android |
 
 #### `audioConfig`
 
