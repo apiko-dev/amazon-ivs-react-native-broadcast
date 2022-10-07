@@ -21,14 +21,16 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
   public static final String SWAP_CAMERA_COMMAND_NAME = "SWAP_CAMERA";
 
   public enum Events {
+    ON_IS_BROADCAST_READY("onIsBroadcastReady"),
+    ON_ERROR("onError"),
     ON_BROADCAST_ERROR("onBroadcastError"),
     ON_BROADCAST_STATE_CHANGED("onBroadcastStateChanged"),
-    ON_BROADCAST_QUALITY_CHANGED("onBroadcastQualityChanged"),
-    ON_NETWORK_HEALTH_CHANGED("onNetworkHealthChanged"),
     ON_BROADCAST_AUDIO_STATS("onBroadcastAudioStats"),
-    ON_BROADCAST_SESSION_ID("onBroadcastSessionId"),
-    ON_IS_BROADCAST_READY("onIsBroadcastReady"),
-    ON_ERROR("onError");
+    ON_TRANSMISSION_STATISTICS_CHANGED("onTransmissionStatisticsChanged"),
+    @Deprecated
+    ON_BROADCAST_QUALITY_CHANGED("onBroadcastQualityChanged"),
+    @Deprecated
+    ON_NETWORK_HEALTH_CHANGED("onNetworkHealthChanged");
 
     private String title;
 
@@ -73,6 +75,14 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
         sendEvent(Events.ON_BROADCAST_STATE_CHANGED.toString(), eventPayload);
         break;
       }
+      case ON_AUDIO_STATS: {
+        sendEvent(Events.ON_BROADCAST_AUDIO_STATS.toString(), eventPayload);
+        break;
+      }
+      case ON_TRANSMISSION_STATISTICS_CHANGED: {
+        sendEvent(Events.ON_TRANSMISSION_STATISTICS_CHANGED.toString(), eventPayload);
+        break;
+      }
       case ON_QUALITY_CHANGED: {
         sendEvent(Events.ON_BROADCAST_QUALITY_CHANGED.toString(), eventPayload);
         break;
@@ -81,13 +91,8 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
         sendEvent(Events.ON_NETWORK_HEALTH_CHANGED.toString(), eventPayload);
         break;
       }
-      case ON_AUDIO_STATS: {
-        sendEvent(Events.ON_BROADCAST_AUDIO_STATS.toString(), eventPayload);
-        break;
-      }
-      case ON_SESSION_ID: {
-        sendEvent(Events.ON_BROADCAST_SESSION_ID.toString(), eventPayload);
-        break;
+      default: {
+        throw new RuntimeException("Unknown event name: " + event);
       }
     }
   }

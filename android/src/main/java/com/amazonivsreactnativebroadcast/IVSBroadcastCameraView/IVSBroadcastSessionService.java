@@ -42,20 +42,6 @@ public class IVSBroadcastSessionService {
   private RunnableCallback broadcastEventHandler;
   private final BroadcastSession.Listener broadcastSessionListener = new BroadcastSession.Listener() {
     @Override
-    public void onStateChanged(@NonNull BroadcastSession.State state) {
-      WritableMap eventPayload = Arguments.createMap();
-      eventPayload.putString("stateStatus", state.toString());
-
-      if (state == BroadcastSession.State.CONNECTED) {
-        WritableMap metadata = Arguments.createMap();
-        metadata.putString("sessionId", sessionId);
-        eventPayload.putMap("metadata", metadata);
-      }
-
-      broadcastEventHandler.run(Events.ON_STATE_CHANGED, eventPayload);
-    }
-
-    @Override
     public void onError(@NonNull BroadcastException exception) {
       int code = exception.getCode();
       String detail = exception.getDetail();
@@ -79,19 +65,17 @@ public class IVSBroadcastSessionService {
     }
 
     @Override
-    public void onBroadcastQualityChanged(double quality) {
+    public void onStateChanged(@NonNull BroadcastSession.State state) {
       WritableMap eventPayload = Arguments.createMap();
-      eventPayload.putDouble("quality", quality);
+      eventPayload.putString("stateStatus", state.toString());
 
-      broadcastEventHandler.run(Events.ON_QUALITY_CHANGED, eventPayload);
-    }
+      if (state == BroadcastSession.State.CONNECTED) {
+        WritableMap metadata = Arguments.createMap();
+        metadata.putString("sessionId", sessionId);
+        eventPayload.putMap("metadata", metadata);
+      }
 
-    @Override
-    public void onNetworkHealthChanged(double health) {
-      WritableMap eventPayload = Arguments.createMap();
-      eventPayload.putDouble("networkHealth", health);
-
-      broadcastEventHandler.run(Events.ON_NETWORK_HEALTH_CHANGED, eventPayload);
+      broadcastEventHandler.run(Events.ON_STATE_CHANGED, eventPayload);
     }
 
     @Override
@@ -105,6 +89,37 @@ public class IVSBroadcastSessionService {
       eventPayload.putMap("audioStats", audioStats);
 
       broadcastEventHandler.run(Events.ON_AUDIO_STATS, eventPayload);
+    }
+
+    @Override
+    public void onTransmissionStatsChanged(@NonNull TransmissionStats statistics) {
+      WritableMap statisticsPayload = Arguments.createMap();
+      statisticsPayload.putDouble("rtt", statistics.roundTripTime);
+      statisticsPayload.putDouble("measuredBitrate", statistics.measuredBitrate);
+      statisticsPayload.putDouble("recommendedBitrate", statistics.recommendedBitrate);
+      statisticsPayload.putString("networkHealth", statistics.networkHealth.name());
+      statisticsPayload.putString("broadcastQuality", statistics.broadcastQuality.name());
+
+      WritableMap eventPayload = Arguments.createMap();
+      eventPayload.putMap("statistics", statisticsPayload);
+
+      broadcastEventHandler.run(Events.ON_TRANSMISSION_STATISTICS_CHANGED, eventPayload);
+    }
+
+    @Override
+    public void onBroadcastQualityChanged(double quality) {
+      WritableMap eventPayload = Arguments.createMap();
+      eventPayload.putDouble("quality", quality);
+
+      broadcastEventHandler.run(Events.ON_QUALITY_CHANGED, eventPayload);
+    }
+
+    @Override
+    public void onNetworkHealthChanged(double health) {
+      WritableMap eventPayload = Arguments.createMap();
+      eventPayload.putDouble("networkHealth", health);
+
+      broadcastEventHandler.run(Events.ON_NETWORK_HEALTH_CHANGED, eventPayload);
     }
   };
 
@@ -319,10 +334,12 @@ public class IVSBroadcastSessionService {
   public enum Events {
     ON_ERROR("onError"),
     ON_STATE_CHANGED("onStateChanged"),
-    ON_QUALITY_CHANGED("onQualityChanged"),
-    ON_NETWORK_HEALTH_CHANGED("onNetworkHealthChanged"),
     ON_AUDIO_STATS("onAudioStats"),
-    ON_SESSION_ID("onSessionId");
+    ON_TRANSMISSION_STATISTICS_CHANGED("onTransmissionStatisticsChanged"),
+    @Deprecated
+    ON_QUALITY_CHANGED("onQualityChanged"),
+    @Deprecated
+    ON_NETWORK_HEALTH_CHANGED("onNetworkHealthChanged");
 
     private String title;
 

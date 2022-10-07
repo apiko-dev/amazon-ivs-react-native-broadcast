@@ -21,16 +21,19 @@ RCT_EXPORT_VIEW_PROPERTY(onError, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBroadcastError, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBroadcastAudioStats, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBroadcastStateChanged, RCTDirectEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onBroadcastQualityChanged, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAudioSessionInterrupted, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAudioSessionResumed, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onMediaServicesWereLost, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onMediaServicesWereReset, RCTDirectEventBlock)
+// @Deprecated in favor of onTransmissionStatisticsChanged event handler
+RCT_EXPORT_VIEW_PROPERTY(onBroadcastQualityChanged, RCTDirectEventBlock)
+// @Deprecated in favor of onTransmissionStatisticsChanged event handler
 RCT_EXPORT_VIEW_PROPERTY(onNetworkHealthChanged, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onTransmissionStatisticsChanged, RCTDirectEventBlock)
 
 // Methods
 RCT_EXTERN_METHOD(START:(nonnull NSNumber *)node options:(NSDictionary)options)
 RCT_EXTERN_METHOD(STOP:(nonnull NSNumber *)node)
-// @Deprecated in favor of cameraPosition prop.
+// @Deprecated in favor of cameraPosition prop
 RCT_EXTERN_METHOD(SWAP_CAMERA:(nonnull NSNumber *)node)
 @end

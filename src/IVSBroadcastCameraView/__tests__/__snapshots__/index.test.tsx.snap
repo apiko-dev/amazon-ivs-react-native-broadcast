@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`IVSBroadcastCameraView component Matched 1`] = `
+exports[`IVSBroadcastCameraView component Snapshot matched 1`] = `
 <RCTIVSBroadcastCameraView
   cameraPosition="back"
   cameraPreviewAspectMode="none"
@@ -18,6 +18,7 @@ exports[`IVSBroadcastCameraView component Matched 1`] = `
   onMediaServicesWereLost={[Function]}
   onMediaServicesWereReset={[Function]}
   onNetworkHealthChanged={[Function]}
+  onTransmissionStatisticsChanged={[Function]}
   rtmpsUrl=""
   sessionLogLevel="error"
   streamKey=""

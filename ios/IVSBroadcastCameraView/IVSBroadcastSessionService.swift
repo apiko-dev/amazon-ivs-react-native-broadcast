@@ -28,8 +28,11 @@ class IVSBroadcastSessionService: NSObject {
   private var onBroadcastError: RCTDirectEventBlock?
   private var onBroadcastAudioStats: RCTDirectEventBlock?
   private var onBroadcastStateChanged: RCTDirectEventBlock?
+  @available(*, message: "@Deprecated in favor of onTransmissionStatisticsChanged method.")
   private var onBroadcastQualityChanged: RCTDirectEventBlock?
+  @available(*, message: "@Deprecated in favor of onTransmissionStatisticsChanged method.")
   private var onNetworkHealthChanged: RCTDirectEventBlock?
+  private var onTransmissionStatisticsChanged: RCTDirectEventBlock?
   
   private func getLogLevel(_ logLevelName: NSString) -> IVSBroadcastSession.LogLevel {
     switch logLevelName {
@@ -406,21 +409,40 @@ class IVSBroadcastSessionService: NSObject {
     self.onBroadcastAudioStats = onBroadcastAudioStatsHandler
   }
   
+  @available(*, message: "@Deprecated in favor of setTransmissionStatisticsChangedHandler method.")
   public func setBroadcastQualityChangedHandler(_ onBroadcastQualityChangedHandler: RCTDirectEventBlock?) {
     self.onBroadcastQualityChanged = onBroadcastQualityChangedHandler
   }
   
+  @available(*, message: "@Deprecated in favor of setTransmissionStatisticsChangedHandler method.")
   public func setNetworkHealthChangedHandler(_ onNetworkHealthChangedHandler: RCTDirectEventBlock?) {
     self.onNetworkHealthChanged = onNetworkHealthChangedHandler
+  }
+  
+  public func setTransmissionStatisticsChangedHandler(_ onTransmissionStatisticsChangedHandler: RCTDirectEventBlock?) {
+    self.onTransmissionStatisticsChanged = onTransmissionStatisticsChangedHandler
   }
 }
 
 extension IVSBroadcastSessionService: IVSBroadcastSession.Delegate {
+  func broadcastSession(_ session: IVSBroadcastSession, transmissionStatisticsChanged statistics: IVSTransmissionStatistics) {
+    self.onTransmissionStatisticsChanged?([
+      "statistics": [
+        "rtt": statistics.rtt,
+        "measuredBitrate": statistics.measuredBitrate,
+        "recommendedBitrate": statistics.recommendedBitrate,
+        "networkHealth": statistics.networkHealth.rawValue,
+        "broadcastQuality": statistics.broadcastQuality.rawValue,
+      ]
+    ])
+    
+  }
+  
   func broadcastSession(_ session: IVSBroadcastSession, didChange state: IVSBroadcastSession.State) {
     var eventPayload = ["stateStatus": state.rawValue] as [AnyHashable : Any]
     
     if (state == .connected) {
-      eventPayload["metadata"] = ["sessionId": self.broadcastSession?.sessionId]
+      eventPayload["metadata"] = ["sessionId": session.sessionId]
     }
     
     self.onBroadcastStateChanged?(eventPayload)
@@ -453,7 +475,7 @@ extension IVSBroadcastSessionService: IVSBroadcastSession.Delegate {
           "detail": error.localizedDescription,
           "source": IVSBroadcastSourceDescription,
           "isFatal": IVSBroadcastErrorIsFatalKey,
-          "sessionId": self.broadcastSession?.sessionId,
+          "sessionId": session.sessionId,
         ]
       ])
     }

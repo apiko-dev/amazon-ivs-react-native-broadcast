@@ -10,19 +10,25 @@ import {
   Command,
   StateStatusEnum,
   StateStatusUnion,
+  NetworkHealth,
+  NetworkHealthEnum,
+  BroadcastQuality,
+  BroadcastQualityEnum,
   IIVSBroadcastCameraView,
   IIVSBroadcastCameraViewProps,
   IIVSBroadcastCameraNativeViewProps,
 } from './IVSBroadcastCameraView.types';
 
+const isNumber = (value: unknown): value is number => typeof value === 'number';
+
 const UNKNOWN = 'unknown';
 export const NATIVE_VIEW_NAME = 'RCTIVSBroadcastCameraView';
 
-const RCTIVSBroadcastCameraView =
-  requireNativeComponent<IIVSBroadcastCameraNativeViewProps>(NATIVE_VIEW_NAME);
-
 const NATIVE_SIDE_COMMANDS =
   UIManager.getViewManagerConfig(NATIVE_VIEW_NAME).Commands;
+
+const RCTIVSBroadcastCameraView =
+  requireNativeComponent<IIVSBroadcastCameraNativeViewProps>(NATIVE_VIEW_NAME);
 
 export const getCommandIdByPlatform = (command: Command) => {
   switch (Platform.OS) {
@@ -50,6 +56,7 @@ const IVSBroadcastCameraView = forwardRef<
     onBroadcastStateChanged,
     onBroadcastQualityChanged,
     onNetworkHealthChanged,
+    onTransmissionStatisticsChanged,
     onAudioSessionInterrupted,
     onAudioSessionResumed,
     onMediaServicesWereLost,
@@ -122,19 +129,45 @@ const IVSBroadcastCameraView = forwardRef<
   const onBroadcastStateChangedHandler: IIVSBroadcastCameraNativeViewProps['onBroadcastStateChanged'] =
     ({ nativeEvent }) => {
       const { stateStatus: incomingStateStatus, metadata } = nativeEvent;
-      const outcomingStateStatus = (
-        typeof incomingStateStatus === 'number'
-          ? StateStatusEnum[incomingStateStatus]
-          : incomingStateStatus
-      ) as StateStatusUnion;
+      const outcomingStateStatus = isNumber(incomingStateStatus)
+        ? (StateStatusEnum[incomingStateStatus] as StateStatusUnion)
+        : incomingStateStatus;
       onBroadcastStateChanged?.(outcomingStateStatus, metadata);
     };
 
+  /**
+   * @deprecated in favor of {@link onTransmissionStatisticsChangedHandler}
+   */
   const onNetworkHealthChangedHandler: IIVSBroadcastCameraNativeViewProps['onNetworkHealthChanged'] =
     ({ nativeEvent }) => onNetworkHealthChanged?.(nativeEvent.networkHealth);
 
+  /**
+   * @deprecated in favor of {@link onTransmissionStatisticsChangedHandler}
+   */
   const onBroadcastQualityChangedHandler: IIVSBroadcastCameraNativeViewProps['onBroadcastQualityChanged'] =
     ({ nativeEvent }) => onBroadcastQualityChanged?.(nativeEvent.quality);
+
+  const onTransmissionStatisticsChangedHandler: IIVSBroadcastCameraNativeViewProps['onTransmissionStatisticsChanged'] =
+    ({ nativeEvent }) => {
+      const {
+        networkHealth: incomingNetworkHealth,
+        broadcastQuality: incomingBroadcastQuality,
+        ...rest
+      } = nativeEvent.statistics;
+
+      const networkHealth = isNumber(incomingNetworkHealth)
+        ? (NetworkHealthEnum[incomingNetworkHealth] as NetworkHealth)
+        : incomingNetworkHealth;
+      const broadcastQuality = isNumber(incomingBroadcastQuality)
+        ? (BroadcastQualityEnum[incomingBroadcastQuality] as BroadcastQuality)
+        : incomingBroadcastQuality;
+
+      return onTransmissionStatisticsChanged?.({
+        networkHealth,
+        broadcastQuality,
+        ...rest,
+      });
+    };
 
   const onAudioSessionInterruptedHandler: IIVSBroadcastCameraNativeViewProps['onAudioSessionInterrupted'] =
     () => onAudioSessionInterrupted?.();
@@ -166,6 +199,7 @@ const IVSBroadcastCameraView = forwardRef<
       onBroadcastStateChanged={onBroadcastStateChangedHandler}
       onBroadcastQualityChanged={onBroadcastQualityChangedHandler}
       onNetworkHealthChanged={onNetworkHealthChangedHandler}
+      onTransmissionStatisticsChanged={onTransmissionStatisticsChangedHandler}
       onAudioSessionInterrupted={onAudioSessionInterruptedHandler}
       onAudioSessionResumed={onAudioSessionResumedHandler}
       onMediaServicesWereLost={onMediaServicesWereLostHandler}

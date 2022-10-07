@@ -89,7 +89,7 @@ jest.mock('react-native', () => {
   return ReactNative;
 });
 
-describe('getCommandIdByPlatform function works as expected', () => {
+describe('getCommandIdByPlatform function should return correct command identifier for both platforms', () => {
   it('iOS platform', () => {
     expect(getCommandIdByPlatform(Start)).toBe(0);
   });
@@ -106,13 +106,13 @@ describe('IVSBroadcastCameraView component', () => {
     expect(broadcastCameraView).toBeDefined();
   });
 
-  test('Matched', () => {
+  test('Snapshot matched', () => {
     const ivsBroadcastCameraViewTree = renderIVSBroadcastCameraView().toJSON();
     expect(ivsBroadcastCameraViewTree).toMatchSnapshot();
   });
 });
 
-describe('Event handlers work as expected', () => {
+describe('Event handlers should be called with the correct payload', () => {
   test.each([
     {
       eventHandlerName: 'onError' as const,
@@ -129,13 +129,6 @@ describe('Event handlers work as expected', () => {
           peak: 100,
           rms: 100,
         },
-      }),
-    },
-    {
-      eventHandlerName: 'onBroadcastStateChanged' as const,
-      ...nativeSyntheticEventFactory<'onBroadcastStateChanged'>({
-        stateStatus: 'CONNECTED',
-        metadata: { sessionId: 'sessionId' },
       }),
     },
     {
@@ -179,9 +172,96 @@ describe('Event handlers work as expected', () => {
     }
   );
 
+  describe('onTransmissionStatisticsChanged event handler should be called with the correct payload for both platforms', () => {
+    const restStatistics = {
+      rtt: 22,
+      measuredBitrate: 333,
+      recommendedBitrate: 444,
+    };
+
+    test('Android platform', async () => {
+      await testEventHandler(
+        'onTransmissionStatisticsChanged',
+        {
+          nativeEvent: {
+            statistics: {
+              ...restStatistics,
+              networkHealth: 0,
+              broadcastQuality: 0,
+            },
+          },
+        },
+        [
+          {
+            ...restStatistics,
+            networkHealth: 'EXCELLENT',
+            broadcastQuality: 'NEAR_MAXIMUM',
+          },
+        ]
+      );
+    });
+
+    test('iOS platform', async () => {
+      const networkHealth = 'HIGH';
+      const broadcastQuality = 'HIGH';
+
+      await testEventHandler(
+        'onTransmissionStatisticsChanged',
+        {
+          nativeEvent: {
+            statistics: {
+              ...restStatistics,
+              networkHealth,
+              broadcastQuality,
+            },
+          },
+        },
+        [
+          {
+            ...restStatistics,
+            networkHealth,
+            broadcastQuality,
+          },
+        ]
+      );
+    });
+  });
+
+  describe('onBroadcastStateChanged event handler should be called with the correct payload for both platforms', () => {
+    const metadata = { sessionId: 'sessionId' };
+
+    test('Android platform', async () => {
+      await testEventHandler(
+        'onBroadcastStateChanged',
+        {
+          nativeEvent: {
+            metadata,
+            stateStatus: 1,
+          },
+        },
+        ['DISCONNECTED', metadata]
+      );
+    });
+
+    test('iOS platform', async () => {
+      const stateStatus = 'CONNECTED';
+
+      await testEventHandler(
+        'onBroadcastStateChanged',
+        {
+          nativeEvent: {
+            metadata,
+            stateStatus,
+          },
+        },
+        [stateStatus, metadata]
+      );
+    });
+  });
+
   test('onBroadcastError', async () => {
     const errorCode = 1;
-    const errorBasePayload = {
+    const resetErrorPayload = {
       type: 'type',
       isFatal: true,
       detail: 'detail',
@@ -195,21 +275,21 @@ describe('Event handlers work as expected', () => {
         nativeEvent: {
           exception: {
             code: errorCode,
-            ...errorBasePayload,
+            ...resetErrorPayload,
           },
         },
       },
       [
         {
           code: String(errorCode),
-          ...errorBasePayload,
+          ...resetErrorPayload,
         },
       ]
     );
   });
 });
 
-describe('Static methods work as expected', () => {
+describe('Static methods should be called with the correct command names', () => {
   const mockCommandFn = jest.fn();
   UIManager.dispatchViewManagerCommand = mockCommandFn;
 
@@ -223,19 +303,19 @@ describe('Static methods work as expected', () => {
   });
 
   test.each([
-    { methodName: 'start' as const, calledWithSecondArg: Start },
-    { methodName: 'stop' as const, calledWithSecondArg: Stop },
+    { methodName: 'start' as const, commandName: Start },
+    { methodName: 'stop' as const, commandName: Stop },
     /**
      * @deprecated in favor of 'cameraPosition' prop.
      */
-    { methodName: 'swapCamera' as const, calledWithSecondArg: SwapCamera },
-  ])('$methodName', ({ methodName, calledWithSecondArg }) => {
+    { methodName: 'swapCamera' as const, commandName: SwapCamera },
+  ])('$methodName', ({ methodName, commandName }) => {
     renderIVSBroadcastCameraView({ ref: ivsBroadcastCameraViewRef });
 
     ivsBroadcastCameraViewRef.current?.[methodName]();
 
     expect(mockCommandFn).toHaveBeenCalled();
-    const secondArg = mockCommandFn.mock.calls[0][1];
-    expect(secondArg).toBe(calledWithSecondArg);
+    const executedCommand = mockCommandFn.mock.calls[0][1];
+    expect(executedCommand).toBe(commandName);
   });
 });

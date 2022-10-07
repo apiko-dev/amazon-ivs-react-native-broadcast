@@ -24,7 +24,27 @@ export enum StateStatusEnum {
   ERROR = 4,
 }
 
+export enum NetworkHealthEnum {
+  EXCELLENT = 0,
+  HIGH = 1,
+  MEDIUM = 2,
+  LOW = 3,
+  BAD = 4,
+}
+
+export enum BroadcastQualityEnum {
+  NEAR_MAXIMUM = 0,
+  HIGH = 1,
+  MEDIUM = 2,
+  LOW = 3,
+  NEAR_MINIMUM = 4,
+}
+
 export type StateStatusUnion = keyof typeof StateStatusEnum;
+
+export type BroadcastQuality = keyof typeof BroadcastQualityEnum;
+
+export type NetworkHealth = keyof typeof NetworkHealthEnum;
 
 export type LogLevel = 'debug' | 'error' | 'info' | 'warning';
 
@@ -54,6 +74,22 @@ type AutomaticBitrateProfile = 'conservative' | 'fastIncrease';
 
 interface IEventHandler<T extends Record<string, unknown>> {
   (event: NativeSyntheticEvent<T>): void;
+}
+
+interface IBaseTransmissionStatistics {
+  rtt: number;
+  recommendedBitrate: number;
+  measuredBitrate: number;
+}
+
+interface INativeTransmissionStatistics extends IBaseTransmissionStatistics {
+  networkHealth: number | NetworkHealth;
+  broadcastQuality: number | BroadcastQuality;
+}
+
+export interface ITransmissionStatistics extends IBaseTransmissionStatistics {
+  networkHealth: NetworkHealth;
+  broadcastQuality: BroadcastQuality;
 }
 
 export interface IBroadcastSessionError {
@@ -118,12 +154,21 @@ export interface INativeEventHandlers {
       metadata?: StateChangedMetadata;
     }>
   >;
+  /**
+   * @deprecated in favor of onTransmissionStatisticsChanged
+   */
   onBroadcastQualityChanged: IEventHandler<Readonly<{ quality: number }>>;
+  /**
+   * @deprecated in favor of onTransmissionStatisticsChanged
+   */
   onNetworkHealthChanged: IEventHandler<Readonly<{ networkHealth: number }>>;
+  onTransmissionStatisticsChanged: IEventHandler<
+    Readonly<{ statistics: INativeTransmissionStatistics }>
+  >;
   onAudioSessionInterrupted(): void;
   onAudioSessionResumed(): void;
-  onMediaServicesWereReset(): void;
   onMediaServicesWereLost(): void;
+  onMediaServicesWereReset(): void;
 }
 
 export interface IIVSBroadcastCameraNativeViewProps
@@ -156,8 +201,17 @@ export interface IEventHandlers {
     stateStatus: StateStatusUnion,
     metadata?: StateChangedMetadata
   ): void;
+  /**
+   * @deprecated in favor of onTransmissionStatisticsChanged
+   */
   onBroadcastQualityChanged?(quality: number): void;
+  /**
+   * @deprecated in favor of onTransmissionStatisticsChanged
+   */
   onNetworkHealthChanged?(networkHealth: number): void;
+  onTransmissionStatisticsChanged?(
+    transmissionStatistics: ITransmissionStatistics
+  ): void;
   onAudioSessionInterrupted?(): void;
   onAudioSessionResumed?(): void;
   onMediaServicesWereLost?(): void;

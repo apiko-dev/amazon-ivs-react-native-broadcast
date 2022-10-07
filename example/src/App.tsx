@@ -16,8 +16,11 @@ import { rtmpsUrl, streamKey } from '../app.json';
 import {
   CameraPosition,
   CameraPreviewAspectMode,
+  NetworkHealth,
+  BroadcastQuality,
   StateStatusUnion,
   IAudioStats,
+  ITransmissionStatistics,
   IBroadcastSessionError,
   IVSBroadcastCameraView,
   IIVSBroadcastCameraView,
@@ -40,8 +43,8 @@ const INITIAL_META_DATA_STATE = {
     rms: 0,
     peak: 0,
   },
-  streamQuality: 0,
-  networkHealth: 0,
+  broadcastQuality: '',
+  networkHealth: '',
 };
 const VIDEO_CONFIG = {
   width: 1920,
@@ -82,14 +85,15 @@ const App: FC = () => {
     readonly readyStatus: SessionReadyStatus;
   }>(INITIAL_STATE);
 
-  const [{ audioStats, networkHealth, streamQuality }, setMetaData] = useState<{
-    readonly streamQuality: number;
-    readonly networkHealth: number;
-    readonly audioStats: {
-      readonly rms: number;
-      readonly peak: number;
-    };
-  }>(INITIAL_META_DATA_STATE);
+  const [{ audioStats, networkHealth, broadcastQuality }, setMetaData] =
+    useState<{
+      readonly broadcastQuality: BroadcastQuality | string;
+      readonly networkHealth: NetworkHealth | string;
+      readonly audioStats: {
+        readonly rms: number;
+        readonly peak: number;
+      };
+    }>(INITIAL_META_DATA_STATE);
 
   const isConnecting = stateStatus === 'CONNECTING';
   const isConnected = stateStatus === 'CONNECTED';
@@ -146,20 +150,12 @@ const App: FC = () => {
     []
   );
 
-  const onBroadcastQualityChangedHandler = useCallback(
-    (quality: number) =>
+  const onTransmissionStatisticsChangedHandler = useCallback(
+    (transmissionStatistics: ITransmissionStatistics) =>
       setMetaData(currentState => ({
         ...currentState,
-        streamQuality: quality,
-      })),
-    []
-  );
-
-  const onNetworkHealthChangedHandler = useCallback(
-    (health: number) =>
-      setMetaData(currentState => ({
-        ...currentState,
-        networkHealth: health,
+        networkHealth: transmissionStatistics.networkHealth,
+        broadcastQuality: transmissionStatistics.broadcastQuality,
       })),
     []
   );
@@ -247,9 +243,8 @@ const App: FC = () => {
         onBroadcastError={onBroadcastErrorHandler}
         onIsBroadcastReady={onIsBroadcastReadyHandler}
         onBroadcastAudioStats={onBroadcastAudioStatsHandler}
-        onNetworkHealthChanged={onNetworkHealthChangedHandler}
         onBroadcastStateChanged={onBroadcastStateChangedHandler}
-        onBroadcastQualityChanged={onBroadcastQualityChangedHandler}
+        onTransmissionStatisticsChanged={onTransmissionStatisticsChangedHandler}
         onMediaServicesWereLost={onMediaServicesWereLostHandler}
         onMediaServicesWereReset={onMediaServicesWereResetHandler}
         onAudioSessionInterrupted={onAudioSessionInterruptedHandler}
@@ -322,7 +317,7 @@ const App: FC = () => {
                     )}, Rms: ${audioStats.rms?.toFixed(2)}`}</Text>
                     <Text
                       style={s.metaDataText}
-                    >{`Stream quality: ${streamQuality}`}</Text>
+                    >{`Stream quality: ${broadcastQuality}`}</Text>
                     <Text
                       style={s.metaDataText}
                     >{`Network health: ${networkHealth}`}</Text>

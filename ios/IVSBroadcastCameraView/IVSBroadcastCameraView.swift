@@ -73,17 +73,24 @@ class IVSBroadcastCameraView: UIView {
       self.broadcastSession.setBroadcastStateChangedHandler(onBroadcastStateChanged)
     }
   }
+  @available(*, message: "@Deprecated in favor of onTransmissionStatisticsChanged event handler.")
   @objc var onBroadcastQualityChanged: RCTDirectEventBlock? {
     didSet {
       self.broadcastSession.setBroadcastQualityChangedHandler(onBroadcastQualityChanged)
     }
   }
+  @available(*, message: "@Deprecated in favor of onTransmissionStatisticsChanged event handler.")
   @objc var onNetworkHealthChanged: RCTDirectEventBlock? {
     didSet {
       self.broadcastSession.setNetworkHealthChangedHandler(onNetworkHealthChanged)
     }
   }
-  
+  @objc var onTransmissionStatisticsChanged: RCTDirectEventBlock? {
+    didSet {
+      self.broadcastSession.setTransmissionStatisticsChangedHandler(onTransmissionStatisticsChanged)
+    }
+  }
+
   @objc
   private func audioSessionInterrupted(_ notification: Notification) {
     guard let userInfo = notification.userInfo,
