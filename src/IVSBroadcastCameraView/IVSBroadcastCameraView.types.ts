@@ -77,19 +77,19 @@ interface IEventHandler<T extends Record<string, unknown>> {
 }
 
 interface IBaseTransmissionStatistics {
-  rtt: number;
-  recommendedBitrate: number;
-  measuredBitrate: number;
+  readonly rtt: number;
+  readonly recommendedBitrate: number;
+  readonly measuredBitrate: number;
 }
 
 interface INativeTransmissionStatistics extends IBaseTransmissionStatistics {
-  networkHealth: number | NetworkHealth;
-  broadcastQuality: number | BroadcastQuality;
+  readonly networkHealth: number | NetworkHealth;
+  readonly broadcastQuality: number | BroadcastQuality;
 }
 
 export interface ITransmissionStatistics extends IBaseTransmissionStatistics {
-  networkHealth: NetworkHealth;
-  broadcastQuality: BroadcastQuality;
+  readonly networkHealth: NetworkHealth;
+  readonly broadcastQuality: BroadcastQuality;
 }
 
 export interface IBroadcastSessionError {
@@ -127,7 +127,7 @@ interface IAudioConfig {
 }
 
 interface IConnectedStateMetadata {
-  sessionId: string;
+  readonly sessionId: string;
 }
 
 export type StateChangedMetadata = IConnectedStateMetadata;
