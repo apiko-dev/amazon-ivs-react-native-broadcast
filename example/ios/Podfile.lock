@@ -1,5 +1,5 @@
 PODS:
-  - amazon-ivs-react-native-broadcast (1.1.1):
+  - amazon-ivs-react-native-broadcast (1.2.0):
     - AmazonIVSBroadcast (~> 1.7.1)
     - React-Core
   - AmazonIVSBroadcast (1.7.1)
@@ -416,7 +416,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  amazon-ivs-react-native-broadcast: 241e8f66255be8098c1113417b832bc25992d2c4
+  amazon-ivs-react-native-broadcast: 03e787be1ee82d0c16a618d54a568c925c198416
   AmazonIVSBroadcast: a90a9ae2f2ede1d75fab9bd5bf37e4d8d48a54a5
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
