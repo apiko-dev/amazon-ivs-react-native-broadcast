@@ -144,10 +144,13 @@ class IVSBroadcastSessionService: NSObject {
   
   private func getNextCameraDescriptorToSwap(_ attachedCamera : IVSDevice) -> IVSDeviceDescriptor? {
     let attachedCameraPosition = attachedCamera.descriptor().position
+    let availableCameraDevices = IVSBroadcastSession.listAvailableDevices().filter { $0.type == .camera }
     
-    return IVSBroadcastSession
-      .listAvailableDevices()
-      .first { $0.type == .camera && $0.position != attachedCameraPosition}
+    return availableCameraDevices
+      .first {
+        let isOppositePosition = $0.position != attachedCameraPosition
+        return availableCameraDevices.count > 2 && attachedCameraPosition == .front ? isOppositePosition && $0.isDefault : isOppositePosition
+      }
   }
   
   private func getCameraPreview() -> IVSImagePreviewView? {
