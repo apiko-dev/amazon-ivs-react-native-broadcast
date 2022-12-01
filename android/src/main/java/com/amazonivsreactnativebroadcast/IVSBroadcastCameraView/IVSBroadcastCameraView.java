@@ -1,7 +1,7 @@
 package com.amazonivsreactnativebroadcast.IVSBroadcastCameraView;
 
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +14,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
-public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEventListener {
+public class IVSBroadcastCameraView extends FrameLayout implements LifecycleEventListener {
   public static final String START_COMMAND_NAME = "START";
   public static final String STOP_COMMAND_NAME = "STOP";
   @Deprecated
@@ -48,12 +48,22 @@ public class IVSBroadcastCameraView extends LinearLayout implements LifecycleEve
   private String RTMPS_URL;
   private IVSBroadcastSessionService ivsBroadcastSession;
 
-  private void addCameraPreview(@NonNull View preview) {
-    preview.layout(0, 0, getRight(), getBottom());
-    addView(preview);
+  /**
+   * A workaround for known issue: https://github.com/facebook/react-native/issues/17968
+   */
+  private void reLayout(@NonNull View view) {
+    view.measure(MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
+    view.layout(view.getLeft(), view.getTop(), view.getMeasuredWidth(), view.getMeasuredHeight());
   }
 
-  private void onReceiveCameraPreviewHandler(View preview) {
+  private void addCameraPreview(@NonNull View preview) {
+    LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    addView(preview, layoutParams);
+    reLayout(preview);
+  }
+
+  private void onReceiveCameraPreviewHandler(@NonNull View preview) {
     removeAllViews();
     addCameraPreview(preview);
   }
