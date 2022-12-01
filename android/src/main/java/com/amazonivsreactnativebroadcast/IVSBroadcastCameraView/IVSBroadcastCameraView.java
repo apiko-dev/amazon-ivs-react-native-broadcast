@@ -61,18 +61,12 @@ public class IVSBroadcastCameraView extends FrameLayout implements LifecycleEven
     LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     addView(preview, layoutParams);
     reLayout(preview);
+    sendIsReadyEvent();
   }
 
   private void onReceiveCameraPreviewHandler(@NonNull View preview) {
     removeAllViews();
     addCameraPreview(preview);
-  }
-
-  private void sendEvent(String eventName, @Nullable WritableMap eventPayload) {
-    ThemedReactContext reactContext = (ThemedReactContext) super.getContext();
-    RCTEventEmitter eventEmitter = reactContext.getJSModule(RCTEventEmitter.class);
-
-    eventEmitter.receiveEvent(getId(), eventName, eventPayload);
   }
 
   private void onBroadcastEventHandler(IVSBroadcastSessionService.Events event, @Nullable WritableMap eventPayload) {
@@ -107,11 +101,25 @@ public class IVSBroadcastCameraView extends FrameLayout implements LifecycleEven
     }
   }
 
+  private void sendEvent(String eventName, @Nullable WritableMap eventPayload) {
+    ThemedReactContext reactContext = (ThemedReactContext) super.getContext();
+    RCTEventEmitter eventEmitter = reactContext.getJSModule(RCTEventEmitter.class);
+
+    eventEmitter.receiveEvent(getId(), eventName, eventPayload);
+  }
+
   private void sendErrorEvent(String errorMessage) {
     WritableMap eventPayload = Arguments.createMap();
     eventPayload.putString("message", errorMessage);
 
     sendEvent(Events.ON_ERROR.toString(), eventPayload);
+  }
+
+  private void sendIsReadyEvent() {
+    WritableMap eventPayload = Arguments.createMap();
+    eventPayload.putBoolean("isReady", ivsBroadcastSession.isReady());
+
+    sendEvent(Events.ON_IS_BROADCAST_READY.toString(), eventPayload);
   }
 
   private void initBroadcastSession() {
@@ -120,13 +128,7 @@ public class IVSBroadcastCameraView extends FrameLayout implements LifecycleEven
     try {
       ivsBroadcastSession.setEventHandler(this::onBroadcastEventHandler);
       ivsBroadcastSession.init();
-      ivsBroadcastSession.getCameraPreviewAsync((cameraPreview) -> {
-        onReceiveCameraPreviewHandler(cameraPreview);
-
-        WritableMap eventPayload = Arguments.createMap();
-        eventPayload.putBoolean("isReady", ivsBroadcastSession.isReady());
-        sendEvent(Events.ON_IS_BROADCAST_READY.toString(), eventPayload);
-      });
+      ivsBroadcastSession.getCameraPreviewAsync(this::onReceiveCameraPreviewHandler);
     } catch (RuntimeException error) {
       sendErrorEvent(error.toString());
     }

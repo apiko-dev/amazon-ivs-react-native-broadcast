@@ -377,8 +377,10 @@ public class IVSBroadcastSessionService {
   }
 
   public void deinit() {
-    broadcastSession.release();
-    broadcastSession = null;
+    if (isInitialized()) {
+      broadcastSession.release();
+      broadcastSession = null;
+    }
   }
 
   public boolean isInitialized() {
