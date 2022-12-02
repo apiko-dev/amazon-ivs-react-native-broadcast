@@ -140,13 +140,19 @@ public class IVSBroadcastCameraView extends FrameLayout implements LifecycleEven
     ivsBroadcastSession = new IVSBroadcastSessionService(reactContext);
   }
 
-  protected void start(ReadableArray args) {
-    ReadableMap options = args.getMap(0);
-    String rtmpsUrl = options.getString("rtmpsUrl");
-    String streamKey = options.getString("streamKey");
+  protected void start(@Nullable ReadableArray args) {
+    String finalRtmpsUrl = RTMPS_URL;
+    String finalStreamKey = STREAM_KEY;
 
-    String finalRtmpsUrl = rtmpsUrl != null ? rtmpsUrl : RTMPS_URL;
-    String finalStreamKey = streamKey != null ? streamKey : STREAM_KEY;
+    if (args != null) {
+      ReadableMap options = args.getMap(0);
+      if (options.hasKey("rtmpsUrl") && !options.isNull("rtmpsUrl")) {
+        finalRtmpsUrl = options.getString("rtmpsUrl");
+      }
+      if (options.hasKey("streamKey") && !options.isNull("streamKey")) {
+        finalStreamKey = options.getString("streamKey");
+      }
+    }
 
     if (finalRtmpsUrl == null) {
       sendErrorEvent("'rtmpsUrl' is empty.");
