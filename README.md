@@ -65,37 +65,37 @@ Example of requesting Android dangerous permissions at runtime could be found in
 
 ## API
 
-|           Props           |            Type            | iOS | Android |
-| :-----------------------: | :------------------------: | :-: | :-----: |
-|        `rtmpsUrl`         |         `string?`          | ✅  |   ✅    |
-|        `streamKey`        |         `string?`          | ✅  |   ✅    |
-|   `configurationPreset`   |   `ConfigurationPreset?`   | ✅  |   ✅    |
-|       `videoConfig`       |      `IVideoConfig?`       | ✅  |   ✅    |
-|       `audioConfig`       |      `IAudioConfig?`       | ✅  |   ✅    |
-|        `logLevel`         |        `LogLevel?`         | ✅  |   ✅    |
-|     `sessionLogLevel`     |        `LogLevel?`         | ✅  |   ✅    |
-| `cameraPreviewAspectMode` | `CameraPreviewAspectMode?` | ✅  |   ✅    |
-| `isCameraPreviewMirrored` |         `boolean?`         | ✅  |   ✅    |
-|     `cameraPosition`      |     `CameraPosition?`      | ✅  |   ✅    |
-|         `isMuted`         |         `boolean?`         | ✅  |   ✅    |
+|                                      Props                                       |            Type            | iOS | Android |
+| :------------------------------------------------------------------------------: | :------------------------: | :-: | :-----: |
+|                [`rtmpsUrl`](./docs/api-documentation.md#rtmpsurl)                |         `string?`          | ✅  |   ✅    |
+|               [`streamKey`](./docs/api-documentation.md#streamkey)               |         `string?`          | ✅  |   ✅    |
+|     [`configurationPreset`](./docs/api-documentation.md#configurationpreset)     |   `ConfigurationPreset?`   | ✅  |   ✅    |
+|             [`videoConfig`](./docs/api-documentation.md#videoconfig)             |      `IVideoConfig?`       | ✅  |   ✅    |
+|             [`audioConfig`](./docs/api-documentation.md#audioconfig)             |      `IAudioConfig?`       | ✅  |   ✅    |
+|                [`logLevel`](./docs/api-documentation.md#loglevel)                |        `LogLevel?`         | ✅  |   ✅    |
+|         [`sessionLogLevel`](./docs/api-documentation.md#sessionloglevel)         |        `LogLevel?`         | ✅  |   ✅    |
+| [`cameraPreviewAspectMode`](./docs/api-documentation.md#camerapreviewaspectmode) | `CameraPreviewAspectMode?` | ✅  |   ✅    |
+| [`isCameraPreviewMirrored`](./docs/api-documentation.md#iscamerapreviewmirrored) |         `boolean?`         | ✅  |   ✅    |
+|          [`cameraPosition`](./docs/api-documentation.md#cameraposition)          |     `CameraPosition?`      | ✅  |   ✅    |
+|                 [`isMuted`](./docs/api-documentation.md#ismuted)                 |         `boolean?`         | ✅  |   ✅    |
 
-|             Handlers              |                                   Type                                    | iOS | Android |
-| :-------------------------------: | :-----------------------------------------------------------------------: | :-: | :-----: |
-|             `onError`             |                      `(errorMessage: string): void?`                      | ✅  |   ✅    |
-|        `onBroadcastError`         |                 `(error: IBroadcastSessionError): void?`                  | ✅  |   ✅    |
-|       `onIsBroadcastReady`        |                        `(isReady: boolean): void?`                        | ✅  |   ✅    |
-|      `onBroadcastAudioStats`      |                    `(audioStats: IAudioStats): void?`                     | ✅  |   ✅    |
-|     `onBroadcastStateChanged`     | `(stateStatus: StateStatusUnion, metadata?: StateChangedMetadata): void?` | ✅  |   ✅    |
-| `onTransmissionStatisticsChanged` |        `(transmissionStatistics: ITransmissionStatistics): void?`         | ✅  |   ✅    |
-|    `onAudioSessionInterrupted`    |                                `(): void?`                                | ✅  |   🚫    |
-|      `onAudioSessionResumed`      |                                `(): void?`                                | ✅  |   🚫    |
-|     `onMediaServicesWereLost`     |                                `(): void?`                                | ✅  |   🚫    |
-|    `onMediaServicesWereReset`     |                                `(): void?`                                | ✅  |   🚫    |
+|                                             Handlers                                             |                                   Type                                    | iOS | Android |
+| :----------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------: | :-: | :-----: |
+|                         [`onError`](./docs/api-documentation.md#onerror)                         |                      `(errorMessage: string): void?`                      | ✅  |   ✅    |
+|                [`onBroadcastError`](./docs/api-documentation.md#onbroadcasterror)                |                 `(error: IBroadcastSessionError): void?`                  | ✅  |   ✅    |
+|              [`onIsBroadcastReady`](./docs/api-documentation.md#onisbroadcastready)              |                        `(isReady: boolean): void?`                        | ✅  |   ✅    |
+|           [`onBroadcastAudioStats`](./docs/api-documentation.md#onbroadcastaudiostats)           |                    `(audioStats: IAudioStats): void?`                     | ✅  |   ✅    |
+|         [`onBroadcastStateChanged`](./docs/api-documentation.md#onbroadcaststatechanged)         | `(stateStatus: StateStatusUnion, metadata?: StateChangedMetadata): void?` | ✅  |   ✅    |
+| [`onTransmissionStatisticsChanged`](./docs/api-documentation.md#ontransmissionstatisticschanged) |        `(transmissionStatistics: ITransmissionStatistics): void?`         | ✅  |   ✅    |
+|       [`onAudioSessionInterrupted`](./docs/api-documentation.md#onaudiosessioninterrupted)       |                                `(): void?`                                | ✅  |   🚫    |
+|           [`onAudioSessionResumed`](./docs/api-documentation.md#onaudiosessionresumed)           |                                `(): void?`                                | ✅  |   🚫    |
+|         [`onMediaServicesWereLost`](./docs/api-documentation.md#onmediaserviceswerelost)         |                                `(): void?`                                | ✅  |   🚫    |
+|        [`onMediaServicesWereReset`](./docs/api-documentation.md#onmediaserviceswerereset)        |                                `(): void?`                                | ✅  |   🚫    |
 
-| Methods |                  Type                  | iOS | Android |
-| :-----: | :------------------------------------: | :-: | :-----: |
-| `start` | `(options?: StartMethodOptions): void` | ✅  |   ✅    |
-| `stop`  |               `(): void`               | ✅  |   ✅    |
+|                   Methods                    |                  Type                  | iOS | Android |
+| :------------------------------------------: | :------------------------------------: | :-: | :-----: |
+| [`start`](./docs/api-documentation.md#start) | `(options?: StartMethodOptions): void` | ✅  |   ✅    |
+|  [`stop`](./docs/api-documentation.md#stop)  |               `(): void`               | ✅  |   ✅    |
 
 👉 Read more detailed [API documentation](docs/api-documentation.md).
 
