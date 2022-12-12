@@ -184,6 +184,8 @@ Periodically called with audio `peak` and `rms` in `dBFS`.
 | :----------------------------------------------------------------------------------: | :------: | :----------: |
 | `onBroadcastAudioStats(audioStats: `[`IAudioStats`](./types.md#iaudiostats)`): void` |    No    | iOS, Android |
 
+⚠️ _Expect this callback to be triggered quite frequently._
+
 #### `onBroadcastStateChanged`
 
 Indicates that the broadcast state changed.
