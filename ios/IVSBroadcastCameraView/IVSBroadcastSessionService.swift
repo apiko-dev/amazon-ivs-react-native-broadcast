@@ -219,7 +219,6 @@ class IVSBroadcastSessionService: NSObject {
       self.config.audio.setQuality(audioQuality)
     }
     if let audioSessionStrategyName = audioConfig["audioSessionStrategy"] {
-      // https://aws.github.io/amazon-ivs-broadcast-docs/1.0.0/ios/Classes/IVSBroadcastSession.html#/c:objc(cs)IVSBroadcastSession(cpy)applicationAudioSessionStrategy
       IVSBroadcastSession.applicationAudioSessionStrategy = self.getAudioSessionStrategy(audioSessionStrategyName as! NSString)
     }
   }

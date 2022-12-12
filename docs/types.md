@@ -4,7 +4,7 @@
 
 👉 [iOS SDK](https://aws.github.io/amazon-ivs-broadcast-docs/1.7.1/ios/)
 
-👉 [Android SDK](https://aws.github.io/amazon-ivs-broadcast-docs/1.7.0/android/reference/com/amazonaws/ivs/broadcast/package-summary.html)
+👉 [Android SDK](https://aws.github.io/amazon-ivs-broadcast-docs/1.7.2/android/reference/com/amazonaws/ivs/broadcast/package-summary.html)
 
 ## `ConfigurationPreset`
 
@@ -209,9 +209,9 @@ interface IBroadcastSessionError {
 | :---------: | ---------------------------------------------------------------------------------------- |
 | `sessionId` | The unique `ID` of the broadcast session. It is updated every time the stream is stopped |
 
-👉 See iOS `code` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.2.0/ios/Enums/IVSBroadcastError.html#/c:@E@IVSBroadcastError@IVSBroadcastErrorDeviceExchangeIncompatibleTypes).
+👉 See iOS `code` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.7.1/ios/Enums/IVSBroadcastError.html#/c:@E@IVSBroadcastError@IVSBroadcastErrorDeviceExchangeIncompatibleTypes).
 
-👉 See Android `type` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.2.1/android/reference/com/amazonaws/ivs/broadcast/ErrorType.html).
+👉 See Android `type` [enumeration](https://aws.github.io/amazon-ivs-broadcast-docs/1.7.2/android/reference/com/amazonaws/ivs/broadcast/ErrorType.html).
 
 ## `IAudioStats`
 
