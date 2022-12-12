@@ -89,7 +89,7 @@ jest.mock('react-native', () => {
   return ReactNative;
 });
 
-describe('getCommandIdByPlatform function should return correct command identifier for both platforms', () => {
+describe('getCommandIdByPlatform function should return correct command identifier', () => {
   it('iOS platform', () => {
     expect(getCommandIdByPlatform(Start)).toBe(0);
   });
@@ -172,7 +172,7 @@ describe('Event handlers should be called with the correct payload', () => {
     }
   );
 
-  describe('onTransmissionStatisticsChanged event handler should be called with the correct payload for both platforms', () => {
+  describe('onTransmissionStatisticsChanged event handler should be called with the correct payload', () => {
     const restStatistics = {
       rtt: 22,
       measuredBitrate: 333,
@@ -227,7 +227,7 @@ describe('Event handlers should be called with the correct payload', () => {
     });
   });
 
-  describe('onBroadcastStateChanged event handler should be called with the correct payload for both platforms', () => {
+  describe('onBroadcastStateChanged event handler should be called with the correct payload', () => {
     const metadata = { sessionId: 'sessionId' };
 
     test('Android platform', async () => {
