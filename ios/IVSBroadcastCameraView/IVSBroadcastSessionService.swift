@@ -154,8 +154,11 @@ class IVSBroadcastSessionService: NSObject {
   }
   
   private func getCameraPreview() -> IVSImagePreviewView? {
-    let preview = try? self.broadcastSession?.previewView(with: self.cameraPreviewAspectMode)
+    let attachedDevice = getAttachedDeviceByUrn(self.attachedCameraUrn)
+    
+    let preview = try? (attachedDevice as? IVSImageDevice)?.previewView(with: self.cameraPreviewAspectMode)
     preview?.setMirrored(self.isCameraPreviewMirrored)
+    
     return preview
   }
   
